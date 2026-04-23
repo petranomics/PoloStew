@@ -7,11 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --noir: #0d0d0d;
-            --ivory: #f5f0e8;
+            --noir: #2c2418;
+            --ivory: #faf6f0;
             --or: #c75d3a;
-            --argent: #d4cfc7;
-            --charbon: #1a1a1a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+            --clay: #c49a6c;
+            --parchment: #f0e6d3;
         }
 
         * {
@@ -42,12 +45,12 @@
         }
 
         .login-brand {
-            background: var(--noir);
+            background: var(--charbon);
             padding: 4rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            color: white;
+            color: var(--ivory);
             position: relative;
             overflow: hidden;
         }
@@ -59,7 +62,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, transparent 0%, rgba(199,93,58,0.1) 100%);
+            background: linear-gradient(135deg, transparent 0%, rgba(138, 154, 123, 0.08) 100%);
         }
 
         .brand-content {
@@ -226,9 +229,9 @@
         }
 
         .btn-submit:hover {
-            background: var(--noir);
+            background: var(--sage);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(44, 36, 24, 0.15);
         }
 
         .divider {

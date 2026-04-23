@@ -8,12 +8,15 @@
         <link rel="stylesheet" href="/css/mega-menu.css">
         <style>
                   :root {
-                                --noir: #0d0d0d;
-                                --ivory: #f5f0e8;
+                                --noir: #2c2418;
+                                --ivory: #faf6f0;
                                 --or: #c75d3a;
-                                --argent: #d4cfc7;
-                                --charbon: #1a1a1a;
+                                --argent: #e8e0d4;
+                                --charbon: #3d3226;
                                 --dor: #d4873a;
+                                --sage: #8a9a7b;
+                                --clay: #c49a6c;
+                                --parchment: #f0e6d3;
                   }
                   * { margin: 0; padding: 0; box-sizing: border-box; }
                   body {
@@ -27,9 +30,9 @@
                                 width: 100%;
                                 top: 0;
                                 z-index: 1000;
-                                background: rgba(245, 240, 232, 0.98);
+                                background: rgba(250, 246, 240, 0.98);
                                 backdrop-filter: blur(20px);
-                                border-bottom: 1px solid rgba(199, 93, 58, 0.15);
+                                border-bottom: 1px solid var(--argent);
                   }
                   nav {
                                 display: flex;
@@ -78,7 +81,7 @@
                   .category-hero {
                                 padding: 140px 5% 60px;
                                 text-align: center;
-                                background: linear-gradient(135deg, var(--ivory) 0%, #f5f3ef 100%);
+                                background: linear-gradient(135deg, var(--ivory) 0%, var(--parchment) 100%);
                   }
                   .category-title {
                                 font-family: 'Playfair Display', serif;
@@ -203,14 +206,15 @@
                                 gap: 2rem;
                   }
                   .product-card {
-                                background: white;
+                                background: var(--parchment);
+                                border: 1px solid var(--argent);
                                 border-radius: 12px;
                                 overflow: hidden;
                                 transition: transform 0.3s, box-shadow 0.3s;
                   }
                   .product-card:hover {
-                                transform: translateY(-8px);
-                                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                                transform: translateY(-5px);
+                                box-shadow: 0 12px 30px rgba(44, 36, 24, 0.1);
                   }
                   .product-card.sold {
                                 opacity: 0.75;
@@ -334,8 +338,8 @@
                   .quick-cart-btn {
                                 flex: 1;
                                 padding: 0.6rem 1rem;
-                                background: var(--noir);
-                                color: var(--ivory);
+                                background: var(--or);
+                                color: white;
                                 border: none;
                                 border-radius: 6px;
                                 font-size: 0.75rem;
@@ -350,7 +354,7 @@
                                 gap: 0.4rem;
                   }
                   .quick-cart-btn:hover {
-                                background: var(--charbon);
+                                background: var(--sage);
                                 transform: translateY(-1px);
                   }
                   .quick-cart-btn:disabled {
@@ -393,7 +397,7 @@
                                 margin-bottom: 1rem;
                   }
                   footer {
-                                background: var(--noir);
+                                background: var(--charbon);
                                 color: var(--ivory);
                                 padding: 4rem 5%;
                                 text-align: center;
@@ -430,7 +434,7 @@
                                 bottom: 30px;
                                 left: 50%;
                                 transform: translateX(-50%) translateY(100px);
-                                background: var(--noir);
+                                background: var(--charbon);
                                 color: var(--ivory);
                                 padding: 1rem 2rem;
                                 border-radius: 8px;

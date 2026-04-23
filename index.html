@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="/css/mega-menu.css">
     <style>
         :root {
-            --noir: #0d0d0d;
-            --ivory: #f5f0e8;
+            --noir: #2c2418;
+            --ivory: #faf6f0;
             --or: #c75d3a;
-            --argent: #d4cfc7;
-            --charbon: #1a1a1a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
             --dor: #d4873a;
+            --sage: #8a9a7b;
+            --clay: #c49a6c;
+            --parchment: #f0e6d3;
         }
 
         * {
@@ -26,7 +29,7 @@
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--ivory);
-            color: var(--noir);
+            color: var(--charbon);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
@@ -37,15 +40,15 @@
             width: 100%;
             top: 0;
             z-index: 1000;
-            background: rgba(245, 240, 232, 0.98);
+            background: rgba(250, 246, 240, 0.98);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(199, 93, 58, 0.15);
+            border-bottom: 1px solid var(--argent);
             transition: all 0.3s ease;
         }
 
         header.scrolled {
-            background: rgba(245, 240, 232, 0.95);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            background: rgba(250, 246, 240, 0.95);
+            box-shadow: 0 4px 20px rgba(44, 36, 24, 0.06);
         }
 
         nav {
@@ -157,7 +160,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: white;
+            background: var(--ivory);
             z-index: 999;
             padding: 2rem;
             overflow-y: auto;
@@ -202,7 +205,7 @@
             height: 51vh;
             position: relative;
             overflow: hidden;
-            background: var(--noir);
+            background: var(--charbon);
         }
 
         .runway-track {
@@ -224,7 +227,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to right, rgba(13,13,13,0.7), transparent 50%, rgba(13,13,13,0.7));
+            background: linear-gradient(to right, rgba(44,36,24,0.65), transparent 50%, rgba(44,36,24,0.65));
             z-index: 1;
         }
 
@@ -389,7 +392,7 @@
             font-size: 1rem;
             font-weight: 300;
             letter-spacing: 0.1em;
-            color: #666;
+            color: var(--clay);
         }
 
         .products-grid {
@@ -399,15 +402,18 @@
         }
 
         .product-card {
-            background: white;
+            background: var(--parchment);
+            border: 1px solid var(--argent);
             transition: all 0.4s ease;
             cursor: pointer;
             position: relative;
+            border-radius: 6px;
+            overflow: hidden;
         }
 
         .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(44, 36, 24, 0.1);
         }
 
         .product-image-container {
@@ -483,7 +489,7 @@
             font-size: 0.7rem;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: #999;
+            color: var(--sage);
             margin-bottom: 0.5rem;
             font-weight: 400;
         }
@@ -507,10 +513,10 @@
         .add-to-cart-btn {
             width: 100%;
             padding: 0.75rem 1.5rem;
-            background: var(--noir);
+            background: var(--or);
             color: white;
-            border: 1px solid var(--noir);
-            border-radius: 0;
+            border: 1px solid var(--or);
+            border-radius: 4px;
             cursor: pointer;
             font-size: 0.75rem;
             letter-spacing: 0.1em;
@@ -527,8 +533,9 @@
         }
 
         .add-to-cart-btn:hover {
-            background: white;
-            color: var(--noir);
+            background: var(--sage);
+            border-color: var(--sage);
+            color: white;
         }
 
         .wishlist-btn.active {
@@ -557,11 +564,11 @@
             position: fixed;
             top: 100px;
             right: 20px;
-            background: var(--noir);
-            color: white;
+            background: var(--charbon);
+            color: var(--ivory);
             padding: 1rem 1.5rem;
             border-radius: 4px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(44, 36, 24, 0.25);
             z-index: 10000;
             opacity: 0;
             transform: translateX(400px);
@@ -600,9 +607,9 @@
         }
 
         .size-btn.selected {
-            background: var(--noir);
+            background: var(--or);
             color: white;
-            border-color: var(--noir);
+            border-color: var(--or);
         }
 
         .size-btn.out-of-stock {
@@ -667,8 +674,8 @@
         /* Brand Story */
         .brand-story {
             padding: 10rem 5%;
-            background: var(--noir);
-            color: white;
+            background: var(--parchment);
+            color: var(--charbon);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -678,7 +685,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, transparent 0%, rgba(201,169,97,0.05) 100%);
+            background: linear-gradient(135deg, transparent 0%, rgba(138,154,123,0.08) 100%);
         }
 
         .story-content {
@@ -701,13 +708,13 @@
             line-height: 2;
             font-weight: 300;
             letter-spacing: 0.03em;
-            opacity: 0.9;
+            opacity: 0.85;
         }
 
         /* Shopify Integration Section */
         .shopify-section {
             padding: 6rem 5%;
-            background: linear-gradient(135deg, var(--argent) 0%, var(--ivory) 100%);
+            background: linear-gradient(135deg, var(--ivory) 0%, var(--parchment) 100%);
             text-align: center;
         }
 
@@ -726,33 +733,36 @@
             font-size: 1.1rem;
             line-height: 1.8;
             margin-bottom: 2.5rem;
-            color: #666;
+            color: var(--charbon);
+            opacity: 0.8;
         }
 
         .shopify-btn {
             display: inline-block;
             padding: 1.2rem 3.5rem;
-            background: var(--noir);
+            background: var(--or);
             color: white;
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 0.2em;
             font-size: 0.85rem;
             transition: all 0.4s ease;
-            border: 1px solid var(--noir);
+            border: 1px solid var(--or);
+            border-radius: 4px;
         }
 
         .shopify-btn:hover {
-            background: transparent;
-            color: var(--noir);
+            background: var(--sage);
+            border-color: var(--sage);
+            color: white;
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(44, 36, 24, 0.12);
         }
 
         /* Footer */
         footer {
             background: var(--charbon);
-            color: white;
+            color: var(--ivory);
             padding: 5rem 5% 2rem;
         }
 
@@ -942,12 +952,13 @@
             margin-top: 2rem;
             transition: all 0.3s ease;
             font-weight: 500;
+            border-radius: 4px;
         }
 
         .checkout-btn:hover {
-            background: var(--noir);
+            background: var(--sage);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(44, 36, 24, 0.15);
         }
 
         /* Mobile Responsive */
@@ -1413,46 +1424,46 @@
     <!-- Runway Hero Carousel -->
     <section class="hero-runway">
         <div class="runway-track" id="runwayTrack">
-            <!-- Slide 1: Vintage Finds -->
+            <!-- Slide 1: Fresh Finds -->
             <div class="runway-slide">
-                <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1920&h=1080&fit=crop') center/cover;"></div>
+                <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1558171813-4c088753af8f?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
                     <p class="slide-category">New Arrivals</p>
-                    <h1 class="slide-title">Curated Vintage</h1>
-                    <p class="slide-description">One-of-a-kind pieces with history and character. Every item hand-picked, every story worth wearing.</p>
+                    <h1 class="slide-title">Fresh Finds</h1>
+                    <p class="slide-description">Just dropped. One of a kind.</p>
                     <a href="#products" class="slide-cta">Explore Collection</a>
                 </div>
             </div>
 
-            <!-- Slide 2: Denim -->
+            <!-- Slide 2: Vintage Denim -->
             <div class="runway-slide">
-                <div class="slide-bg" style="background: linear-gradient(135deg, #8b6f47 0%, #a08560 100%);"></div>
+                <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
                     <p class="slide-category">Worn-In Classics</p>
                     <h1 class="slide-title">Vintage Denim</h1>
-                    <p class="slide-description">Broken-in Levi's, faded Wranglers, and rare selvedge finds. Denim that already has a life behind it.</p>
+                    <p class="slide-description">Broken in. Not broken.</p>
                     <a href="/category.html?cat=bottoms" class="slide-cta">View Collection</a>
                 </div>
             </div>
 
-            <!-- Slide 3: Streetwear -->
+            <!-- Slide 3: Jersey Season -->
             <div class="runway-slide">
-                <div class="slide-bg" style="background: linear-gradient(135deg, #c75d3a 0%, #8b3a22 100%);"></div>
+                <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
-                    <p class="slide-category">Rare Finds</p>
-                    <h1 class="slide-title">Vintage Streetwear</h1>
-                    <p class="slide-description">Deadstock tees, throwback hoodies, and pieces you won't find anywhere else. Street culture, preserved.</p>
-                    <a href="/category.html?cat=t-shirts" class="slide-cta">Shop Now</a>
+                    <p class="slide-category">Game Day</p>
+                    <h1 class="slide-title">Jersey Season</h1>
+                    <p class="slide-description">Game day, every day.</p>
+                    <a href="/category.html?cat=jerseys" class="slide-cta">Shop Now</a>
                 </div>
             </div>
 
-            <!-- Slide 4: Statement Pieces -->
+            <!-- Slide 4: Curated Vintage -->
             <div class="runway-slide">
-                <div class="slide-bg" style="background: linear-gradient(135deg, #d4873a 0%, #f4e8d0 100%);"></div>
+                <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
                     <p class="slide-category">One of a Kind</p>
-                    <h1 class="slide-title">Worn Stories</h1>
-                    <p class="slide-description">Every piece in our collection carries a past. Vintage finds that add soul to your wardrobe and stand apart from the ordinary.</p>
+                    <h1 class="slide-title">Curated Vintage</h1>
+                    <p class="slide-description">Worn stories. New chapter.</p>
                     <a href="#products" class="slide-cta">Discover More</a>
                 </div>
             </div>
@@ -1477,254 +1488,254 @@
         </div>
 
         <div class="products-grid">
-            <!-- Skincare - Dermalogica -->
-            <div class="product-card" data-product-id="skincare-daily-microfoliant" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <!-- T-Shirts -->
+            <div class="product-card" data-product-id="vintage-white-tee" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=500&fit=crop" alt="Daily Microfoliant" class="product-image" />
-                    <span class="product-badge">Bestseller</span>
+                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop" alt="Vintage White Tee" class="product-image" />
+                    <span class="product-badge">Just In</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Skincare</p>
-                    <h3 class="product-name">Daily Microfoliant</h3>
-                    <p class="product-price">$62</p>
+                    <p class="product-brand">Hanes / 90s</p>
+                    <h3 class="product-name">Vintage Blank White Tee</h3>
+                    <p class="product-price">$28</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="skincare-cleansing-gel" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-striped-tee" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop" alt="Special Cleansing Gel" class="product-image" />
+                    <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=500&fit=crop" alt="Striped Pocket Tee" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Skincare</p>
-                    <h3 class="product-name">Special Cleansing Gel</h3>
+                    <p class="product-brand">Gap / 80s</p>
+                    <h3 class="product-name">Striped Pocket Tee</h3>
+                    <p class="product-price">$34</p>
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-product-id="vintage-graphic-tee" onclick="window.location.href='product?id=' + this.dataset.productId">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1503341504253-dff4f94032ef?w=400&h=500&fit=crop" alt="Faded Graphic Tee" class="product-image" />
+                    <span class="product-badge">Rare</span>
+                    <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
+                </div>
+                <div class="product-info">
+                    <p class="product-brand">Fruit of the Loom / 90s</p>
+                    <h3 class="product-name">Faded Graphic Band Tee</h3>
                     <p class="product-price">$45</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="skincare-dynamic-recovery" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <!-- Shorts -->
+            <div class="product-card" data-product-id="vintage-athletic-shorts" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400&h=500&fit=crop" alt="Dynamic Skin Recovery" class="product-image" />
-                    <span class="product-badge">New</span>
+                    <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=500&fit=crop" alt="Retro Athletic Shorts" class="product-image" />
+                    <span class="product-badge">90s</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Skincare</p>
-                    <h3 class="product-name">Dynamic Skin Recovery SPF 50</h3>
-                    <p class="product-price">$85</p>
+                    <p class="product-brand">Nike / 90s</p>
+                    <h3 class="product-name">Retro Athletic Shorts</h3>
+                    <p class="product-price">$38</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Fragrance - Bvlgari -->
-            <div class="product-card" data-product-id="fragrance-man-in-black" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-denim-cutoffs" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=500&fit=crop" alt="Man in Black EDP" class="product-image" />
-                    <span class="product-badge">Exclusive</span>
+                    <img src="https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=400&h=500&fit=crop" alt="Denim Cutoff Shorts" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Fragrance</p>
-                    <h3 class="product-name">Man in Black EDP</h3>
-                    <p class="product-price">$125</p>
+                    <p class="product-brand">Levi's / 80s</p>
+                    <h3 class="product-name">Denim Cutoff Shorts</h3>
+                    <p class="product-price">$42</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="fragrance-goldea" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-track-shorts" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400&h=500&fit=crop" alt="Goldea The Roman Night" class="product-image" />
+                    <img src="https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=400&h=500&fit=crop" alt="Track Shorts" class="product-image" />
+                    <span class="product-badge">Fresh</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Fragrance</p>
-                    <h3 class="product-name">Goldea The Roman Night</h3>
-                    <p class="product-price">$145</p>
+                    <p class="product-brand">Adidas / 90s</p>
+                    <h3 class="product-name">Vintage Track Shorts</h3>
+                    <p class="product-price">$36</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="fragrance-aqva" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <!-- Outerwear -->
+            <div class="product-card" data-product-id="vintage-denim-jacket" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400&h=500&fit=crop" alt="Aqva Pour Homme" class="product-image" />
-                    <span class="product-badge">Bestseller</span>
+                    <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop" alt="Denim Trucker Jacket" class="product-image" />
+                    <span class="product-badge">Classic</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Fragrance</p>
-                    <h3 class="product-name">Aqva Pour Homme</h3>
-                    <p class="product-price">$110</p>
+                    <p class="product-brand">Levi's / 80s</p>
+                    <h3 class="product-name">Denim Trucker Jacket</h3>
+                    <p class="product-price">$68</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Watches - Rolex -->
-            <div class="product-card" data-product-id="watches-submariner" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-windbreaker" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400&h=500&fit=crop" alt="Submariner Date" class="product-image" />
+                    <img src="https://images.unsplash.com/photo-1544923246-77307dd270cb?w=400&h=500&fit=crop" alt="Colorblock Windbreaker" class="product-image" />
+                    <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
+                </div>
+                <div class="product-info">
+                    <p class="product-brand">Starter / 90s</p>
+                    <h3 class="product-name">Colorblock Windbreaker</h3>
+                    <p class="product-price">$55</p>
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card" data-product-id="vintage-fleece" onclick="window.location.href='product?id=' + this.dataset.productId">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1548883354-94bcfe321cbb?w=400&h=500&fit=crop" alt="Retro Fleece Pullover" class="product-image" />
+                    <span class="product-badge">Cozy</span>
+                    <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
+                </div>
+                <div class="product-info">
+                    <p class="product-brand">Patagonia / 90s</p>
+                    <h3 class="product-name">Retro Fleece Pullover</h3>
+                    <p class="product-price">$72</p>
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Bottoms -->
+            <div class="product-card" data-product-id="vintage-501s" onclick="window.location.href='product?id=' + this.dataset.productId">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=500&fit=crop" alt="Faded 501 Jeans" class="product-image" />
                     <span class="product-badge">Icon</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Watches</p>
-                    <h3 class="product-name">Submariner Date</h3>
-                    <p class="product-price">$14,300</p>
+                    <p class="product-brand">Levi's / 80s</p>
+                    <h3 class="product-name">Faded 501 Jeans</h3>
+                    <p class="product-price">$58</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="watches-datejust" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-corduroys" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=400&h=500&fit=crop" alt="Datejust 41" class="product-image" />
+                    <img src="https://images.unsplash.com/photo-1475178626620-a4d074967571?w=400&h=500&fit=crop" alt="Wide Leg Corduroys" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Watches</p>
-                    <h3 class="product-name">Datejust 41</h3>
-                    <p class="product-price">$12,850</p>
+                    <p class="product-brand">Wrangler / 70s</p>
+                    <h3 class="product-name">Wide Leg Corduroys</h3>
+                    <p class="product-price">$48</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="watches-daytona" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-track-pants" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1622434641406-a158123450f9?w=400&h=500&fit=crop" alt="Cosmograph Daytona" class="product-image" />
-                    <span class="product-badge">Limited</span>
+                    <img src="https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=400&h=500&fit=crop" alt="Snap-Button Track Pants" class="product-image" />
+                    <span class="product-badge">Throwback</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Watches</p>
-                    <h3 class="product-name">Cosmograph Daytona</h3>
-                    <p class="product-price">$38,250</p>
+                    <p class="product-brand">Adidas / 90s</p>
+                    <h3 class="product-name">Snap-Button Track Pants</h3>
+                    <p class="product-price">$44</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Bags - Hermès -->
-            <div class="product-card" data-product-id="bags-birkin" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <!-- Jerseys -->
+            <div class="product-card" data-product-id="vintage-basketball-jersey" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=500&fit=crop" alt="Birkin 35" class="product-image" />
-                    <span class="product-badge">Icon</span>
+                    <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=500&fit=crop" alt="Vintage Basketball Jersey" class="product-image" />
+                    <span class="product-badge">Grail</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Bags</p>
-                    <h3 class="product-name">Birkin 35</h3>
-                    <p class="product-price">$12,500</p>
+                    <p class="product-brand">Champion / 90s</p>
+                    <h3 class="product-name">Vintage Basketball Jersey</h3>
+                    <p class="product-price">$65</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="bags-kelly" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-soccer-jersey" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1591561954557-26941169b49e?w=400&h=500&fit=crop" alt="Kelly 28" class="product-image" />
+                    <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=400&h=500&fit=crop" alt="Retro Soccer Jersey" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Bags</p>
-                    <h3 class="product-name">Kelly 28</h3>
-                    <p class="product-price">$10,800</p>
+                    <p class="product-brand">Umbro / 90s</p>
+                    <h3 class="product-name">Retro Soccer Jersey</h3>
+                    <p class="product-price">$52</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="bags-constance" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-baseball-jersey" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=500&fit=crop" alt="Constance 24" class="product-image" />
-                    <span class="product-badge">New</span>
+                    <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=500&fit=crop" alt="Throwback Baseball Jersey" class="product-image" />
+                    <span class="product-badge">Deadstock</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Bags</p>
-                    <h3 class="product-name">Constance 24</h3>
-                    <p class="product-price">$9,200</p>
+                    <p class="product-brand">Mitchell & Ness / 80s</p>
+                    <h3 class="product-name">Throwback Baseball Jersey</h3>
+                    <p class="product-price">$78</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <!-- Accessories - Chanel -->
-            <div class="product-card" data-product-id="accessories-sunglasses" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <!-- Extra / Mixed -->
+            <div class="product-card" data-product-id="vintage-hoodie" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=500&fit=crop" alt="Classic Sunglasses" class="product-image" />
-                    <span class="product-badge">Icon</span>
+                    <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop" alt="Heavyweight Hoodie" class="product-image" />
+                    <span class="product-badge">Cozy</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Accessories</p>
-                    <h3 class="product-name">Classic Sunglasses</h3>
-                    <p class="product-price">$485</p>
+                    <p class="product-brand">Russell Athletic / 90s</p>
+                    <h3 class="product-name">Heavyweight Hoodie</h3>
+                    <p class="product-price">$52</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="accessories-scarf" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-cargo-pants" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&h=500&fit=crop" alt="Silk Twill Scarf" class="product-image" />
+                    <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&h=500&fit=crop" alt="Utility Cargo Pants" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Accessories</p>
-                    <h3 class="product-name">Silk Twill Scarf</h3>
-                    <p class="product-price">$625</p>
+                    <p class="product-brand">Carhartt / 2000s</p>
+                    <h3 class="product-name">Utility Cargo Pants</h3>
+                    <p class="product-price">$56</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="accessories-earrings" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="vintage-polo-rugby" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=500&fit=crop" alt="Classic Pearl Earrings" class="product-image" />
-                    <span class="product-badge">Bestseller</span>
+                    <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=500&fit=crop" alt="Rugby Polo Shirt" class="product-image" />
+                    <span class="product-badge">Fresh</span>
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Accessories</p>
-                    <h3 class="product-name">Classic Pearl Earrings</h3>
-                    <p class="product-price">$895</p>
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
-                </div>
-            </div>
-
-            <!-- Streetwear - Supreme -->
-            <div class="product-card" data-product-id="streetwear-box-logo" onclick="window.location.href='product?id=' + this.dataset.productId">
-                <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop" alt="Box Logo Tee Black" class="product-image" />
-                    <span class="product-badge">Drop</span>
-                    <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Streetwear</p>
-                    <h3 class="product-name">Box Logo Tee Black</h3>
-                    <p class="product-price">$298</p>
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card" data-product-id="streetwear-hoodie" onclick="window.location.href='product?id=' + this.dataset.productId">
-                <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop" alt="Classic Hoodie" class="product-image" />
-                    <span class="product-badge">New</span>
-                    <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Streetwear</p>
-                    <h3 class="product-name">Classic Hoodie</h3>
-                    <p class="product-price">$548</p>
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card" data-product-id="streetwear-cargo" onclick="window.location.href='product?id=' + this.dataset.productId">
-                <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&h=500&fit=crop" alt="Cargo Pants" class="product-image" />
-                    <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Streetwear</p>
-                    <h3 class="product-name">Cargo Pants</h3>
-                    <p class="product-price">$428</p>
+                    <p class="product-brand">Ralph Lauren / 90s</p>
+                    <h3 class="product-name">Rugby Polo Shirt</h3>
+                    <p class="product-price">$48</p>
                     <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>
                 </div>
             </div>
@@ -1734,9 +1745,9 @@
     <!-- Brand Story -->
     <section class="brand-story">
         <div class="story-content">
-            <h2 class="story-title">Vintage Finds. Worn Stories.</h2>
+            <h2 class="story-title">The Hunt Is the Point</h2>
             <p class="story-text">
-                At PoloStew, we believe the best clothes have already lived a life. Every piece in our collection -- from a faded band tee to a perfectly broken-in leather jacket -- is chosen for its character, its craft, and the story it carries. We dig through racks, warehouses, and estate sales so you don't have to. This is thrift culture, elevated. One-of-a-kind pieces that can't be replicated, only discovered.
+                We spend our weekends in warehouse sales, thrift shops, and flea markets so you can spend yours looking good. Every piece on PoloStew was pulled from the wild -- worn in, broken in, one of a kind. No fast fashion, no mass production. Just real clothes with real history. We're here for the hunt, the find, and the feeling of wearing something nobody else has. Sustainability isn't our marketing angle -- it's just what happens when you buy things that already exist.
             </p>
         </div>
     </section>
@@ -1824,7 +1835,7 @@
                 
                 <div id="orders" class="tab-content active">
                     <div class="cart-item">
-                        <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); display: flex; align-items: center; justify-content: center; color: rgba(212, 135, 58, 0.4); font-family: 'Playfair Display', serif;">ROLEX</div>
+                        <div style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--charbon) 0%, var(--noir) 100%); display: flex; align-items: center; justify-content: center; color: rgba(212, 135, 58, 0.4); font-family: 'Playfair Display', serif;">VINTAGE</div>
                         <div style="flex: 1;">
                             <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.5rem;">Submariner Date</h3>
                             <p style="color: #999; margin-bottom: 0.5rem;">Order #TL48291</p>
@@ -1851,7 +1862,7 @@
                             <label style="display: block; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.8rem; color: #666;">Email</label>
                             <input type="email" value="alexander@example.com" style="width: 100%; padding: 1rem; border: 1px solid var(--argent); background: var(--ivory); font-family: 'DM Sans', sans-serif; font-size: 1rem;" />
                         </div>
-                        <button type="submit" style="width: 100%; padding: 1rem; background: var(--noir); color: white; border: none; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='var(--or)'" onmouseout="this.style.background='var(--noir)'">Save Changes</button>
+                        <button type="submit" style="width: 100%; padding: 1rem; background: var(--or); color: white; border: none; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease; border-radius: 4px;" onmouseover="this.style.background='var(--sage)'" onmouseout="this.style.background='var(--or)'">Save Changes</button>
                     </form>
                 </div>
             </div>
@@ -1944,24 +1955,24 @@
 
         function addToCart(productId) {
             const products = {
-                1: { name: 'Dermalogica Daily Microfoliant', brand: 'Dermalogica', price: 62 },
-                2: { name: 'Dermalogica Special Cleansing Gel', brand: 'Dermalogica', price: 45 },
-                3: { name: 'Dermalogica Dynamic Skin Recovery SPF 50', brand: 'Dermalogica', price: 85 },
-                4: { name: 'Bvlgari Man in Black EDP', brand: 'Bvlgari', price: 125 },
-                5: { name: 'Bvlgari Goldea The Roman Night', brand: 'Bvlgari', price: 145 },
-                6: { name: 'Bvlgari Aqva Pour Homme', brand: 'Bvlgari', price: 110 },
-                7: { name: 'Rolex Submariner Date', brand: 'Rolex', price: 14300 },
-                8: { name: 'Rolex Datejust 41', brand: 'Rolex', price: 12850 },
-                9: { name: 'Rolex Cosmograph Daytona', brand: 'Rolex', price: 38250 },
-                10: { name: 'Hermès Birkin 35', brand: 'Hermès', price: 12500 },
-                11: { name: 'Hermès Kelly 28', brand: 'Hermès', price: 10800 },
-                12: { name: 'Hermès Constance 24', brand: 'Hermès', price: 9200 },
-                13: { name: 'Chanel Classic Sunglasses', brand: 'Chanel', price: 485 },
-                14: { name: 'Chanel Silk Twill Scarf', brand: 'Chanel', price: 625 },
-                15: { name: 'Chanel Classic Pearl Earrings', brand: 'Chanel', price: 895 },
-                16: { name: 'Supreme Box Logo Tee Black', brand: 'Supreme', price: 298 },
-                17: { name: 'Supreme Classic Hoodie', brand: 'Supreme', price: 548 },
-                18: { name: 'Supreme Cargo Pants', brand: 'Supreme', price: 428 }
+                1: { name: 'Vintage Blank White Tee', brand: 'Hanes', price: 28 },
+                2: { name: 'Striped Pocket Tee', brand: 'Gap', price: 34 },
+                3: { name: 'Faded Graphic Band Tee', brand: 'Fruit of the Loom', price: 45 },
+                4: { name: 'Retro Athletic Shorts', brand: 'Nike', price: 38 },
+                5: { name: 'Denim Cutoff Shorts', brand: "Levi's", price: 42 },
+                6: { name: 'Vintage Track Shorts', brand: 'Adidas', price: 36 },
+                7: { name: 'Denim Trucker Jacket', brand: "Levi's", price: 68 },
+                8: { name: 'Colorblock Windbreaker', brand: 'Starter', price: 55 },
+                9: { name: 'Retro Fleece Pullover', brand: 'Patagonia', price: 72 },
+                10: { name: 'Faded 501 Jeans', brand: "Levi's", price: 58 },
+                11: { name: 'Wide Leg Corduroys', brand: 'Wrangler', price: 48 },
+                12: { name: 'Snap-Button Track Pants', brand: 'Adidas', price: 44 },
+                13: { name: 'Vintage Basketball Jersey', brand: 'Champion', price: 65 },
+                14: { name: 'Retro Soccer Jersey', brand: 'Umbro', price: 52 },
+                15: { name: 'Throwback Baseball Jersey', brand: 'Mitchell & Ness', price: 78 },
+                16: { name: 'Heavyweight Hoodie', brand: 'Russell Athletic', price: 52 },
+                17: { name: 'Utility Cargo Pants', brand: 'Carhartt', price: 56 },
+                18: { name: 'Rugby Polo Shirt', brand: 'Ralph Lauren', price: 48 }
             };
 
             const product = products[productId];
@@ -1988,7 +1999,7 @@
                     subtotal += item.price;
                     html += `
                         <div class="cart-item">
-                            <div style="width: 100px; height: 100px; background: var(--argent); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: rgba(13,13,13,0.2);">${item.brand}</div>
+                            <div style="width: 100px; height: 100px; background: var(--parchment); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: rgba(44,36,24,0.25);">${item.brand}</div>
                             <div style="flex: 1;">
                                 <p style="font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #999; margin-bottom: 0.5rem;">${item.brand}</p>
                                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.5rem;">${item.name}</h3>

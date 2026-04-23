@@ -7,12 +7,15 @@
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
       <style>
                 :root {
-                              --noir: #0d0d0d;
-                              --ivory: #f5f0e8;
+                              --noir: #2c2418;
+                              --ivory: #faf6f0;
                               --or: #c75d3a;
-                              --argent: #d4cfc7;
-                              --charbon: #1a1a1a;
+                              --argent: #e8e0d4;
+                              --charbon: #3d3226;
                               --dor: #d4873a;
+                              --sage: #8a9a7b;
+                              --clay: #c49a6c;
+                              --parchment: #f0e6d3;
                 }
 
                 * {
@@ -34,9 +37,9 @@
                               width: 100%;
                               top: 0;
                               z-index: 1000;
-                              background: rgba(245, 240, 232, 0.98);
+                              background: rgba(250, 246, 240, 0.98);
                               backdrop-filter: blur(20px);
-                              border-bottom: 1px solid rgba(199, 93, 58, 0.15);
+                              border-bottom: 1px solid var(--argent);
                               transition: all 0.3s ease;
                 }
 
@@ -301,8 +304,8 @@
                 .add-to-cart-btn {
                               flex: 1;
                               padding: 1rem 2rem;
-                              background: var(--noir);
-                              color: var(--ivory);
+                              background: var(--or);
+                              color: white;
                               border: none;
                               border-radius: 8px;
                               font-size: 1rem;
@@ -314,7 +317,7 @@
                 }
 
                 .add-to-cart-btn:hover {
-                              background: var(--charbon);
+                              background: var(--sage);
                               transform: translateY(-2px);
                 }
 
@@ -468,7 +471,7 @@
                               bottom: 30px;
                               left: 50%;
                               transform: translateX(-50%) translateY(100px);
-                              background: var(--noir);
+                              background: var(--charbon);
                               color: var(--ivory);
                               padding: 1rem 2rem;
                               border-radius: 8px;
