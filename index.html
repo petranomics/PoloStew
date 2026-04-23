@@ -397,8 +397,8 @@
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
         }
 
         .product-card {
@@ -419,14 +419,13 @@
         .product-image-container {
             position: relative;
             width: 100%;
-            padding-bottom: 130%;
+            height: 280px;
             background: var(--argent);
             overflow: hidden;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .product-image {
-            position: absolute;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -482,43 +481,43 @@
         }
 
         .product-info {
-            padding: 0 0.5rem 1.5rem;
+            padding: 0 0.5rem 0.75rem;
         }
 
         .product-brand {
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--sage);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             font-weight: 400;
         }
 
         .product-name {
             font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
+            font-size: 1rem;
             font-weight: 400;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.4rem;
             color: var(--noir);
             letter-spacing: 0.02em;
         }
 
         .product-price {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 500;
             color: var(--noir);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .add-to-cart-btn {
             width: 100%;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem;
             background: var(--or);
             color: white;
             border: 1px solid var(--or);
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             font-weight: 500;
@@ -972,14 +971,14 @@
             }
             
             .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2rem;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.25rem;
             }
-            
+
             .footer-content {
                 grid-template-columns: 1fr 1fr;
             }
-            
+
             .slide-title {
                 font-size: 3rem;
             }
@@ -989,46 +988,50 @@
             nav {
                 padding: 1rem 4%;
             }
-            
+
             .logo {
                 font-size: 1.4rem;
                 letter-spacing: 0.2em;
             }
-            
+
             .hero-runway {
                 height: 70vh;
                 margin-top: 60px;
             }
-            
+
             .slide-title {
                 font-size: 2.5rem;
             }
-            
+
             .slide-description {
                 font-size: 0.95rem;
             }
-            
+
             .runway-arrow {
                 width: 40px;
                 height: 40px;
                 font-size: 1.2rem;
             }
-            
+
             .runway-arrow.prev {
                 left: 1rem;
             }
-            
+
             .runway-arrow.next {
                 right: 1rem;
             }
-            
+
             .section-title {
                 font-size: 2.5rem;
             }
-            
+
             .products-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .product-image-container {
+                height: 220px;
             }
             
             .featured-section {
@@ -1078,7 +1081,7 @@
             }
             
             .product-name {
-                font-size: 1.2rem;
+                font-size: 0.9rem;
             }
         }
 
@@ -1489,7 +1492,7 @@
 
         <div class="products-grid">
             <!-- T-Shirts -->
-            <div class="product-card" data-product-id="vintage-white-tee" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="tshirt-vintage-blank-white" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop" alt="Vintage White Tee" class="product-image" />
                     <span class="product-badge">Just In</span>
@@ -1503,7 +1506,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-striped-tee" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="tshirt-striped-pocket" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=500&fit=crop" alt="Striped Pocket Tee" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
@@ -1516,7 +1519,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-graphic-tee" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="tshirt-faded-graphic-band" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1503341504253-dff4f94032ef?w=400&h=500&fit=crop" alt="Faded Graphic Tee" class="product-image" />
                     <span class="product-badge">Rare</span>
@@ -1531,7 +1534,7 @@
             </div>
 
             <!-- Shorts -->
-            <div class="product-card" data-product-id="vintage-athletic-shorts" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="shorts-retro-athletic-nike" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=500&fit=crop" alt="Retro Athletic Shorts" class="product-image" />
                     <span class="product-badge">90s</span>
@@ -1545,7 +1548,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-denim-cutoffs" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="shorts-denim-cutoffs-levis" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=400&h=500&fit=crop" alt="Denim Cutoff Shorts" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
@@ -1558,7 +1561,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-track-shorts" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="shorts-vintage-track-adidas" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=400&h=500&fit=crop" alt="Track Shorts" class="product-image" />
                     <span class="product-badge">Fresh</span>
@@ -1573,7 +1576,7 @@
             </div>
 
             <!-- Outerwear -->
-            <div class="product-card" data-product-id="vintage-denim-jacket" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="outerwear-denim-trucker-levis" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop" alt="Denim Trucker Jacket" class="product-image" />
                     <span class="product-badge">Classic</span>
@@ -1587,7 +1590,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-windbreaker" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="outerwear-colorblock-windbreaker" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1544923246-77307dd270cb?w=400&h=500&fit=crop" alt="Colorblock Windbreaker" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
@@ -1600,7 +1603,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-fleece" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="outerwear-retro-fleece-patagonia" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1548883354-94bcfe321cbb?w=400&h=500&fit=crop" alt="Retro Fleece Pullover" class="product-image" />
                     <span class="product-badge">Cozy</span>
@@ -1615,7 +1618,7 @@
             </div>
 
             <!-- Bottoms -->
-            <div class="product-card" data-product-id="vintage-501s" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="bottoms-levis-501-stonewash" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=500&fit=crop" alt="Faded 501 Jeans" class="product-image" />
                     <span class="product-badge">Icon</span>
@@ -1629,7 +1632,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-corduroys" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="bottoms-wrangler-corduroys" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1475178626620-a4d074967571?w=400&h=500&fit=crop" alt="Wide Leg Corduroys" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
@@ -1642,7 +1645,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-track-pants" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="bottoms-adidas-track-pants" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=400&h=500&fit=crop" alt="Snap-Button Track Pants" class="product-image" />
                     <span class="product-badge">Throwback</span>
@@ -1657,7 +1660,7 @@
             </div>
 
             <!-- Jerseys -->
-            <div class="product-card" data-product-id="vintage-basketball-jersey" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="jersey-champion-basketball" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=500&fit=crop" alt="Vintage Basketball Jersey" class="product-image" />
                     <span class="product-badge">Grail</span>
@@ -1671,7 +1674,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-soccer-jersey" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="jersey-umbro-soccer" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=400&h=500&fit=crop" alt="Retro Soccer Jersey" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
@@ -1684,7 +1687,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-baseball-jersey" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="jersey-mitchell-ness-baseball" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=500&fit=crop" alt="Throwback Baseball Jersey" class="product-image" />
                     <span class="product-badge">Deadstock</span>
@@ -1699,7 +1702,7 @@
             </div>
 
             <!-- Extra / Mixed -->
-            <div class="product-card" data-product-id="vintage-hoodie" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="outerwear-russell-hoodie" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop" alt="Heavyweight Hoodie" class="product-image" />
                     <span class="product-badge">Cozy</span>
@@ -1713,7 +1716,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-cargo-pants" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="bottoms-carhartt-cargo" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&h=500&fit=crop" alt="Utility Cargo Pants" class="product-image" />
                     <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">♡</button>
@@ -1726,7 +1729,7 @@
                 </div>
             </div>
 
-            <div class="product-card" data-product-id="vintage-polo-rugby" onclick="window.location.href='product?id=' + this.dataset.productId">
+            <div class="product-card" data-product-id="tshirt-ralph-lauren-rugby" onclick="window.location.href='product?id=' + this.dataset.productId">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=500&fit=crop" alt="Rugby Polo Shirt" class="product-image" />
                     <span class="product-badge">Fresh</span>
@@ -1950,68 +1953,35 @@
             }
         });
 
-        // Shopping Cart
-        let cart = [];
-
-        function addToCart(productId) {
-            const products = {
-                1: { name: 'Vintage Blank White Tee', brand: 'Hanes', price: 28 },
-                2: { name: 'Striped Pocket Tee', brand: 'Gap', price: 34 },
-                3: { name: 'Faded Graphic Band Tee', brand: 'Fruit of the Loom', price: 45 },
-                4: { name: 'Retro Athletic Shorts', brand: 'Nike', price: 38 },
-                5: { name: 'Denim Cutoff Shorts', brand: "Levi's", price: 42 },
-                6: { name: 'Vintage Track Shorts', brand: 'Adidas', price: 36 },
-                7: { name: 'Denim Trucker Jacket', brand: "Levi's", price: 68 },
-                8: { name: 'Colorblock Windbreaker', brand: 'Starter', price: 55 },
-                9: { name: 'Retro Fleece Pullover', brand: 'Patagonia', price: 72 },
-                10: { name: 'Faded 501 Jeans', brand: "Levi's", price: 58 },
-                11: { name: 'Wide Leg Corduroys', brand: 'Wrangler', price: 48 },
-                12: { name: 'Snap-Button Track Pants', brand: 'Adidas', price: 44 },
-                13: { name: 'Vintage Basketball Jersey', brand: 'Champion', price: 65 },
-                14: { name: 'Retro Soccer Jersey', brand: 'Umbro', price: 52 },
-                15: { name: 'Throwback Baseball Jersey', brand: 'Mitchell & Ness', price: 78 },
-                16: { name: 'Heavyweight Hoodie', brand: 'Russell Athletic', price: 52 },
-                17: { name: 'Utility Cargo Pants', brand: 'Carhartt', price: 56 },
-                18: { name: 'Rugby Polo Shirt', brand: 'Ralph Lauren', price: 48 }
-            };
-
-            const product = products[productId];
-            if (product) {
-                cart.push(product);
-                updateCartDisplay();
-                // Show brief confirmation
-                alert(`${product.name} added to cart!`);
-            }
-        }
-
+        // Cart display — uses the Cart class from cart.js
         function updateCartDisplay() {
             const cartItems = document.getElementById('cartItems');
             const cartSummary = document.getElementById('cartSummary');
-            
-            if (cart.length === 0) {
+
+            if (!window.cart || window.cart.items.length === 0) {
                 cartItems.innerHTML = '<p style="text-align: center; padding: 3rem; color: #999;">Your cart is empty</p>';
                 cartSummary.style.display = 'none';
             } else {
                 let html = '';
                 let subtotal = 0;
-                
-                cart.forEach((item, index) => {
+
+                window.cart.items.forEach((item) => {
                     subtotal += item.price;
                     html += `
                         <div class="cart-item">
-                            <div style="width: 100px; height: 100px; background: var(--parchment); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: rgba(44,36,24,0.25);">${item.brand}</div>
+                            <div style="width: 100px; height: 100px; background: var(--parchment); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: rgba(44,36,24,0.25);">${item.brand || ''}</div>
                             <div style="flex: 1;">
-                                <p style="font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #999; margin-bottom: 0.5rem;">${item.brand}</p>
+                                <p style="font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #999; margin-bottom: 0.5rem;">${item.brand || ''}</p>
                                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.5rem;">${item.name}</h3>
                             </div>
                             <div>
                                 <p style="font-size: 1.1rem; font-weight: 600;">$${item.price.toLocaleString()}</p>
-                                <button onclick="removeFromCart(${index})" style="background: none; border: none; color: #999; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem;">Remove</button>
+                                <button onclick="removeCartItem('${item.id}')" style="background: none; border: none; color: #999; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem;">Remove</button>
                             </div>
                         </div>
                     `;
                 });
-                
+
                 cartItems.innerHTML = html;
                 document.getElementById('subtotal').textContent = `$${subtotal.toLocaleString()}`;
                 document.getElementById('total').textContent = `$${subtotal.toLocaleString()}`;
@@ -2019,14 +1989,39 @@
             }
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartDisplay();
+        function removeCartItem(productId) {
+            if (window.cart) {
+                window.cart.removeFromCart(productId);
+                updateCartDisplay();
+            }
         }
 
-        function checkout() {
-            alert('Redirecting to Shopify secure checkout...\n\nIn a production environment, this would integrate with Shopify\'s Checkout API for seamless payment processing.');
-            // window.location.href = 'https://checkout.shopify.com/...';
+        async function checkout() {
+            // Check if cart has items
+            if (!window.cart || window.cart.items.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+
+            // Check if user is logged in
+            let isLoggedIn = false;
+            if (window.auth) {
+                isLoggedIn = await window.auth.checkAuth();
+            }
+
+            if (!isLoggedIn) {
+                // Redirect to login with a redirect param back to homepage
+                window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+
+            // User is logged in — place the order
+            const total = window.cart.getTotal();
+            const count = window.cart.getCount();
+            window.cart.clearCart();
+            updateCartDisplay();
+            closeCart();
+            alert('Order placed! ' + count + ' item' + (count > 1 ? 's' : '') + ' for $' + total.toLocaleString() + '. Thank you for shopping with PoloStew!');
         }
 
         // Modal Functions
@@ -2041,6 +2036,7 @@
         }
 
         function openCart() {
+            updateCartDisplay();
             document.getElementById('cartModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
@@ -2096,8 +2092,9 @@
             
             resultsContainer.innerHTML = matches.map(function(p) {
                 var img = p.images ? p.images[0] : '';
-                var price = p.onSale && p.sizes && p.sizes[0] && p.sizes[0].salePrice 
-                    ? '<span style="text-decoration:line-through;color:#999;margin-right:0.5rem;">$' + p.basePrice + '</span><span style="color:#e53935;">$' + p.sizes[0].salePrice + '</span>'
+                var salePrice = p.salePrice || p.basePrice;
+                var price = p.onSale && p.salePrice
+                    ? '<span style="text-decoration:line-through;color:#999;margin-right:0.5rem;">$' + p.basePrice + '</span><span style="color:#e53935;">$' + salePrice + '</span>'
                     : '$' + p.basePrice;
                 return '<a href="product.html?id=' + p.id + '" style="display:flex;gap:1rem;padding:1rem;text-decoration:none;color:inherit;border-bottom:1px solid #eee;align-items:center;">' +
                     '<img src="' + img + '" alt="' + p.name + '" style="width:60px;height:60px;object-fit:cover;border-radius:4px;">' +

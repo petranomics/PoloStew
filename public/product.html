@@ -846,14 +846,14 @@
                                                               showToast('Reserved — added to cart');
                                                 }
                               } else {
-                                                let cart = JSON.parse(localStorage.getItem('luxineCart') || '[]');
+                                                let cart = JSON.parse(localStorage.getItem('polostew_cart') || '[]');
                                                 const existingIndex = cart.findIndex(item => item.id === cartItem.id);
                                                 if (existingIndex > -1) {
                                                               showToast('This one-of-a-kind item is already in your cart');
                                                               return;
                                                 }
                                                 cart.push(cartItem);
-                                                localStorage.setItem('luxineCart', JSON.stringify(cart));
+                                                localStorage.setItem('polostew_cart', JSON.stringify(cart));
                                                 showToast('Reserved — added to cart');
                               }
                 }

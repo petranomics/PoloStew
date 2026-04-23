@@ -492,16 +492,20 @@
                 };
                 localStorage.setItem('userSession', JSON.stringify(sessionData));
 
+                // Check for redirect parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
+
                 // Redirect based on role
                 if (user.role === 'admin') {
                     showAlert('Admin login successful! Redirecting to admin panel...', 'success');
                     setTimeout(() => {
-                        window.location.href = '/admin';
+                        window.location.href = redirectUrl || '/admin/';
                     }, 1500);
                 } else {
                     showAlert('Login successful! Redirecting to your account...', 'success');
                     setTimeout(() => {
-                        window.location.href = 'account.html';
+                        window.location.href = redirectUrl || 'account.html';
                     }, 1500);
                 }
             }, 1000);
@@ -512,10 +516,14 @@
             const session = localStorage.getItem('userSession');
             if (session) {
                 const userData = JSON.parse(session);
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect');
                 showAlert(`Already logged in as ${userData.name}. Redirecting...`, 'success');
                 setTimeout(() => {
-                    if (userData.role === 'admin') {
-                        window.location.href = '/admin';
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    } else if (userData.role === 'admin') {
+                        window.location.href = '/admin/';
                     } else {
                         window.location.href = 'account.html';
                     }

@@ -242,7 +242,8 @@ class AuthClient {
         };
 
         // Update button appearance if desired
-        btn.setAttribute('title', `Logged in as ${this.user.profile.firstName}`);
+        const displayName = this.user.profile?.firstName || this.user.name || this.user.email || 'User';
+        btn.setAttribute('title', `Logged in as ${displayName}`);
       } else {
         // User is not logged in
         btn.onclick = () => {

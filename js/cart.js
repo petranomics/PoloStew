@@ -13,7 +13,7 @@ class Cart {
   // Load cart from localStorage
   loadCart() {
     try {
-      const cartData = localStorage.getItem('luxine_cart');
+      const cartData = localStorage.getItem('polostew_cart');
       return cartData ? JSON.parse(cartData) : [];
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -24,7 +24,7 @@ class Cart {
   // Save cart to localStorage
   saveCart() {
     try {
-      localStorage.setItem('luxine_cart', JSON.stringify(this.items));
+      localStorage.setItem('polostew_cart', JSON.stringify(this.items));
       this.updateCartUI();
     } catch (error) {
       console.error('Error saving cart:', error);
