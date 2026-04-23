@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title id="pageTitle">Category - POLOSTEW</title>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/mega-menu.css">
+        <style>
+                  :root {
+                                --noir: #0d0d0d;
+                                --ivory: #f5f0e8;
+                                --or: #c75d3a;
+                                --argent: #d4cfc7;
+                                --charbon: #1a1a1a;
+                                --dor: #d4873a;
+                  }
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body {
+                                font-family: 'DM Sans', sans-serif;
+                                background: var(--ivory);
+                                color: var(--noir);
+                                min-height: 100vh;
+                  }
+                  header {
+                                position: fixed;
+                                width: 100%;
+                                top: 0;
+                                z-index: 1000;
+                                background: rgba(245, 240, 232, 0.98);
+                                backdrop-filter: blur(20px);
+                                border-bottom: 1px solid rgba(199, 93, 58, 0.15);
+                  }
+                  nav {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                padding: 1.2rem 5%;
+                  }
+                  .logo {
+                                font-family: 'Playfair Display', serif;
+                                font-size: 1.8rem;
+                                font-weight: 600;
+                                letter-spacing: 0.3em;
+                                color: var(--noir);
+                                text-decoration: none;
+                  }
+                  .nav-links {
+                                display: flex;
+                                gap: 2.5rem;
+                                list-style: none;
+                  }
+                  .nav-links a {
+                                text-decoration: none;
+                                color: var(--noir);
+                                font-size: 0.85rem;
+                                letter-spacing: 0.1em;
+                                text-transform: uppercase;
+                                font-weight: 400;
+                                transition: color 0.3s;
+                  }
+                  .nav-links a:hover, .nav-links a.active {
+                                color: var(--or);
+                  }
+                  .nav-icons {
+                                display: flex;
+                                gap: 1.5rem;
+                                align-items: center;
+                  }
+                  .nav-icon {
+                                width: 24px;
+                                height: 24px;
+                                cursor: pointer;
+                                opacity: 0.8;
+                                transition: opacity 0.3s;
+                  }
+                  .nav-icon:hover { opacity: 1; }
+                  .category-hero {
+                                padding: 140px 5% 60px;
+                                text-align: center;
+                                background: linear-gradient(135deg, var(--ivory) 0%, #f5f3ef 100%);
+                  }
+                  .category-title {
+                                font-family: 'Playfair Display', serif;
+                                font-size: 3.5rem;
+                                font-weight: 500;
+                                margin-bottom: 1rem;
+                                letter-spacing: 0.05em;
+                  }
+                  .category-subtitle {
+                                font-size: 1.1rem;
+                                color: #666;
+                                max-width: 600px;
+                                margin: 0 auto;
+                                line-height: 1.7;
+                  }
+
+                  /* Products layout with sidebar */
+                  .products-section {
+                                padding: 3rem 5%;
+                                max-width: 1400px;
+                                margin: 0 auto;
+                                display: grid;
+                                grid-template-columns: 240px 1fr;
+                                gap: 2.5rem;
+                  }
+
+                  /* Filter Sidebar */
+                  .filter-sidebar {
+                                position: sticky;
+                                top: 100px;
+                                height: fit-content;
+                  }
+
+                  .filter-group {
+                                margin-bottom: 1.75rem;
+                                padding-bottom: 1.75rem;
+                                border-bottom: 1px solid var(--argent);
+                  }
+
+                  .filter-group:last-child {
+                                border-bottom: none;
+                  }
+
+                  .filter-group h4 {
+                                font-size: 0.75rem;
+                                text-transform: uppercase;
+                                letter-spacing: 0.1em;
+                                margin-bottom: 0.75rem;
+                                color: #999;
+                  }
+
+                  .filter-option {
+                                display: flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                                padding: 0.35rem 0;
+                                cursor: pointer;
+                                font-size: 0.85rem;
+                                transition: color 0.2s;
+                  }
+
+                  .filter-option:hover {
+                                color: var(--or);
+                  }
+
+                  .filter-option input[type="checkbox"] {
+                                accent-color: var(--or);
+                                cursor: pointer;
+                  }
+
+                  .filter-option .count {
+                                margin-left: auto;
+                                font-size: 0.75rem;
+                                color: #aaa;
+                  }
+
+                  .filter-clear-btn {
+                                display: inline-block;
+                                margin-top: 0.5rem;
+                                padding: 0.4rem 1rem;
+                                font-size: 0.75rem;
+                                text-transform: uppercase;
+                                letter-spacing: 0.05em;
+                                border: 1px solid var(--argent);
+                                background: transparent;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                  }
+
+                  .filter-clear-btn:hover {
+                                border-color: var(--or);
+                                color: var(--or);
+                  }
+
+                  /* Sort bar */
+                  .sort-bar {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 1.5rem;
+                  }
+
+                  .result-count {
+                                font-size: 0.85rem;
+                                color: #666;
+                  }
+
+                  .sort-select {
+                                padding: 0.4rem 0.75rem;
+                                border: 1px solid var(--argent);
+                                border-radius: 6px;
+                                font-family: inherit;
+                                font-size: 0.8rem;
+                                cursor: pointer;
+                                background: white;
+                  }
+
+                  .products-grid {
+                                display: grid;
+                                grid-template-columns: repeat(3, 1fr);
+                                gap: 2rem;
+                  }
+                  .product-card {
+                                background: white;
+                                border-radius: 12px;
+                                overflow: hidden;
+                                transition: transform 0.3s, box-shadow 0.3s;
+                  }
+                  .product-card:hover {
+                                transform: translateY(-8px);
+                                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                  }
+                  .product-card.sold {
+                                opacity: 0.75;
+                  }
+                  .product-image-container {
+                                position: relative;
+                                aspect-ratio: 1;
+                                overflow: hidden;
+                                cursor: pointer;
+                  }
+                  .product-image {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                transition: transform 0.5s;
+                  }
+                  .product-card:hover .product-image {
+                                transform: scale(1.05);
+                  }
+                  .product-badge {
+                                position: absolute;
+                                top: 1rem;
+                                left: 1rem;
+                                background: var(--or);
+                                color: white;
+                                padding: 0.4rem 1rem;
+                                font-size: 0.65rem;
+                                text-transform: uppercase;
+                                letter-spacing: 0.1em;
+                                border-radius: 4px;
+                                z-index: 2;
+                  }
+                  .sold-badge {
+                                position: absolute;
+                                inset: 0;
+                                background: rgba(0, 0, 0, 0.5);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                z-index: 3;
+                  }
+                  .sold-badge span {
+                                background: #e53935;
+                                color: white;
+                                padding: 0.5rem 1.75rem;
+                                font-size: 0.9rem;
+                                font-weight: 600;
+                                letter-spacing: 0.2em;
+                                text-transform: uppercase;
+                                border-radius: 4px;
+                                transform: rotate(-15deg);
+                  }
+                  .wishlist-btn {
+                                position: absolute;
+                                top: 1rem;
+                                right: 1rem;
+                                background: white;
+                                border: none;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                opacity: 0;
+                                transition: all 0.3s;
+                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                z-index: 2;
+                  }
+                  .product-card:hover .wishlist-btn { opacity: 1; }
+                  .product-info {
+                                padding: 1.5rem;
+                  }
+                  .product-brand {
+                                font-size: 0.75rem;
+                                text-transform: uppercase;
+                                letter-spacing: 0.15em;
+                                color: var(--or);
+                                margin-bottom: 0.5rem;
+                  }
+                  .product-name {
+                                font-family: 'Playfair Display', serif;
+                                font-size: 1.25rem;
+                                font-weight: 500;
+                                margin-bottom: 0.5rem;
+                                cursor: pointer;
+                  }
+                  .product-price {
+                                font-size: 1.1rem;
+                                font-weight: 500;
+                  }
+                  /* Vintage badges on cards */
+                  .card-vintage-badges {
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 0.3rem;
+                                margin-top: 0.5rem;
+                  }
+                  .card-badge {
+                                display: inline-block;
+                                padding: 0.15rem 0.5rem;
+                                font-size: 0.6rem;
+                                text-transform: uppercase;
+                                letter-spacing: 0.04em;
+                                border-radius: 3px;
+                                font-weight: 500;
+                                border: 1px solid;
+                  }
+                  .card-badge--size { border-color: var(--or); color: var(--or); }
+                  .card-badge--condition { border-color: #4a7c59; color: #4a7c59; }
+                  .card-badge--era { border-color: #6b5b95; color: #6b5b95; }
+
+                  .product-quick-actions {
+                                display: flex;
+                                gap: 0.5rem;
+                                margin-top: 0.75rem;
+                                padding-top: 0.75rem;
+                                border-top: 1px solid var(--argent);
+                  }
+                  .quick-cart-btn {
+                                flex: 1;
+                                padding: 0.6rem 1rem;
+                                background: var(--noir);
+                                color: var(--ivory);
+                                border: none;
+                                border-radius: 6px;
+                                font-size: 0.75rem;
+                                font-weight: 500;
+                                cursor: pointer;
+                                transition: all 0.3s;
+                                text-transform: uppercase;
+                                letter-spacing: 0.05em;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 0.4rem;
+                  }
+                  .quick-cart-btn:hover {
+                                background: var(--charbon);
+                                transform: translateY(-1px);
+                  }
+                  .quick-cart-btn:disabled {
+                                background: #999;
+                                cursor: not-allowed;
+                                transform: none;
+                  }
+                  .quick-save-btn {
+                                width: 38px;
+                                height: 38px;
+                                border: 1px solid var(--argent);
+                                background: white;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.3s;
+                  }
+                  .quick-save-btn:hover {
+                                border-color: var(--or);
+                                background: rgba(199, 93, 58, 0.1);
+                  }
+                  .quick-save-btn.saved {
+                                background: var(--or);
+                                border-color: var(--or);
+                  }
+                  .quick-save-btn.saved svg {
+                                fill: var(--ivory);
+                                stroke: var(--ivory);
+                  }
+                  .no-products {
+                                text-align: center;
+                                padding: 4rem 2rem;
+                                color: #666;
+                  }
+                  .no-products h3 {
+                                font-family: 'Playfair Display', serif;
+                                font-size: 1.5rem;
+                                margin-bottom: 1rem;
+                  }
+                  footer {
+                                background: var(--noir);
+                                color: var(--ivory);
+                                padding: 4rem 5%;
+                                text-align: center;
+                  }
+                  .footer-logo {
+                                font-family: 'Playfair Display', serif;
+                                font-size: 1.5rem;
+                                letter-spacing: 0.3em;
+                                margin-bottom: 1rem;
+                  }
+                  .footer-text {
+                                font-size: 0.85rem;
+                                opacity: 0.7;
+                  }
+                  @media (max-width: 968px) {
+                                .products-section {
+                                              grid-template-columns: 1fr;
+                                }
+                                .filter-sidebar {
+                                              position: relative;
+                                              top: 0;
+                                }
+                                .products-grid { grid-template-columns: repeat(2, 1fr); }
+                                .nav-links { display: none; }
+                                .category-title { font-size: 2.5rem; }
+                  }
+                  @media (max-width: 600px) {
+                                .products-grid { grid-template-columns: 1fr; }
+                                .category-hero { padding: 120px 4% 40px; }
+                                .category-title { font-size: 2rem; }
+                  }
+                  .toast {
+                                position: fixed;
+                                bottom: 30px;
+                                left: 50%;
+                                transform: translateX(-50%) translateY(100px);
+                                background: var(--noir);
+                                color: var(--ivory);
+                                padding: 1rem 2rem;
+                                border-radius: 8px;
+                                font-size: 0.9rem;
+                                opacity: 0;
+                                transition: all 0.3s;
+                                z-index: 9999;
+                  }
+                  .toast.show {
+                                transform: translateX(-50%) translateY(0);
+                                opacity: 1;
+                  }
+              </style>
+  </head>
+  <body>
+        <header>
+                  <nav>
+                                <a href="index.html" class="logo">POLOSTEW</a>
+                                <ul class="nav-links">
+                                    <li data-category="t-shirts" id="nav-t-shirts">
+                                        <a href="/category.html?cat=t-shirts">T-Shirts</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="t-shirts-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="t-shirts-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="t-shirts-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="t-shirts-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="shorts" id="nav-shorts">
+                                        <a href="/category.html?cat=shorts">Shorts</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="shorts-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="shorts-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="shorts-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="shorts-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="outerwear" id="nav-outerwear">
+                                        <a href="/category.html?cat=outerwear">Outerwear</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="outerwear-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="outerwear-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="outerwear-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="outerwear-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="bottoms" id="nav-bottoms">
+                                        <a href="/category.html?cat=bottoms">Bottoms</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="bottoms-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="bottoms-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="bottoms-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="bottoms-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="jerseys" id="nav-jerseys">
+                                        <a href="/category.html?cat=jerseys">Jerseys</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="jerseys-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="jerseys-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="jerseys-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="jerseys-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                </ul>
+                              <div class="nav-icons">
+                                              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <circle cx="11" cy="11" r="8"></circle>
+                                                                  <path d="m21 21-4.35-4.35"></path>
+                                              </svg>
+                                              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                                  <circle cx="12" cy="7" r="4"></circle>
+                                              </svg>
+                                              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                                                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                                                                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                              </svg>
+                              </div>
+                  </nav>
+        </header>
+
+      <section class="category-hero">
+              <h1 class="category-title" id="categoryTitle">Category</h1>
+              <p class="category-subtitle" id="categorySubtitle">Discover our curated collection</p>
+      </section>
+
+      <section class="products-section">
+              <!-- Filter Sidebar -->
+              <aside class="filter-sidebar" id="filterSidebar">
+                    <div class="filter-group">
+                          <h4>Category</h4>
+                          <div id="filterCategories">
+                                <!-- Populated by JS -->
+                          </div>
+                    </div>
+                    <div class="filter-group">
+                          <h4>Condition</h4>
+                          <div id="filterConditions">
+                                <!-- Populated by JS -->
+                          </div>
+                    </div>
+                    <div class="filter-group">
+                          <h4>Era</h4>
+                          <div id="filterEras">
+                                <!-- Populated by JS -->
+                          </div>
+                    </div>
+                    <div class="filter-group">
+                          <h4>Brand</h4>
+                          <div id="filterBrands">
+                                <!-- Populated by JS -->
+                          </div>
+                    </div>
+                    <div class="filter-group">
+                          <h4>Availability</h4>
+                          <label class="filter-option">
+                                <input type="checkbox" id="filterInStock" onchange="toggleInStockFilter()">
+                                <span>In Stock Only</span>
+                          </label>
+                    </div>
+                    <button class="filter-clear-btn" onclick="clearAllFilters()">Clear All Filters</button>
+              </aside>
+
+              <!-- Products Area -->
+              <div>
+                    <div class="sort-bar">
+                          <span class="result-count" id="resultCount">0 items</span>
+                          <select class="sort-select" id="sortSelect" onchange="changeSort(this.value)">
+                                <option value="newest">Newest First</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="name-az">Name: A-Z</option>
+                                <option value="name-za">Name: Z-A</option>
+                          </select>
+                    </div>
+                    <div class="products-grid" id="productsGrid">
+                                <!-- Products will be dynamically loaded -->
+                    </div>
+              </div>
+      </section>
+
+      <footer>
+                <div class="footer-logo">POLOSTEW</div>
+                <p class="footer-text">Curated Vintage Sportswear</p>
+      </footer>
+
+        <div class="toast" id="toast"></div>
+
+        <script src="/js/filters.js"></script>
+        <script src="/js/cart.js"></script>
+        <script>
+                  const categoryInfo = {
+                                't-shirts': {
+                                                  title: 'T-Shirts',
+                                                  subtitle: 'Vintage tees from the archives — graphic prints, band merch, and rare finds'
+                                },
+                                'shorts': {
+                                                  title: 'Shorts',
+                                                  subtitle: 'Classic athletic shorts and casual cuts from decades past'
+                                },
+                                'outerwear': {
+                                                  title: 'Outerwear',
+                                                  subtitle: 'Vintage jackets, windbreakers, and layering pieces with character'
+                                },
+                                'bottoms': {
+                                                  title: 'Bottoms',
+                                                  subtitle: 'Retro pants, track bottoms, and vintage denim from every era'
+                                },
+                                'jerseys': {
+                                                  title: 'Jerseys',
+                                                  subtitle: 'Game-worn style — vintage sports jerseys and athletic knits'
+                                }
+                  };
+
+                  let currentCategory = '';
+                  let allProducts = [];
+                  let productFilters = null;
+
+                  document.addEventListener('DOMContentLoaded', function() {
+                                const urlParams = new URLSearchParams(window.location.search);
+                                currentCategory = urlParams.get('cat') || '';
+
+                                setupPage();
+                                loadProducts();
+                  });
+
+                  function setupPage() {
+                                const info = categoryInfo[currentCategory];
+
+                                if (info) {
+                                              document.getElementById('pageTitle').textContent = info.title + ' - POLOSTEW';
+                                              document.getElementById('categoryTitle').textContent = info.title;
+                                              document.getElementById('categorySubtitle').textContent = info.subtitle;
+                                } else {
+                                              document.getElementById('pageTitle').textContent = 'All Vintage - POLOSTEW';
+                                              document.getElementById('categoryTitle').textContent = 'All Vintage';
+                                              document.getElementById('categorySubtitle').textContent = 'Every piece is one of a kind — browse our full collection of curated vintage sportswear';
+                                }
+
+                                // Highlight active nav link
+                                if (currentCategory) {
+                                              const activeLink = document.getElementById('nav-' + currentCategory);
+                                              if (activeLink) activeLink.querySelector('a').classList.add('active');
+                                }
+                  }
+
+                  async function loadProducts() {
+                                try {
+                                              const response = await fetch('/api/products');
+                                              const data = await response.json();
+                                              allProducts = data.products || [];
+                                } catch (error) {
+                                              console.error('Error loading products:', error);
+                                              // Fallback to localStorage
+                                              const storedProducts = localStorage.getItem('luxineProducts');
+                                              allProducts = storedProducts ? JSON.parse(storedProducts) : [];
+                                }
+
+                                // Initialize filter system
+                                productFilters = new ProductFilters(allProducts, function(filtered) {
+                                              renderProducts(filtered);
+                                              updateResultCount(filtered.length);
+                                });
+
+                                // Apply initial category filter if set
+                                if (currentCategory) {
+                                              productFilters.setCategoryFilter(currentCategory);
+                                }
+
+                                // Build filter sidebar
+                                buildFilterSidebar();
+
+                                // Initial render
+                                productFilters.applyFilters();
+                  }
+
+                  function buildFilterSidebar() {
+                                // Categories
+                                const categoriesContainer = document.getElementById('filterCategories');
+                                const categories = Object.keys(categoryInfo);
+                                categoriesContainer.innerHTML = categories.map(cat => `
+                                              <label class="filter-option">
+                                                    <input type="checkbox" value="${cat}" onchange="toggleCategoryFilter('${cat}')" ${cat === currentCategory ? 'checked' : ''}>
+                                                    <span>${categoryInfo[cat].title}</span>
+                                              </label>
+                                `).join('');
+
+                                // Conditions
+                                const conditionsContainer = document.getElementById('filterConditions');
+                                const conditions = ['Excellent', 'Good', 'Fair'];
+                                conditionsContainer.innerHTML = conditions.map(cond => `
+                                              <label class="filter-option">
+                                                    <input type="checkbox" value="${cond}" onchange="toggleConditionFilter('${cond}')">
+                                                    <span>${cond}</span>
+                                              </label>
+                                `).join('');
+
+                                // Eras
+                                const erasContainer = document.getElementById('filterEras');
+                                const eras = ['70s', '80s', '90s', '2000s'];
+                                erasContainer.innerHTML = eras.map(era => `
+                                              <label class="filter-option">
+                                                    <input type="checkbox" value="${era}" onchange="toggleEraFilter('${era}')">
+                                                    <span>${era}</span>
+                                              </label>
+                                `).join('');
+
+                                // Brands (dynamic from products)
+                                const brandsContainer = document.getElementById('filterBrands');
+                                if (productFilters) {
+                                              const brands = productFilters.getAllBrands();
+                                              brandsContainer.innerHTML = brands.map(brand => `
+                                                            <label class="filter-option">
+                                                                  <input type="checkbox" value="${brand}" onchange="toggleBrandFilter('${brand}')">
+                                                                  <span>${brand}</span>
+                                                            </label>
+                                              `).join('');
+                                }
+                  }
+
+                  function toggleCategoryFilter(category) {
+                                if (!productFilters) return;
+                                // For category, we use single-select behavior via setCategoryFilter
+                                // If checkbox is checked, set category; if unchecked, clear it
+                                const checkbox = document.querySelector(`#filterCategories input[value="${category}"]`);
+                                if (checkbox && checkbox.checked) {
+                                              // Uncheck other category checkboxes
+                                              document.querySelectorAll('#filterCategories input').forEach(cb => {
+                                                            if (cb.value !== category) cb.checked = false;
+                                              });
+                                              currentCategory = category;
+                                              productFilters.setCategoryFilter(category);
+
+                                              // Update page header
+                                              const info = categoryInfo[category];
+                                              if (info) {
+                                                            document.getElementById('categoryTitle').textContent = info.title;
+                                                            document.getElementById('categorySubtitle').textContent = info.subtitle;
+                                              }
+                                } else {
+                                              currentCategory = '';
+                                              productFilters.setCategoryFilter(null);
+                                              document.getElementById('categoryTitle').textContent = 'All Vintage';
+                                              document.getElementById('categorySubtitle').textContent = 'Every piece is one of a kind — browse our full collection of curated vintage sportswear';
+                                }
+                  }
+
+                  function toggleConditionFilter(condition) {
+                                if (!productFilters) return;
+                                productFilters.toggleCondition(condition);
+                  }
+
+                  function toggleEraFilter(era) {
+                                if (!productFilters) return;
+                                productFilters.toggleEra(era);
+                  }
+
+                  function toggleBrandFilter(brand) {
+                                if (!productFilters) return;
+                                productFilters.toggleBrand(brand);
+                  }
+
+                  function toggleInStockFilter() {
+                                if (!productFilters) return;
+                                productFilters.toggleInStockOnly();
+                  }
+
+                  function changeSort(value) {
+                                if (!productFilters) return;
+                                productFilters.setSortBy(value);
+                  }
+
+                  function clearAllFilters() {
+                                if (!productFilters) return;
+                                productFilters.clearFilters();
+
+                                // Reset all checkboxes
+                                document.querySelectorAll('.filter-sidebar input[type="checkbox"]').forEach(cb => {
+                                              cb.checked = false;
+                                });
+
+                                // Reset sort
+                                document.getElementById('sortSelect').value = 'newest';
+
+                                // Reset page header
+                                currentCategory = '';
+                                document.getElementById('categoryTitle').textContent = 'All Vintage';
+                                document.getElementById('categorySubtitle').textContent = 'Every piece is one of a kind — browse our full collection of curated vintage sportswear';
+                  }
+
+                  function updateResultCount(count) {
+                                document.getElementById('resultCount').textContent = `${count} item${count !== 1 ? 's' : ''}`;
+                  }
+
+                  function renderProducts(products) {
+                                const grid = document.getElementById('productsGrid');
+
+                                if (products.length === 0) {
+                                                  grid.innerHTML = `
+                                                        <div class="no-products" style="grid-column: 1/-1;">
+                                                              <h3>No products found</h3>
+                                                              <p>Try adjusting your filters or check back soon for new vintage arrivals.</p>
+                                                        </div>
+                                                  `;
+                                                  return;
+                                }
+
+                                grid.innerHTML = products.map(product => {
+                                    const isSold = product.stock === 0;
+                                    const price = product.salePrice || product.basePrice;
+                                    const image = product.images ? product.images[0] : product.image;
+
+                                    return `
+                                    <div class="product-card ${isSold ? 'sold' : ''}" data-id="${product.id}">
+                                          <div class="product-image-container" onclick="goToProduct('${product.id}')">
+                                                <img src="${image}" alt="${product.name}" class="product-image">
+                                                ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+                                                ${isSold ? `<div class="sold-badge"><span>SOLD</span></div>` : ''}
+                                                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${product.id}', this)">
+                                                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                      </svg>
+                                                </button>
+                                          </div>
+                                          <div class="product-info">
+                                                <p class="product-brand">${product.brand}</p>
+                                                <h3 class="product-name" onclick="goToProduct('${product.id}')">${product.name}</h3>
+                                                <p class="product-price">$${price.toLocaleString()}</p>
+                                                <div class="card-vintage-badges">
+                                                      ${product.size ? `<span class="card-badge card-badge--size">${product.size}</span>` : ''}
+                                                      ${product.condition ? `<span class="card-badge card-badge--condition">${product.condition}</span>` : ''}
+                                                      ${product.era ? `<span class="card-badge card-badge--era">${product.era}</span>` : ''}
+                                                </div>
+                                                <div class="product-quick-actions">
+                                                      <button class="quick-cart-btn" onclick="quickAddToCart('${product.id}')" ${isSold ? 'disabled' : ''}>
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                                                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                                                                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                                            </svg>
+                                                            ${isSold ? 'Sold' : 'Add to Cart'}
+                                                      </button>
+                                                      <button class="quick-save-btn" id="save-${product.id}" onclick="quickSave('${product.id}')">
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                            </svg>
+                                                      </button>
+                                                </div>
+                                          </div>
+                                    </div>`;
+                                }).join('');
+
+                                updateSavedStatus();
+                  }
+
+                  function goToProduct(productId) {
+                                window.location.href = `product.html?id=${productId}`;
+                  }
+
+                  function quickAddToCart(productId) {
+                                const product = allProducts.find(p => p.id === productId);
+                                if (!product) return;
+
+                                if (product.stock === 0) {
+                                              showToast('This item has been sold');
+                                              return;
+                                }
+
+                                // Check if already in cart
+                                if (window.cart) {
+                                              const existingItem = window.cart.items.find(item => item.id === productId);
+                                              if (existingItem) {
+                                                            showToast('This one-of-a-kind item is already in your cart');
+                                                            return;
+                                              }
+
+                                              const price = product.salePrice || product.basePrice;
+                                              window.cart.addToCart({
+                                                            id: productId,
+                                                            name: product.name,
+                                                            brand: product.brand,
+                                                            price: price,
+                                                            image: product.images ? product.images[0] : product.image,
+                                                            size: product.size || 'One Size',
+                                                            condition: product.condition || '',
+                                                            era: product.era || ''
+                                              });
+                                } else {
+                                              let cart = JSON.parse(localStorage.getItem('luxine_cart') || '[]');
+                                              if (cart.some(item => item.id === productId)) {
+                                                            showToast('This one-of-a-kind item is already in your cart');
+                                                            return;
+                                              }
+                                              const price = product.salePrice || product.basePrice;
+                                              cart.push({
+                                                            id: productId,
+                                                            name: product.name,
+                                                            brand: product.brand,
+                                                            price: price,
+                                                            image: product.images ? product.images[0] : product.image,
+                                                            size: product.size || 'One Size',
+                                                            condition: product.condition || '',
+                                                            era: product.era || '',
+                                                            quantity: 1
+                                              });
+                                              localStorage.setItem('luxine_cart', JSON.stringify(cart));
+                                              showToast('Reserved — added to cart');
+                                }
+                  }
+
+                  function quickSave(productId) {
+                                const product = allProducts.find(p => p.id === productId);
+                                if (!product) return;
+
+                                let wishlist = JSON.parse(localStorage.getItem('luxineWishlist') || '[]');
+                                const btn = document.getElementById(`save-${productId}`);
+                                const index = wishlist.findIndex(item => item.id === productId);
+
+                                if (index > -1) {
+                                                  wishlist.splice(index, 1);
+                                                  if (btn) btn.classList.remove('saved');
+                                                  showToast('Removed from saved');
+                                } else {
+                                                  wishlist.push(product);
+                                                  if (btn) btn.classList.add('saved');
+                                                  showToast('Saved to wishlist');
+                                }
+
+                                localStorage.setItem('luxineWishlist', JSON.stringify(wishlist));
+                  }
+
+                  function toggleWishlist(productId, btn) {
+                                quickSave(productId);
+                  }
+
+                  function updateSavedStatus() {
+                                const wishlist = JSON.parse(localStorage.getItem('luxineWishlist') || '[]');
+                                wishlist.forEach(item => {
+                                                  const btn = document.getElementById(`save-${item.id}`);
+                                                  if (btn) btn.classList.add('saved');
+                                });
+                  }
+
+                  function showToast(message) {
+                                const toast = document.getElementById('toast');
+                                toast.textContent = message;
+                                toast.classList.add('show');
+                                setTimeout(() => toast.classList.remove('show'), 2500);
+                  }
+        </script>
+
+    <!-- Mega Menu Controller -->
+    <script src="/js/mega-menu.js"></script>
+  </body>
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title id="pageTitle">Category - LUXINE</title>title>
+        <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Lexend:wght@200;300;400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/mega-menu.css">
+        <style>
+                  :root {
+                                --noir: #0d0d0d;
+                                --ivory: #faf9f6;
+                                --or: #c9a961;
+                                --argent: #e8e6e3;
+                                --charbon: #1a1a1a;
+                                --dor: #d4af37;
+                  }
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body {
+                                font-family: 'Lexend', sans-serif;
+                                background: var(--ivory);
+                                color: var(--noir);
+                                min-height: 100vh;
+                  }
+                  header {
+                                position: fixed;
+                                width: 100%;
+                                top: 0;
+                                z-index: 1000;
+                                background: rgba(250, 249, 246, 0.98);
+                                backdrop-filter: blur(20px);
+                                border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+                  }
+                  nav {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                padding: 1.2rem 5%;
+                  }
+                  .logo {
+                                font-family: 'Bodoni Moda', serif;
+                                font-size: 1.8rem;
+                                font-weight: 600;
+                                letter-spacing: 0.3em;
+                                color: var(--noir);
+                                text-decoration: none;
+                  }
+                  .nav-links {
+                                display: flex;
+                                gap: 2.5rem;
+                                list-style: none;
+                  }
+                  .nav-links a {
+                                text-decoration: none;
+                                color: var(--noir);
+                                font-size: 0.85rem;
+                                letter-spacing: 0.1em;
+                                text-transform: uppercase;
+                                font-weight: 400;
+                                transition: color 0.3s;
+                  }
+                  .nav-links a:hover, .nav-links a.active {
+                                color: var(--or);
+                  }
+                  .nav-icons {
+                                display: flex;
+                                gap: 1.5rem;
+                                align-items: center;
+                  }
+                  .nav-icon {
+                                width: 24px;
+                                height: 24px;
+                                cursor: pointer;
+                                opacity: 0.8;
+                                transition: opacity 0.3s;
+                  }
+                  .nav-icon:hover { opacity: 1; }
+                  .category-hero {
+                                padding: 140px 5% 60px;
+                                text-align: center;
+                                background: linear-gradient(135deg, var(--ivory) 0%, #f5f3ef 100%);
+                  }
+                  .category-title {
+                                font-family: 'Bodoni Moda', serif;
+                                font-size: 3.5rem;
+                                font-weight: 500;
+                                margin-bottom: 1rem;
+                                letter-spacing: 0.05em;
+                  }
+                  .category-subtitle {
+                                font-size: 1.1rem;
+                                color: #666;
+                                max-width: 600px;
+                                margin: 0 auto;
+                                line-height: 1.7;
+                  }
+                  .products-section {
+                                padding: 4rem 5%;
+                                max-width: 1400px;
+                                margin: 0 auto;
+                  }
+                  .products-grid {
+                                display: grid;
+                                grid-template-columns: repeat(3, 1fr);
+                                gap: 2rem;
+                  }
+                  .product-card {
+                                background: white;
+                                border-radius: 12px;
+                                overflow: hidden;
+                                transition: transform 0.3s, box-shadow 0.3s;
+                  }
+                  .product-card:hover {
+                                transform: translateY(-8px);
+                                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                  }
+                  .product-image-container {
+                                position: relative;
+                                aspect-ratio: 1;
+                                overflow: hidden;
+                                cursor: pointer;
+                  }
+                  .product-image {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                transition: transform 0.5s;
+                  }
+                  .product-card:hover .product-image {
+                                transform: scale(1.05);
+                  }
+                  .product-badge {
+                                position: absolute;
+                                top: 1rem;
+                                left: 1rem;
+                                background: var(--or);
+                                color: white;
+                                padding: 0.4rem 1rem;
+                                font-size: 0.65rem;
+                                text-transform: uppercase;
+                                letter-spacing: 0.1em;
+                                border-radius: 4px;
+                                z-index: 2;
+                  }
+                  .wishlist-btn {
+                                position: absolute;
+                                top: 1rem;
+                                right: 1rem;
+                                background: white;
+                                border: none;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                opacity: 0;
+                                transition: all 0.3s;
+                                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                z-index: 2;
+                  }
+                  .product-card:hover .wishlist-btn { opacity: 1; }
+                  .product-info {
+                                padding: 1.5rem;
+                  }
+                  .product-brand {
+                                font-size: 0.75rem;
+                                text-transform: uppercase;
+                                letter-spacing: 0.15em;
+                                color: var(--or);
+                                margin-bottom: 0.5rem;
+                  }
+                  .product-name {
+                                font-family: 'Bodoni Moda', serif;
+                                font-size: 1.25rem;
+                                font-weight: 500;
+                                margin-bottom: 0.5rem;
+                                cursor: pointer;
+                  }
+                  .product-price {
+                                font-size: 1.1rem;
+                                font-weight: 500;
+                  }
+                  .product-quick-actions {
+                                display: flex;
+                                gap: 0.5rem;
+                                margin-top: 0.75rem;
+                                padding-top: 0.75rem;
+                                border-top: 1px solid var(--argent);
+                  }
+                  .quick-cart-btn {
+                                flex: 1;
+                                padding: 0.6rem 1rem;
+                                background: var(--noir);
+                                color: var(--ivory);
+                                border: none;
+                                border-radius: 6px;
+                                font-size: 0.75rem;
+                                font-weight: 500;
+                                cursor: pointer;
+                                transition: all 0.3s;
+                                text-transform: uppercase;
+                                letter-spacing: 0.05em;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 0.4rem;
+                  }
+                  .quick-cart-btn:hover {
+                                background: var(--charbon);
+                                transform: translateY(-1px);
+                  }
+                  .quick-save-btn {
+                                width: 38px;
+                                height: 38px;
+                                border: 1px solid var(--argent);
+                                background: white;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.3s;
+                  }
+                  .quick-save-btn:hover {
+                                border-color: var(--or);
+                                background: rgba(201, 169, 97, 0.1);
+                  }
+                  .quick-save-btn.saved {
+                                background: var(--or);
+                                border-color: var(--or);
+                  }
+                  .quick-save-btn.saved svg {
+                                fill: var(--ivory);
+                                stroke: var(--ivory);
+                  }
+                  .no-products {
+                                text-align: center;
+                                padding: 4rem 2rem;
+                                color: #666;
+                  }
+                  .no-products h3 {
+                                font-family: 'Bodoni Moda', serif;
+                                font-size: 1.5rem;
+                                margin-bottom: 1rem;
+                  }
+                  footer {
+                                background: var(--noir);
+                                color: var(--ivory);
+                                padding: 4rem 5%;
+                                text-align: center;
+                  }
+                  .footer-logo {
+                                font-family: 'Bodoni Moda', serif;
+                                font-size: 1.5rem;
+                                letter-spacing: 0.3em;
+                                margin-bottom: 1rem;
+                  }
+                  .footer-text {
+                                font-size: 0.85rem;
+                                opacity: 0.7;
+                  }
+                  @media (max-width: 968px) {
+                                .products-grid { grid-template-columns: repeat(2, 1fr); }
+                                .nav-links { display: none; }
+                                .category-title { font-size: 2.5rem; }
+                  }
+                  @media (max-width: 600px) {
+                                .products-grid { grid-template-columns: 1fr; }
+                                .category-hero { padding: 120px 4% 40px; }
+                                .category-title { font-size: 2rem; }
+                  }
+                  .toast {
+                                position: fixed;
+                                bottom: 30px;
+                                left: 50%;
+                                transform: translateX(-50%) translateY(100px);
+                                background: var(--noir);
+                                color: var(--ivory);
+                                padding: 1rem 2rem;
+                                border-radius: 8px;
+                                font-size: 0.9rem;
+                                opacity: 0;
+                                transition: all 0.3s;
+                                z-index: 9999;
+                  }
+                  .toast.show {
+                                transform: translateX(-50%) translateY(0);
+                                opacity: 1;
+                  }
+              </style>
+  </head>
+  <body>
+        <header>
+                  <nav>
+                                <a href="index.html" class="logo">LUXINE</a>
+                                <ul class="nav-links">
+                                    <li data-category="t-shirts" id="nav-t-shirts">
+                                        <a href="/category.html?cat=t-shirts">T-Shirts</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="t-shirts-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="t-shirts-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="t-shirts-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="t-shirts-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="shorts" id="nav-shorts">
+                                        <a href="/category.html?cat=shorts">Shorts</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="shorts-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="shorts-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="shorts-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="shorts-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="outerwear" id="nav-outerwear">
+                                        <a href="/category.html?cat=outerwear">Outerwear</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="outerwear-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="outerwear-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="outerwear-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="outerwear-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="bottoms" id="nav-bottoms">
+                                        <a href="/category.html?cat=bottoms">Bottoms</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="bottoms-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="bottoms-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="bottoms-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="bottoms-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                    <li data-category="jerseys" id="nav-jerseys">
+                                        <a href="/category.html?cat=jerseys">Jerseys</a>
+                                        <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="jerseys-brands"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="jerseys-types"></ul></div>
+                                            <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="jerseys-prices"></ul></div>
+                                            <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="jerseys-featured"></div></div>
+                                        </div></div></div>
+                                    </li>
+                                </ul>
+                              <div class="nav-icons">
+                                              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <circle cx="11" cy="11" r="8"></circle>circle>
+                                                                  <path d="m21 21-4.35-4.35"></path>path>
+                                              </svg>
+                                              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>path>
+                                                                  <circle cx="12" cy="7" r="4"></circle>circle>
+                                              </svg>
+                                              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>path>
+                                                                  <line x1="3" y1="6" x2="21" y2="6"></line>line>
+                                                                  <path d="M16 10a4 4 0 0 1-8 0"></path>path>
+                                              </svg>
+                              </div>
+                  </nav>
+        </header>
+  
+      <section class="category-hero">
+              <h1 class="category-title" id="categoryTitle">Category</h1>
+              <p class="category-subtitle" id="categorySubtitle">Discover our curated collection</p>
+      </section>
+  
+      <section class="products-section">
+              <div class="products-grid" id="productsGrid">
+                          <!-- Products will be dynamically loaded -->
+              </div>
+      </section>
+  
+      <footer>
+                <div class="footer-logo">LUXINE</div>
+                <p class="footer-text">Curated Luxury Fashion & Lifestyle</p>
+      </footer>
+
+        <div class="toast" id="toast"></div>
+
+        <script>
+                  const categoryInfo = {
+                                skincare: {
+                                                  title: 'Skincare',
+                                                  subtitle: 'Indulge in premium skincare essentials crafted for radiant, healthy skin'
+                                },
+                                fragrance: {
+                                                  title: 'Fragrance',
+                                                  subtitle: 'Discover signature scents from the world\'s most prestigious perfume houses'
+                                },
+                                watches: {
+                                                  title: 'Watches',
+                                                  subtitle: 'Timeless elegance meets precision craftsmanship in our luxury timepiece collection'
+                                },
+                                bags: {
+                                                  title: 'Bags',
+                                                  subtitle: 'Exquisite handbags and accessories from iconic fashion houses'
+                                },
+                                accessories: {
+                                                  title: 'Accessories',
+                                                  subtitle: 'Complete your look with our curated selection of luxury accessories'
+                                },
+                                streetwear: {
+                                                  title: 'Streetwear',
+                                                  subtitle: 'Where street culture meets luxury fashion in limited edition pieces'
+                                }
+                  };
+
+                  let currentCategory = '';
+
+                  document.addEventListener('DOMContentLoaded', function() {
+                                const urlParams = new URLSearchParams(window.location.search);
+                                currentCategory = urlParams.get('cat') || 'skincare';
+
+                                setupPage();
+                                loadProducts();
+                  });
+
+                  function setupPage() {
+                                const info = categoryInfo[currentCategory] || categoryInfo.skincare;
+
+                                document.getElementById('pageTitle').textContent = info.title + ' - LUXINE';
+                                document.getElementById('categoryTitle').textContent = info.title;
+                                document.getElementById('categorySubtitle').textContent = info.subtitle;
+
+                                // Highlight active nav link
+                                const activeLink = document.getElementById('nav-' + currentCategory);
+                                if (activeLink) activeLink.classList.add('active');
+                  }
+
+                  function loadProducts() {
+                                const storedProducts = localStorage.getItem('luxineProducts');
+                                let products = [];
+
+                                if (storedProducts) {
+                                                  products = JSON.parse(storedProducts);
+                                } else {
+                                                  // Demo products if none stored
+                                                  products = getDemoProducts();
+                                                  localStorage.setItem('luxineProducts', JSON.stringify(products));
+                                }
+
+                                // Filter by category
+                                const filteredProducts = products.filter(p => {
+                                                  const productCategory = (p.brand || p.category || '').toLowerCase();
+                                                  return productCategory === currentCategory.toLowerCase();
+                                });
+
+                                renderProducts(filteredProducts);
+                  }
+
+                  function getDemoProducts() {
+                                return [
+                                  { id: 1, name: 'Daily Microfoliant', brand: 'Skincare', category: 'Skincare', price: 62, image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=500&fit=crop', badge: 'Bestseller' },
+                                  { id: 2, name: 'Special Cleansing Gel', brand: 'Skincare', category: 'Skincare', price: 45, image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop' },
+                                  { id: 3, name: 'Dynamic Skin Recovery SPF 50', brand: 'Skincare', category: 'Skincare', price: 85, image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400&h=500&fit=crop', badge: 'New' },
+                                  { id: 4, name: 'Oud Wood Intense', brand: 'Fragrance', category: 'Fragrance', price: 395, image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=500&fit=crop', badge: 'Exclusive' },
+                                  { id: 5, name: 'Black Orchid', brand: 'Fragrance', category: 'Fragrance', price: 180, image: 'https://images.unsplash.com/photo-1595425964071-2c1ecb10b52d?w=400&h=500&fit=crop' },
+                                  { id: 6, name: 'Submariner Date', brand: 'Watches', category: 'Watches', price: 9550, image: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=400&h=500&fit=crop', badge: 'Bestseller' },
+                                  { id: 7, name: 'Speedmaster Professional', brand: 'Watches', category: 'Watches', price: 6350, image: 'https://images.unsplash.com/photo-1539874754764-5a96559165b0?w=400&h=500&fit=crop' },
+                                  { id: 8, name: 'Classic Flap Bag', brand: 'Bags', category: 'Bags', price: 8200, image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=500&fit=crop', badge: 'Iconic' },
+                                  { id: 9, name: 'Neverfull MM', brand: 'Bags', category: 'Bags', price: 1960, image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=500&fit=crop' },
+                                  { id: 10, name: 'Silk Scarf', brand: 'Accessories', category: 'Accessories', price: 420, image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&h=500&fit=crop' },
+                                  { id: 11, name: 'Leather Belt', brand: 'Accessories', category: 'Accessories', price: 550, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=500&fit=crop' },
+                                  { id: 12, name: 'Limited Edition Hoodie', brand: 'Streetwear', category: 'Streetwear', price: 890, image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop', badge: 'Limited' },
+                                  { id: 13, name: 'Collab Sneakers', brand: 'Streetwear', category: 'Streetwear', price: 1250, image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400&h=500&fit=crop', badge: 'Exclusive' }
+                                              ];
+                  }
+
+                  function renderProducts(products) {
+                                const grid = document.getElementById('productsGrid');
+
+                                if (products.length === 0) {
+                                                  grid.innerHTML = `
+                                                                      <div class="no-products" style="grid-column: 1/-1;">
+                                                                                              <h3>No products found</h3>
+                                                                                                                      <p>Check back soon for new arrivals in this category.</p>
+                                                                                                                                          </div>
+                                                                                                                                                          `;
+                                                  return;
+                                }
+
+                                grid.innerHTML = products.map(product => `
+                                                <div class="product-card" data-id="${product.id}">
+                                                                    <div class="product-image-container" onclick="goToProduct(${product.id})">
+                                                                                            <img src="${product.image}" alt="${product.name}" class="product-image">
+                                                                                                                    ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+                                                                                                                                            <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(${product.id}, this)">
+                                                                                                                                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                                                                                                                                                                                                    </svg>
+                                                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                    <div class="product-info">
+                                                                                                                                                                                                                                                                                                                            <p class="product-brand">${product.brand || product.category}</p>
+                                                                                                                                                                                                                                                                                                                                                    <h3 class="product-name" onclick="goToProduct(${product.id})">${product.name}</h3>
+                                                                                                                                                                                                                                                                                                                                                                            <p class="product-price">$${product.price.toLocaleString()}</p>
+                                                                                                                                                                                                                                                                                                                                                                                                    <div class="product-quick-actions">
+                                                                                                                                                                                                                                                                                                                                                                                                                                <button class="quick-cart-btn" onclick="quickAddToCart(${product.id})">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Add to Cart
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <button class="quick-save-btn" id="save-${product.id}" onclick="quickSave(${product.id})">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            `).join('');
+
+                                updateSavedStatus();
+                  }
+
+                  function goToProduct(productId) {
+                                window.location.href = `product.html?id=${productId}`;
+                  }
+
+                  function quickAddToCart(productId) {
+                                const products = JSON.parse(localStorage.getItem('luxineProducts') || '[]');
+                                const product = products.find(p => p.id === productId);
+                                if (!product) return;
+
+                                let cart = JSON.parse(localStorage.getItem('luxineCart') || '[]');
+                                const existingIndex = cart.findIndex(item => item.id === productId);
+
+                                if (existingIndex > -1) {
+                                                  cart[existingIndex].quantity += 1;
+                                } else {
+                                                  cart.push({ ...product, quantity: 1 });
+                                }
+
+                                localStorage.setItem('luxineCart', JSON.stringify(cart));
+                                showToast('Added to cart');
+                  }
+
+                  function quickSave(productId) {
+                                const products = JSON.parse(localStorage.getItem('luxineProducts') || '[]');
+                                const product = products.find(p => p.id === productId);
+                                if (!product) return;
+
+                                let wishlist = JSON.parse(localStorage.getItem('luxineWishlist') || '[]');
+                                const btn = document.getElementById(`save-${productId}`);
+                                const index = wishlist.findIndex(item => item.id === productId);
+
+                                if (index > -1) {
+                                                  wishlist.splice(index, 1);
+                                                  if (btn) btn.classList.remove('saved');
+                                                  showToast('Removed from saved');
+                                } else {
+                                                  wishlist.push(product);
+                                                  if (btn) btn.classList.add('saved');
+                                                  showToast('Saved to wishlist');
+                                }
+
+                                localStorage.setItem('luxineWishlist', JSON.stringify(wishlist));
+                  }
+
+                  function toggleWishlist(productId, btn) {
+                                quickSave(productId);
+                  }
+
+                  function updateSavedStatus() {
+                                const wishlist = JSON.parse(localStorage.getItem('luxineWishlist') || '[]');
+                                wishlist.forEach(item => {
+                                                  const btn = document.getElementById(`save-${item.id}`);
+                                                  if (btn) btn.classList.add('saved');
+                                });
+                  }
+
+                  function showToast(message) {
+                                const toast = document.getElementById('toast');
+                                toast.textContent = message;
+                                toast.classList.add('show');
+                                setTimeout(() => toast.classList.remove('show'), 2500);
+                  }
+        </script>
+
+    <!-- Mega Menu Controller -->
+    <script src="/js/mega-menu.js"></script>
+  </body>
+</html>
+        </script>
+      </footer></li></li>
+                  </nav>
+        </header>
+  </body>
+        </style>
+  </head>

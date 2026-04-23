@@ -1,0 +1,266 @@
+/* Mega Menu Styles for PoloStew */
+
+/* Base Navigation Adjustments */
+nav {
+    position: relative;
+}
+.nav-links > li {
+    position: static;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    margin-top: -2.5rem;
+    margin-bottom: -2.5rem;
+}
+
+/* Mega Menu Wrapper */
+.mega-menu-wrapper {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    background: white;
+    border-top: 1px solid rgba(199, 93, 58, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 998;
+    pointer-events: none;
+}
+
+/* Invisible hover bridge above the mega menu to prevent gap issues */
+.mega-menu-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: transparent;
+}
+
+/* Show mega menu on hover (desktop only) */
+@media (min-width: 1281px) {
+    .nav-links > li:hover .mega-menu-wrapper {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
+/* Mega Menu Container */
+.mega-menu-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 5%;
+}
+
+/* Mega Menu Grid - 4 Columns */
+.mega-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+}
+
+/* Individual Column Styling */
+.mega-menu-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.mega-menu-column:last-child {
+    border-left: 1px solid rgba(199, 93, 58, 0.15);
+    padding-left: 3rem;
+}
+
+/* Column Headings */
+.mega-menu-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--noir, #0d0d0d);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--or, #c75d3a);
+}
+
+/* Menu Lists */
+.mega-menu-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0;
+    margin: 0;
+}
+
+.mega-menu-list li a {
+    color: var(--noir, #0d0d0d);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    transition: all 0.25s ease;
+    display: block;
+    padding: 0.4rem 0;
+    position: relative;
+    padding-left: 0;
+}
+
+.mega-menu-list li a:hover {
+    color: var(--or, #c75d3a);
+    padding-left: 0.75rem;
+}
+
+.mega-menu-list li a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 1px;
+    background: var(--or, #c75d3a);
+    transition: width 0.25s ease;
+}
+
+.mega-menu-list li a:hover::before {
+    width: 0.5rem;
+}
+
+/* Featured Products Column */
+.mega-menu-featured {
+    background: linear-gradient(135deg, var(--ivory, #f5f0e8) 0%, #f5f3ef 100%);
+    padding: 2rem;
+    border-radius: 8px;
+    border-left: none;
+}
+
+.featured-products-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Featured Product Card */
+.featured-product-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.featured-product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.featured-product-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.featured-product-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.featured-product-info .brand {
+    font-size: 0.7rem;
+    color: var(--or, #c75d3a);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.25rem;
+    font-weight: 400;
+}
+
+.featured-product-info h5 {
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.featured-product-info .price {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    color: var(--noir, #0d0d0d);
+    font-weight: 500;
+}
+
+/* Mobile Mega Menu Styles */
+@media (max-width: 1280px) {
+    .menu-toggle {
+        order: -1;
+        flex-shrink: 0;
+    }
+
+    .mega-menu-wrapper {
+        position: static;
+        width: 100%;
+        max-width: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        border: none;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: auto;
+    }
+
+    .mega-menu-wrapper.active {
+        max-height: 1000px;
+    }
+
+    .mega-menu-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .mega-menu-column:last-child {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid rgba(199, 93, 58, 0.15);
+        padding-top: 1.5rem;
+    }
+
+    .mega-menu-featured {
+        display: none;
+    }
+
+    .mega-menu-container {
+        padding: 1.5rem;
+    }
+}
+
+/* Empty state */
+.mega-menu-empty {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Loading state */
+.mega-menu-wrapper.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>Product - LUXINE</title>
+      <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Lexend:wght@200;300;400;500&display=swap" rel="stylesheet">
+      <style>
+                :root {
+                              --noir: #0d0d0d;
+                              --ivory: #faf9f6;
+                              --or: #c9a961;
+                              --argent: #e8e6e3;
+                              --charbon: #1a1a1a;
+                              --dor: #d4af37;
+                }
+
+                * {
+                              margin: 0;
+                              padding: 0;
+                              box-sizing: border-box;
+                }
+
+                body {
+                              font-family: 'Lexend', sans-serif;
+                              background: var(--ivory);
+                              color: var(--noir);
+                              min-height: 100vh;
+                }
+
+                /* Header */
+                header {
+                              position: fixed;
+                              width: 100%;
+                              top: 0;
+                              z-index: 1000;
+                              background: rgba(250, 249, 246, 0.98);
+                              backdrop-filter: blur(20px);
+                              border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+                              transition: all 0.3s ease;
+                }
+
+                nav {
+                              display: flex;
+                              justify-content: space-between;
+                              align-items: center;
+                              padding: 1.2rem 5%;
+                }
+
+                .logo {
+                              font-family: 'Bodoni Moda', serif;
+                              font-size: 1.8rem;
+                              font-weight: 600;
+                              letter-spacing: 0.3em;
+                              color: var(--noir);
+                              text-decoration: none;
+                }
+
+                .nav-icons {
+                              display: flex;
+                              gap: 1.5rem;
+                              align-items: center;
+                }
+
+                .nav-icon {
+                              width: 24px;
+                              height: 24px;
+                              cursor: pointer;
+                              opacity: 0.8;
+                              transition: opacity 0.3s;
+                }
+
+                .nav-icon:hover {
+                              opacity: 1;
+                }
+
+                /* Main Product Section */
+                .product-page {
+                              padding-top: 100px;
+                              min-height: 100vh;
+                }
+
+                .product-container {
+                              max-width: 1400px;
+                              margin: 0 auto;
+                              padding: 3rem 5%;
+                              display: grid;
+                              grid-template-columns: 1fr 1fr;
+                              gap: 4rem;
+                }
+
+                /* Image Gallery */
+                .product-gallery {
+                              position: sticky;
+                              top: 120px;
+                              height: fit-content;
+                }
+
+                .main-image-container {
+                              position: relative;
+                              width: 100%;
+                              aspect-ratio: 1;
+                              background: #fff;
+                              border-radius: 12px;
+                              overflow: hidden;
+                              margin-bottom: 1rem;
+                }
+
+                .main-image {
+                              width: 100%;
+                              height: 100%;
+                              object-fit: cover;
+                              transition: transform 0.5s ease;
+                }
+
+                .main-image-container:hover .main-image {
+                              transform: scale(1.05);
+                }
+
+                .thumbnail-container {
+                              display: flex;
+                              gap: 0.75rem;
+                              overflow-x: auto;
+                              padding: 0.5rem 0;
+                              cursor: grab;
+                }
+
+                .thumbnail-container:active {
+                              cursor: grabbing;
+                }
+
+                .thumbnail {
+                              width: 80px;
+                              height: 80px;
+                              border-radius: 8px;
+                              overflow: hidden;
+                              cursor: pointer;
+                              opacity: 0.6;
+                              transition: all 0.3s ease;
+                              flex-shrink: 0;
+                              border: 2px solid transparent;
+                }
+
+                .thumbnail:hover,
+                .thumbnail.active {
+                              opacity: 1;
+                              border-color: var(--or);
+                }
+
+                .thumbnail img {
+                              width: 100%;
+                              height: 100%;
+                              object-fit: cover;
+                }
+
+                /* Product Info */
+                .product-info {
+                              padding-top: 1rem;
+                }
+
+                .breadcrumb {
+                              font-size: 0.85rem;
+                              color: #666;
+                              margin-bottom: 1rem;
+                }
+
+                .breadcrumb a {
+                              color: #666;
+                              text-decoration: none;
+                              transition: color 0.3s;
+                }
+
+                .breadcrumb a:hover {
+                              color: var(--or);
+                }
+
+                .product-brand {
+                              font-size: 0.9rem;
+                              text-transform: uppercase;
+                              letter-spacing: 0.15em;
+                              color: var(--or);
+                              margin-bottom: 0.5rem;
+                }
+
+                .product-title {
+                              font-family: 'Bodoni Moda', serif;
+                              font-size: 2.5rem;
+                              font-weight: 500;
+                              margin-bottom: 1rem;
+                              line-height: 1.2;
+                }
+
+                .product-price {
+                              font-size: 1.75rem;
+                              font-weight: 500;
+                              margin-bottom: 2rem;
+                }
+
+                .product-description {
+                              font-size: 1rem;
+                              line-height: 1.8;
+                              color: #444;
+                              margin-bottom: 2rem;
+                              padding-bottom: 2rem;
+                              border-bottom: 1px solid var(--argent);
+                }
+
+                /* Size Selector */
+                .size-selector {
+                              margin-bottom: 2rem;
+                              padding-bottom: 2rem;
+                              border-bottom: 1px solid var(--argent);
+                }
+
+                .size-selector h4 {
+                              font-size: 0.9rem;
+                              font-weight: 600;
+                              margin-bottom: 1rem;
+                              text-transform: uppercase;
+                              letter-spacing: 0.05em;
+                }
+
+                .size-btn {
+                              padding: 0.75rem 1.5rem;
+                              margin-right: 0.5rem;
+                              margin-bottom: 0.5rem;
+                              border: 1px solid var(--argent);
+                              background: transparent;
+                              border-radius: 6px;
+                              cursor: pointer;
+                              transition: all 0.3s ease;
+                              font-family: inherit;
+                              font-size: 0.9rem;
+                }
+
+                .size-btn:hover {
+                              border-color: var(--or);
+                              background: rgba(201, 169, 97, 0.1);
+                }
+
+                .size-btn.selected {
+                              background: var(--noir);
+                              color: var(--ivory);
+                              border-color: var(--noir);
+                }
+
+                .size-btn:disabled {
+                              opacity: 0.4;
+                              cursor: not-allowed;
+                              text-decoration: line-through;
+                }
+
+                .size-dropdown {
+                              width: 100%;
+                              padding: 0.75rem;
+                              border: 1px solid var(--argent);
+                              border-radius: 6px;
+                              font-family: inherit;
+                              font-size: 0.95rem;
+                              cursor: pointer;
+                              background: white;
+                }
+
+                /* Actions */
+                .product-actions {
+                              display: flex;
+                              flex-direction: column;
+                              gap: 1rem;
+                              margin-bottom: 2rem;
+                }
+
+                .quantity-selector {
+                              display: flex;
+                              align-items: center;
+                              gap: 1rem;
+                }
+
+                .quantity-selector label {
+                              font-size: 0.9rem;
+                              font-weight: 500;
+                }
+
+                .quantity-controls {
+                              display: flex;
+                              align-items: center;
+                              border: 1px solid var(--argent);
+                              border-radius: 8px;
+                              overflow: hidden;
+                }
+
+                .quantity-btn {
+                              width: 40px;
+                              height: 40px;
+                              border: none;
+                              background: transparent;
+                              font-size: 1.25rem;
+                              cursor: pointer;
+                              transition: background 0.3s;
+                }
+
+                .quantity-btn:hover {
+                              background: var(--argent);
+                }
+
+                .quantity-input {
+                              width: 50px;
+                              height: 40px;
+                              border: none;
+                              text-align: center;
+                              font-size: 1rem;
+                              font-family: inherit;
+                }
+
+                .action-buttons {
+                              display: flex;
+                              gap: 1rem;
+                }
+
+                .add-to-cart-btn {
+                              flex: 1;
+                              padding: 1rem 2rem;
+                              background: var(--noir);
+                              color: var(--ivory);
+                              border: none;
+                              border-radius: 8px;
+                              font-size: 1rem;
+                              font-weight: 500;
+                              cursor: pointer;
+                              transition: all 0.3s ease;
+                              text-transform: uppercase;
+                              letter-spacing: 0.1em;
+                }
+
+                .add-to-cart-btn:hover {
+                              background: var(--charbon);
+                              transform: translateY(-2px);
+                }
+
+                .wishlist-btn-large {
+                              width: 56px;
+                              height: 56px;
+                              border: 1px solid var(--argent);
+                              background: transparent;
+                              border-radius: 8px;
+                              cursor: pointer;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              transition: all 0.3s ease;
+                }
+
+                .wishlist-btn-large:hover {
+                              border-color: var(--or);
+                              background: rgba(201, 169, 97, 0.1);
+                }
+
+                .wishlist-btn-large.active {
+                              background: var(--or);
+                              border-color: var(--or);
+                }
+
+                .wishlist-btn-large.active svg {
+                              fill: var(--ivory);
+                              stroke: var(--ivory);
+                }
+
+                /* Product Details Accordion */
+                .product-details-section {
+                              margin-top: 2rem;
+                }
+
+                .detail-accordion {
+                              border-top: 1px solid var(--argent);
+                }
+
+                .detail-header {
+                              display: flex;
+                              justify-content: space-between;
+                              align-items: center;
+                              padding: 1.25rem 0;
+                              cursor: pointer;
+                              font-weight: 500;
+                }
+
+                .detail-header svg {
+                              transition: transform 0.3s;
+                }
+
+                .detail-accordion.open .detail-header svg {
+                              transform: rotate(180deg);
+                }
+
+                .detail-content {
+                              max-height: 0;
+                              overflow: hidden;
+                              transition: max-height 0.3s ease;
+                }
+
+                .detail-accordion.open .detail-content {
+                              max-height: 500px;
+                }
+
+                .detail-content p {
+                              padding-bottom: 1.25rem;
+                              color: #666;
+                              line-height: 1.7;
+                }
+
+                /* Badge */
+                .product-badge {
+                              display: inline-block;
+                              background: var(--or);
+                              color: var(--ivory);
+                              padding: 0.35rem 0.75rem;
+                              font-size: 0.7rem;
+                              text-transform: uppercase;
+                              letter-spacing: 0.1em;
+                              border-radius: 4px;
+                              margin-bottom: 1rem;
+                }
+
+                .sale-badge {
+                              background: #e53935;
+                }
+
+                /* Responsive */
+                @media (max-width: 968px) {
+                              .product-container {
+                                                grid-template-columns: 1fr;
+                                                gap: 2rem;
+                              }
+
+                              .product-gallery {
+                                                position: relative;
+                                                top: 0;
+                              }
+
+                              .product-title {
+                                                font-size: 2rem;
+                              }
+                }
+
+                @media (max-width: 600px) {
+                              .product-container {
+                                                padding: 1.5rem 4%;
+                              }
+
+                              .thumbnail {
+                                                width: 60px;
+                                                height: 60px;
+                              }
+
+                              .action-buttons {
+                                                flex-direction: column;
+                              }
+
+                              .wishlist-btn-large {
+                                                width: 100%;
+                              }
+                }
+
+                /* Toast Notification */
+                .toast {
+                              position: fixed;
+                              bottom: 30px;
+                              left: 50%;
+                              transform: translateX(-50%) translateY(100px);
+                              background: var(--noir);
+                              color: var(--ivory);
+                              padding: 1rem 2rem;
+                              border-radius: 8px;
+                              font-size: 0.9rem;
+                              opacity: 0;
+                              transition: all 0.3s ease;
+                              z-index: 9999;
+                }
+
+                .toast.show {
+                              transform: translateX(-50%) translateY(0);
+                              opacity: 1;
+                }
+            </style>
+  </head>
+  <body>
+        <header>
+                  <nav>
+                                <a href="index.html" class="logo">LUXINE</a>
+                                <div class="nav-icons">
+                                                  <svg class="nav-icon" onclick="window.location.href='index.html#search'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                        <circle cx="11" cy="11" r="8"></circle>
+                                                                        <path d="m21 21-4.35-4.35"></path>
+                                                  </svg>
+                                                  <svg class="nav-icon" onclick="window.location.href='account.html'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                                        <circle cx="12" cy="7" r="4"></circle>
+                                                  </svg>
+                                                  <svg class="nav-icon cart-icon" onclick="window.location.href='cart.html'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                                                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                                                                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                                  </svg>
+                                </div>
+                  </nav>
+        </header>
+
+        <main class="product-page">
+                  <div class="product-container">
+                                <!-- Image Gallery -->
+                                <div class="product-gallery">
+                                                  <div class="main-image-container">
+                                                                        <img id="mainImage" class="main-image" src="" alt="Product Image">
+                                                  </div>
+                                                  <div class="thumbnail-container" id="thumbnailContainer">
+                                                                        <!-- Thumbnails populated by JS -->
+                                                  </div>
+                                </div>
+
+                                <!-- Product Info -->
+                                <div class="product-info">
+                                                  <div class="breadcrumb">
+                                                                        <a href="index.html">Home</a> / <a href="#" id="categoryLink">Category</a> / <span id="productNameBreadcrumb">Product</span>
+                                                  </div>
+
+                                                  <span class="product-badge" id="productBadge" style="display: none;"></span>
+                                                  <p class="product-brand" id="productBrand">Brand</p>
+                                                  <h1 class="product-title" id="productTitle">Product Name</h1>
+                                                  <div class="product-price" id="productPrice">$0</div>
+
+                                                  <div class="product-description" id="productDescription">
+                                                                        Product description will appear here.
+                                                  </div>
+
+                                                  <!-- Size Selector -->
+                                                  <div id="sizeSelectorContainer"></div>
+
+                                                  <div class="product-actions">
+                                                                        <div class="quantity-selector">
+                                                                                                  <label>Quantity:</label>
+                                                                                                <div class="quantity-controls">
+                                                                                                                            <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                                                                                                                            <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="10">
+                                                                                                                            <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                                                                                                  </div>
+                                                                        </div>
+
+                                                                      <div class="action-buttons">
+                                                                                              <button class="add-to-cart-btn" onclick="addToCartFromPage()">Add to Cart</button>
+                                                                                              <button class="wishlist-btn-large" id="wishlistBtn" onclick="toggleWishlist()">
+                                                                                                                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                                                                                            </svg>
+                                                                                                </button>
+                                                                      </div>
+                                                  </div>
+
+                                                <div class="product-details-section">
+                                                                    <div class="detail-accordion">
+                                                                                            <div class="detail-header" onclick="toggleAccordion(this)">
+                                                                                                                        <span>Product Details</span>
+                                                                                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                                                                                                          </svg>
+                                                                                              </div>
+                                                                                            <div class="detail-content">
+                                                                                                                        <p id="productDetails">Details about the product including materials, dimensions, and care instructions.</p>
+                                                                                              </div>
+                                                                    </div>
+                                                                    <div class="detail-accordion">
+                                                                                            <div class="detail-header" onclick="toggleAccordion(this)">
+                                                                                                                        <span>Shipping & Returns</span>
+                                                                                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                                                                                                          </svg>
+                                                                                              </div>
+                                                                                            <div class="detail-content">
+                                                                                                                        <p>Free shipping on orders over $100. Standard delivery 3-5 business days. Express delivery available. 30-day return policy for unworn items with original packaging.</p>
+                                                                                              </div>
+                                                                    </div>
+                                                </div>
+                                </div>
+                  </div>
+        </main>
+
+      <div class="toast" id="toast"></div>
+
+      <script src="js/cart.js"></script>
+      <script>
+                // Product data
+                let currentProduct = null;
+                let selectedSize = null;
+                let currentImageIndex = 0;
+
+                // Initialize page
+                document.addEventListener('DOMContentLoaded', function() {
+                              loadProductFromAPI();
+                });
+
+                async function loadProductFromAPI() {
+                              const urlParams = new URLSearchParams(window.location.search);
+                              const productId = urlParams.get('id');
+
+                              if (!productId) {
+                                                window.location.href = 'index.html';
+                                                return;
+                              }
+
+                              try {
+                                                // Fetch product from API
+                                                const response = await fetch('/api/products');
+                                                const data = await response.json();
+                                                currentProduct = data.products.find(p => p.id === productId);
+
+                                                if (!currentProduct) {
+                                                                      window.location.href = 'index.html';
+                                                                      return;
+                                                }
+
+                                                renderProduct();
+                              } catch (error) {
+                                                console.error('Error loading product:', error);
+                                                window.location.href = 'index.html';
+                              }
+                }
+
+                function renderProduct() {
+                              if (!currentProduct) return;
+
+                              // Update page content
+                              document.title = `${currentProduct.name} - LUXINE`;
+                              document.getElementById('productBrand').textContent = currentProduct.brand;
+                              document.getElementById('productTitle').textContent = currentProduct.name;
+                              document.getElementById('productDescription').textContent = currentProduct.description || 'Experience luxury with this exceptional product from our curated collection.';
+                              document.getElementById('productNameBreadcrumb').textContent = currentProduct.name;
+
+                              // Category link
+                              const categoryLink = document.getElementById('categoryLink');
+                              categoryLink.textContent = currentProduct.category;
+                              categoryLink.href = `category.html?category=${currentProduct.category}`;
+
+                              // Badge for sale or featured
+                              const badge = document.getElementById('productBadge');
+                              if (currentProduct.onSale) {
+                                                badge.textContent = 'SALE';
+                                                badge.className = 'product-badge sale-badge';
+                                                badge.style.display = 'inline-block';
+                              } else if (currentProduct.featured) {
+                                                badge.textContent = 'FEATURED';
+                                                badge.className = 'product-badge';
+                                                badge.style.display = 'inline-block';
+                              }
+
+                              // Images
+                              const images = currentProduct.images || [currentProduct.image];
+                              renderGallery(images);
+
+                              // Size selector
+                              renderSizeSelector();
+
+                              // Set initial price (first size)
+                              if (currentProduct.sizes && currentProduct.sizes.length > 0) {
+                                                selectedSize = currentProduct.sizes[0];
+                                                updatePriceDisplay();
+                              }
+
+                              // Check wishlist status
+                              checkWishlistStatus();
+                }
+
+                function renderGallery(images) {
+                              const mainImage = document.getElementById('mainImage');
+                              const thumbnailContainer = document.getElementById('thumbnailContainer');
+
+                              // Set main image
+                              mainImage.src = images[0];
+                              mainImage.alt = currentProduct.name;
+
+                              // Clear and render thumbnails
+                              thumbnailContainer.innerHTML = '';
+                              images.forEach((img, index) => {
+                                                const thumb = document.createElement('div');
+                                                thumb.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+                                                thumb.innerHTML = `<img src="${img}" alt="Thumbnail ${index + 1}">`;
+                                                thumb.onclick = () => selectImage(index, images);
+                                                thumbnailContainer.appendChild(thumb);
+                              });
+
+                              // Enable drag to scroll
+                              enableThumbnailDrag();
+                }
+
+                function selectImage(index, images) {
+                              currentImageIndex = index;
+                              document.getElementById('mainImage').src = images[index];
+
+                              // Update active thumbnail
+                              document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                                                thumb.classList.toggle('active', i === index);
+                              });
+                }
+
+                function enableThumbnailDrag() {
+                              const container = document.getElementById('thumbnailContainer');
+                              let isDown = false;
+                              let startX;
+                              let scrollLeft;
+
+                              container.addEventListener('mousedown', (e) => {
+                                                isDown = true;
+                                                startX = e.pageX - container.offsetLeft;
+                                                scrollLeft = container.scrollLeft;
+                              });
+
+                              container.addEventListener('mouseleave', () => isDown = false);
+                              container.addEventListener('mouseup', () => isDown = false);
+                              container.addEventListener('mousemove', (e) => {
+                                                if (!isDown) return;
+                                                e.preventDefault();
+                                                const x = e.pageX - container.offsetLeft;
+                                                const walk = (x - startX) * 2;
+                                                container.scrollLeft = scrollLeft - walk;
+                              });
+                }
+
+                function renderSizeSelector() {
+                              const container = document.getElementById('sizeSelectorContainer');
+                              if (!currentProduct.sizes || currentProduct.sizes.length === 0) return;
+
+                              // Only show size selector if multiple sizes or clothing
+                              if (currentProduct.sizes.length === 1 && currentProduct.category !== 'streetwear') {
+                                                selectedSize = currentProduct.sizes[0];
+                                                return;
+                              }
+
+                              const sizeDiv = document.createElement('div');
+                              sizeDiv.className = 'size-selector';
+                              sizeDiv.innerHTML = '<h4>Select Size</h4>';
+
+                              if (currentProduct.category === 'streetwear') {
+                                                // Button-style selector for clothing
+                                                currentProduct.sizes.forEach((size, index) => {
+                                                                      const btn = document.createElement('button');
+                                                                      btn.className = 'size-btn';
+                                                                      if (index === 0) btn.classList.add('selected');
+                                                                      btn.textContent = size.size;
+                                                                      btn.disabled = size.stock === 0;
+                                                                      btn.onclick = () => selectSize(size, btn);
+                                                                      sizeDiv.appendChild(btn);
+                                                });
+                              } else {
+                                                // Dropdown for other products
+                                                const select = document.createElement('select');
+                                                select.className = 'size-dropdown';
+                                                currentProduct.sizes.forEach((size, index) => {
+                                                                      const option = document.createElement('option');
+                                                                      option.value = index;
+                                                                      const price = size.salePrice || size.price;
+                                                                      option.textContent = `${size.size} - $${price}`;
+                                                                      if (size.stock === 0) {
+                                                                                                option.textContent += ' (Out of Stock)';
+                                                                                                option.disabled = true;
+                                                                      }
+                                                                      select.appendChild(option);
+                                                });
+                                                select.onchange = (e) => {
+                                                                      const size = currentProduct.sizes[e.target.value];
+                                                                      selectSize(size, null);
+                                                };
+                                                sizeDiv.appendChild(select);
+                              }
+
+                              container.appendChild(sizeDiv);
+                }
+
+                function selectSize(size, button) {
+                              selectedSize = size;
+
+                              // Update button states
+                              if (button) {
+                                                document.querySelectorAll('.size-btn').forEach(btn => {
+                                                                      btn.classList.remove('selected');
+                                                });
+                                                button.classList.add('selected');
+                              }
+
+                              updatePriceDisplay();
+                }
+
+                function updatePriceDisplay() {
+                              if (!selectedSize) return;
+
+                              const priceElement = document.getElementById('productPrice');
+                              if (selectedSize.salePrice) {
+                                                const discount = Math.round(((selectedSize.price - selectedSize.salePrice) / selectedSize.price) * 100);
+                                                priceElement.innerHTML = `
+                                                                      <span style="text-decoration: line-through; color: #999; margin-right: 0.5rem;">$${selectedSize.price}</span>
+                                                                      <span style="color: #e53935; font-weight: 600;">$${selectedSize.salePrice}</span>
+                                                                      <span style="background: #e53935; color: white; padding: 0.15rem 0.5rem; font-size: 0.7rem; border-radius: 3px; margin-left: 0.5rem;">${discount}% OFF</span>
+                                                `;
+                              } else {
+                                                priceElement.textContent = `$${selectedSize.price.toLocaleString()}`;
+                              }
+                }
+
+                function changeQuantity(delta) {
+                              const input = document.getElementById('quantity');
+                              let value = parseInt(input.value) + delta;
+                              value = Math.max(1, Math.min(10, value));
+                              input.value = value;
+                }
+
+                function addToCartFromPage() {
+                              if (!selectedSize) {
+                                                showToast('Please select a size');
+                                                return;
+                              }
+
+                              if (selectedSize.stock === 0) {
+                                                showToast('This size is out of stock');
+                                                return;
+                              }
+
+                              const quantity = parseInt(document.getElementById('quantity').value);
+                              const price = selectedSize.salePrice || selectedSize.price;
+
+                              const cartItem = {
+                                                id: currentProduct.id,
+                                                name: currentProduct.name,
+                                                brand: currentProduct.brand,
+                                                price: price,
+                                                originalPrice: selectedSize.price,
+                                                salePrice: selectedSize.salePrice || null,
+                                                image: currentProduct.images ? currentProduct.images[0] : currentProduct.image,
+                                                size: selectedSize.size,
+                                                sku: selectedSize.sku,
+                                                quantity: quantity
+                              };
+
+                              // Use cart.js if available, otherwise localStorage
+                              if (window.cart) {
+                                                window.cart.addToCart(cartItem);
+                                                showToast(`Added ${quantity} item(s) to cart`);
+                              } else {
+                                                let cart = JSON.parse(localStorage.getItem('luxineCart') || '[]');
+                                                const existingIndex = cart.findIndex(item => item.id === cartItem.id && item.sku === cartItem.sku);
+                                                if (existingIndex > -1) {
+                                                                      cart[existingIndex].quantity += quantity;
+                                                } else {
+                                                                      cart.push(cartItem);
+                                                }
+                                                localStorage.setItem('luxineCart', JSON.stringify(cart));
+                                                showToast(`Added ${quantity} item(s) to cart`);
+                              }
+                }
+
+                function toggleWishlist() {
+                              const btn = document.getElementById('wishlistBtn');
+                              let wishlist = JSON.parse(localStorage.getItem('luxineWishlist') || '[]');
+
+                              const index = wishlist.findIndex(item => item.id === currentProduct.id);
+                              if (index > -1) {
+                                                wishlist.splice(index, 1);
+                                                btn.classList.remove('active');
+                                                showToast('Removed from wishlist');
+                              } else {
+                                                wishlist.push(currentProduct);
+                                                btn.classList.add('active');
+                                                showToast('Added to wishlist');
+                              }
+
+                              localStorage.setItem('luxineWishlist', JSON.stringify(wishlist));
+                }
+
+                function checkWishlistStatus() {
+                              const wishlist = JSON.parse(localStorage.getItem('luxineWishlist') || '[]');
+                              const isInWishlist = wishlist.some(item => item.id === currentProduct.id);
+                              document.getElementById('wishlistBtn').classList.toggle('active', isInWishlist);
+                }
+
+                function toggleAccordion(header) {
+                              const accordion = header.parentElement;
+                              accordion.classList.toggle('open');
+                }
+
+                function showToast(message) {
+                              const toast = document.getElementById('toast');
+                              toast.textContent = message;
+                              toast.classList.add('show');
+                              setTimeout(() => toast.classList.remove('show'), 3000);
+                }
+      </script>
+  </body>
+</html>

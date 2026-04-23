@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skincare - LUXINE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Lexend:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/mega-menu.css">
+    <style>
+        :root {
+            --noir: #0d0d0d;
+            --ivory: #faf9f6;
+            --or: #c9a961;
+            --argent: #e8e6e3;
+            --charbon: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background: var(--ivory);
+            color: var(--noir);
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(250, 249, 246, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: 0.25em;
+            color: var(--noir);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--noir);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .category-hero {
+            margin-top: 70px;
+            padding: 6rem 5%;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e6e3 100%);
+            text-align: center;
+        }
+
+        .category-title {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .products-section {
+            padding: 4rem 5%;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image-container {
+            position: relative;
+            padding-bottom: 130%;
+            overflow: hidden;
+            background: var(--argent);
+        }
+
+        .product-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--or);
+            color: white;
+            padding: 0.4rem 1rem;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-brand {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-name {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        footer {
+            background: var(--charbon);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .category-title { font-size: 2.5rem; }
+            .products-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">LUXINE</a>
+            <ul class="nav-links">
+                <li data-category="t-shirts">
+                    <a href="/category.html?cat=t-shirts">T-Shirts</a>
+                    <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="t-shirts-brands"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="t-shirts-types"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="t-shirts-prices"></ul></div>
+                        <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="t-shirts-featured"></div></div>
+                    </div></div></div>
+                </li>
+                <li data-category="shorts">
+                    <a href="/category.html?cat=shorts">Shorts</a>
+                    <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="shorts-brands"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="shorts-types"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="shorts-prices"></ul></div>
+                        <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="shorts-featured"></div></div>
+                    </div></div></div>
+                </li>
+                <li data-category="outerwear">
+                    <a href="/category.html?cat=outerwear">Outerwear</a>
+                    <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="outerwear-brands"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="outerwear-types"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="outerwear-prices"></ul></div>
+                        <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="outerwear-featured"></div></div>
+                    </div></div></div>
+                </li>
+                <li data-category="bottoms">
+                    <a href="/category.html?cat=bottoms">Bottoms</a>
+                    <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="bottoms-brands"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="bottoms-types"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="bottoms-prices"></ul></div>
+                        <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="bottoms-featured"></div></div>
+                    </div></div></div>
+                </li>
+                <li data-category="jerseys">
+                    <a href="/category.html?cat=jerseys">Jerseys</a>
+                    <div class="mega-menu-wrapper"><div class="mega-menu-container"><div class="mega-menu-grid">
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Brand</h4><ul class="mega-menu-list" id="jerseys-brands"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Type</h4><ul class="mega-menu-list" id="jerseys-types"></ul></div>
+                        <div class="mega-menu-column"><h4 class="mega-menu-heading">Shop by Price</h4><ul class="mega-menu-list" id="jerseys-prices"></ul></div>
+                        <div class="mega-menu-column mega-menu-featured"><h4 class="mega-menu-heading">Trending Now</h4><div class="featured-products-grid" id="jerseys-featured"></div></div>
+                    </div></div></div>
+                </li>
+            </ul>
+            <div style="display: flex; gap: 1rem;">
+                <button style="background:none; border:none; cursor:pointer; font-size:1.1rem;">🔍</button>
+                <button style="background:none; border:none; cursor:pointer; font-size:1.1rem;">👤</button>
+                <button style="background:none; border:none; cursor:pointer; font-size:1.1rem;">🛍️</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="category-hero">
+        <h1 class="category-title">Skincare</h1>
+        <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto; line-height: 1.8;">
+            Premium skincare products crafted for exceptional results
+        </p>
+    </section>
+
+    <section class="products-section">
+        <div class="products-grid">
+            <!-- 24 Products with unique images -->
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400" class="product-image" /><span class="product-badge">Bestseller</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Daily Microfoliant</h3><p class="product-price">$62</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Cleansing Gel</h3><p class="product-price">$45</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400" class="product-image" /><span class="product-badge">New</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">SPF 50 Moisturizer</h3><p class="product-price">$85</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1570554886111-e80fcca6a029?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Eye Repair Cream</h3><p class="product-price">$98</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400" class="product-image" /><span class="product-badge">Bestseller</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Vitamin Power Serum</h3><p class="product-price">$125</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Gentle Exfoliant</h3><p class="product-price">$56</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Replenish Oil</h3><p class="product-price">$88</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=400" class="product-image" /><span class="product-badge">New</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Power Rich Cream</h3><p class="product-price">$135</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Smoothing Cream</h3><p class="product-price">$75</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400" class="product-image" /><span class="product-badge">Bestseller</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Vitamin C Serum</h3><p class="product-price">$155</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1619451334792-150fd785ee74?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Retinol Repair</h3><p class="product-price">$125</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1617897903246-719242758050?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Hydrating Booster</h3><p class="product-price">$68</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1614859324591-3affa07016fb?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Antioxidant Mist</h3><p class="product-price">$52</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1620428268482-cf1851a36764?w=400" class="product-image" /><span class="product-badge">New</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">PreCleanse Oil</h3><p class="product-price">$48</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Barrier Repair</h3><p class="product-price">$89</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1621607512214-68297480165e?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Clearing Wash</h3><p class="product-price">$42</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1612356342180-c0e1a7c275aa?w=400" class="product-image" /><span class="product-badge">Bestseller</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Active Moist</h3><p class="product-price">$55</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1617330527074-e66b8e1a5f90?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Calming Serum</h3><p class="product-price">$79</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Eye Lift Treatment</h3><p class="product-price">$92</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1598452963314-b09f397a5c48?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Clearing Booster</h3><p class="product-price">$64</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400" class="product-image" /><span class="product-badge">New</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Sleep Cocoon</h3><p class="product-price">$115</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Hydrating Masque</h3><p class="product-price">$58</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400" class="product-image" /></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Pore Refining</h3><p class="product-price">$72</p></div></div>
+            <div class="product-card"><div class="product-image-container"><img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400" class="product-image" /><span class="product-badge">Bestseller</span></div><div class="product-info"><p class="product-brand">Skincare</p><h3 class="product-name">Moisture Balance</h3><p class="product-price">$95</p></div></div>
+        </div>
+    </section>
+
+    <footer>
+        <p style="font-size: 0.75rem; opacity: 0.6;">© 2026 LUXINE. All rights reserved.</p>
+    </footer>
+
+    <!-- Mega Menu Controller -->
+    <script src="/js/mega-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "banners": [
+    {
+      "id": "banner-1",
+      "title": "New Drops",
+      "subtitle": "Fresh vintage finds added daily",
+      "backgroundImage": "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=1920&h=800&fit=crop",
+      "backgroundColor": "#1a1a1a",
+      "textColor": "#faf9f6",
+      "buttonText": "Shop Now",
+      "buttonLink": "/category?cat=t-shirts",
+      "active": true,
+      "order": 1
+    },
+    {
+      "id": "banner-2",
+      "title": "Vintage Outerwear",
+      "subtitle": "Starter jackets, Carhartt, and more",
+      "backgroundImage": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1920&h=800&fit=crop",
+      "backgroundColor": "#c9a961",
+      "textColor": "#0d0d0d",
+      "buttonText": "Explore",
+      "buttonLink": "/category?cat=outerwear",
+      "active": true,
+      "order": 2
+    },
+    {
+      "id": "banner-3",
+      "title": "Jersey Collection",
+      "subtitle": "Throwback jerseys from every era",
+      "backgroundImage": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1920&h=800&fit=crop",
+      "backgroundColor": "#0d0d0d",
+      "textColor": "#faf9f6",
+      "buttonText": "View Collection",
+      "buttonLink": "/category?cat=jerseys",
+      "active": true,
+      "order": 3
+    }
+  ]
+}

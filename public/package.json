@@ -1,0 +1,28 @@
+{
+  "name": "theluxine",
+  "version": "2.0.0",
+  "description": "Luxury E-Commerce Platform - Curated Fashion & Lifestyle",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/blob": "^0.24.0",
+    "@vercel/kv": "^1.0.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.1",
+    "cookie": "^0.6.0"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["luxury", "ecommerce", "fashion", "lifestyle"],
+  "author": "ThatLuxine",
+  "license": "UNLICENSED",
+  "private": true
+}

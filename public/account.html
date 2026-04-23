@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - LUXINE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Lexend:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #0d0d0d;
+            --ivory: #faf9f6;
+            --or: #c9a961;
+            --argent: #e8e6e3;
+            --charbon: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background: var(--ivory);
+            color: var(--noir);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(250, 249, 246, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.8rem;
+            letter-spacing: 0.15em;
+            color: var(--noir);
+            text-decoration: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .btn-logout {
+            padding: 0.6rem 1.5rem;
+            background: var(--noir);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 100px auto 2rem;
+            padding: 0 5%;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .profile-section {
+            text-align: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--argent);
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--or);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 1rem;
+            font-family: 'Bodoni Moda', serif;
+        }
+
+        .profile-name {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: var(--noir);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: var(--ivory);
+            color: var(--or);
+        }
+
+        /* Main Content */
+        .main-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            min-height: 600px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Orders */
+        .order-card {
+            background: var(--ivory);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--or);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--argent);
+        }
+
+        .order-number {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.3rem;
+        }
+
+        .order-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .status-delivered {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-processing {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .order-items {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .item-meta {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--or);
+        }
+
+        /* Payment Methods */
+        .payment-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .payment-card {
+            background: var(--ivory);
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--noir);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-expiry {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .btn-remove {
+            padding: 0.6rem 1.5rem;
+            background: transparent;
+            color: #c62828;
+            border: 1px solid #c62828;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn-add {
+            padding: 1rem 2rem;
+            background: var(--or);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 1rem;
+        }
+
+        /* Favorites */
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .favorite-card {
+            background: white;
+            border: 1px solid var(--argent);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .favorite-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .favorite-info {
+            padding: 1.5rem;
+        }
+
+        .favorite-name {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .favorite-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--or);
+            margin-bottom: 1rem;
+        }
+
+        .favorite-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-cart {
+            flex: 1;
+            padding: 0.8rem;
+            background: var(--noir);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn-unfavorite {
+            padding: 0.8rem;
+            background: transparent;
+            border: 1px solid var(--argent);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Shipping */
+        .address-card {
+            background: var(--ivory);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .default-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--or);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .address-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .address-details {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .address-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-edit {
+            padding: 0.6rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--noir);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .favorites-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .favorites-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">LUXINE</a>
+            <div class="user-info">
+                <span class="user-name" id="userName">Loading...</span>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <div class="profile-avatar" id="avatarInitial">D</div>
+                <h3 class="profile-name" id="profileName">Demo User</h3>
+                <p class="profile-email" id="profileEmail">demo@example.com</p>
+            </div>
+
+            <ul class="nav-menu">
+                <li><a href="#" class="active" onclick="showSection('orders')">📦 My Orders</a></li>
+                <li><a href="#" onclick="showSection('favorites')">❤️ Favorites</a></li>
+                <li><a href="#" onclick="showSection('payment')">💳 Payment Methods</a></li>
+                <li><a href="#" onclick="showSection('shipping')">🚚 Shipping Addresses</a></li>
+                <li><a href="#" onclick="showSection('settings')">⚙️ Account Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Orders Section -->
+            <div id="orders" class="content-section active">
+                <h1 class="section-title">My Orders</h1>
+
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-number">Order #TL-2026-001</div>
+                            <div style="font-size: 0.85rem; color: #666; margin-top: 0.3rem;">Placed on January 15, 2026</div>
+                        </div>
+                        <span class="order-status status-delivered">Delivered</span>
+                    </div>
+                    <div class="order-items">
+                        <div class="order-item">
+                            <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400" class="item-image">
+                            <div class="item-details">
+                                <div class="item-name">Daily Microfoliant</div>
+                                <div class="item-meta">Skincare • Quantity: 1</div>
+                            </div>
+                            <div class="item-price">$62.00</div>
+                        </div>
+                        <div class="order-item">
+                            <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=400" class="item-image">
+                            <div class="item-details">
+                                <div class="item-name">Man in Black EDP</div>
+                                <div class="item-meta">Fragrance • Quantity: 1</div>
+                            </div>
+                            <div class="item-price">$125.00</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--argent);">
+                        <strong>Total: $187.00</strong>
+                    </div>
+                </div>
+
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-number">Order #TL-2026-002</div>
+                            <div style="font-size: 0.85rem; color: #666; margin-top: 0.3rem;">Placed on February 5, 2026</div>
+                        </div>
+                        <span class="order-status status-processing">Processing</span>
+                    </div>
+                    <div class="order-items">
+                        <div class="order-item">
+                            <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400" class="item-image">
+                            <div class="item-details">
+                                <div class="item-name">Submariner Date</div>
+                                <div class="item-meta">Watches • Quantity: 1</div>
+                            </div>
+                            <div class="item-price">$14,300.00</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--argent);">
+                        <strong>Total: $14,300.00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Favorites Section -->
+            <div id="favorites" class="content-section">
+                <h1 class="section-title">My Favorites</h1>
+                <div class="favorites-grid">
+                    <div class="favorite-card">
+                        <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400" class="favorite-image">
+                        <div class="favorite-info">
+                            <div class="favorite-name">SPF 50 Moisturizer</div>
+                            <div class="favorite-price">$85.00</div>
+                            <div class="favorite-actions">
+                                <button class="btn-cart">Add to Cart</button>
+                                <button class="btn-unfavorite">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favorite-card">
+                        <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400" class="favorite-image">
+                        <div class="favorite-info">
+                            <div class="favorite-name">Birkin 35</div>
+                            <div class="favorite-price">$12,500.00</div>
+                            <div class="favorite-actions">
+                                <button class="btn-cart">Add to Cart</button>
+                                <button class="btn-unfavorite">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="favorite-card">
+                        <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400" class="favorite-image">
+                        <div class="favorite-info">
+                            <div class="favorite-name">Classic Sunglasses</div>
+                            <div class="favorite-price">$485.00</div>
+                            <div class="favorite-actions">
+                                <button class="btn-cart">Add to Cart</button>
+                                <button class="btn-unfavorite">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Methods Section -->
+            <div id="payment" class="content-section">
+                <h1 class="section-title">Payment Methods</h1>
+                <p style="color: #666; margin-bottom: 2rem;">Manage your saved payment methods for faster checkout</p>
+
+                <div class="payment-grid">
+                    <div class="payment-card">
+                        <div class="payment-info">
+                            <div class="card-icon">💳</div>
+                            <div>
+                                <div class="card-number">•••• •••• •••• 4242</div>
+                                <div class="card-expiry">Expires 12/2027 • Visa</div>
+                            </div>
+                        </div>
+                        <button class="btn-remove">Remove</button>
+                    </div>
+                    <div class="payment-card">
+                        <div class="payment-info">
+                            <div class="card-icon" style="background: var(--or);">💳</div>
+                            <div>
+                                <div class="card-number">•••• •••• •••• 8888</div>
+                                <div class="card-expiry">Expires 03/2028 • Mastercard</div>
+                            </div>
+                        </div>
+                        <button class="btn-remove">Remove</button>
+                    </div>
+                </div>
+
+                <button class="btn-add">+ Add New Payment Method</button>
+                <p style="margin-top: 2rem; font-size: 0.85rem; color: #999;">
+                    🔒 Your payment information is encrypted and secure. We partner with Stripe for secure payment processing.
+                </p>
+            </div>
+
+            <!-- Shipping Addresses Section -->
+            <div id="shipping" class="content-section">
+                <h1 class="section-title">Shipping Addresses</h1>
+                <p style="color: #666; margin-bottom: 2rem;">Manage your delivery addresses</p>
+
+                <div class="address-card">
+                    <span class="default-badge">Default</span>
+                    <div class="address-name">Home Address</div>
+                    <div class="address-details">
+                        John Doe<br>
+                        123 Luxury Avenue<br>
+                        New York, NY 10001<br>
+                        United States<br>
+                        Phone: +1 (555) 123-4567
+                    </div>
+                    <div class="address-actions">
+                        <button class="btn-edit">Edit</button>
+                        <button class="btn-remove">Remove</button>
+                    </div>
+                </div>
+
+                <div class="address-card">
+                    <div class="address-name">Office Address</div>
+                    <div class="address-details">
+                        John Doe<br>
+                        456 Business Plaza, Suite 789<br>
+                        New York, NY 10002<br>
+                        United States<br>
+                        Phone: +1 (555) 987-6543
+                    </div>
+                    <div class="address-actions">
+                        <button class="btn-edit">Edit</button>
+                        <button class="btn-edit" style="border-color: var(--or); color: var(--or);">Set as Default</button>
+                        <button class="btn-remove">Remove</button>
+                    </div>
+                </div>
+
+                <button class="btn-add">+ Add New Address</button>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings" class="content-section">
+                <h1 class="section-title">Account Settings</h1>
+
+                <div style="background: var(--ivory); padding: 2rem; border-radius: 8px;">
+                    <h3 style="margin-bottom: 1.5rem;">Personal Information</h3>
+                    <div style="display: grid; gap: 1.5rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Full Name</label>
+                            <input type="text" value="Demo User" style="width: 100%; padding: 0.8rem; border: 1px solid var(--argent); border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email</label>
+                            <input type="email" value="demo@example.com" style="width: 100%; padding: 0.8rem; border: 1px solid var(--argent); border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone</label>
+                            <input type="tel" value="+1 (555) 123-4567" style="width: 100%; padding: 0.8rem; border: 1px solid var(--argent); border-radius: 4px;">
+                        </div>
+                        <button class="btn-add" style="width: fit-content;">Save Changes</button>
+                    </div>
+                </div>
+
+                <div style="background: var(--ivory); padding: 2rem; border-radius: 8px; margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem;">Password</h3>
+                    <button class="btn-add" style="width: fit-content;">Change Password</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        window.addEventListener('load', function() {
+            const session = localStorage.getItem('userSession');
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userData = JSON.parse(session);
+            
+            // If admin, redirect to admin panel
+            if (userData.role === 'admin') {
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            // Populate user info
+            document.getElementById('userName').textContent = userData.name;
+            document.getElementById('profileName').textContent = userData.name;
+            document.getElementById('profileEmail').textContent = userData.email;
+            document.getElementById('avatarInitial').textContent = userData.name.charAt(0).toUpperCase();
+        });
+
+        // Show section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active to clicked nav item
+            event.target.classList.add('active');
+
+            return false;
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

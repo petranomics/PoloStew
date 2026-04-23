@@ -1,0 +1,332 @@
+/* Mega Menu Styles for ThatLuxine */
+
+/* Base Navigation Adjustments */
+.nav-links > li {
+  position: relative;
+}
+
+/* Mega Menu Wrapper */
+.mega-menu-wrapper {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 1400px;
+  background: white;
+  border-top: 1px solid rgba(201, 169, 97, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 998;
+  pointer-events: none;
+}
+
+/* Show mega menu on hover (desktop only) */
+@media (min-width: 1281px) {
+  .nav-links > li:hover .mega-menu-wrapper {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+}
+
+/* Mega Menu Container */
+.mega-menu-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 5%;
+}
+
+/* Mega Menu Grid - 4 Columns */
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+}
+
+/* Individual Column Styling */
+.mega-menu-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.mega-menu-column:last-child {
+  border-left: 1px solid rgba(201, 169, 97, 0.15);
+  padding-left: 3rem;
+}
+
+/* Column Headings */
+.mega-menu-heading {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  color: var(--noir, #0d0d0d);
+  border-bottom: 1px solid var(--or, #c9a961);
+  padding-bottom: 0.75rem;
+}
+
+/* Menu Lists */
+.mega-menu-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0;
+  margin: 0;
+}
+
+.mega-menu-list li a {
+  color: var(--noir, #0d0d0d);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  transition: all 0.25s ease;
+  display: block;
+  padding: 0.4rem 0;
+  position: relative;
+  padding-left: 0;
+}
+
+.mega-menu-list li a:hover {
+  color: var(--or, #c9a961);
+  padding-left: 0.75rem;
+}
+
+.mega-menu-list li a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--or, #c9a961);
+  transition: width 0.25s ease;
+}
+
+.mega-menu-list li a:hover::before {
+  width: 0.5rem;
+}
+
+/* Featured Products Column */
+.mega-menu-featured {
+  background: linear-gradient(135deg, var(--ivory, #faf9f6) 0%, #f5f3ef 100%);
+  padding: 2rem;
+  border-radius: 8px;
+  border-left: none;
+}
+
+.featured-products-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Featured Product Card */
+.featured-product-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--noir, #0d0d0d);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.featured-product-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.featured-product-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.featured-product-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.featured-product-info .brand {
+  font-size: 0.7rem;
+  color: var(--or, #c9a961);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+  font-weight: 400;
+}
+
+.featured-product-info h5 {
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.featured-product-info .price {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 0.9rem;
+  color: var(--noir, #0d0d0d);
+  font-weight: 500;
+}
+
+/* Mobile Mega Menu Styles */
+@media (max-width: 1280px) {
+  .mega-menu-wrapper {
+    position: static;
+    width: 100%;
+    max-width: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    border: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+  }
+
+  .mega-menu-wrapper.active {
+    max-height: 2500px;
+  }
+
+  .mega-menu-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .mega-menu-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .mega-menu-column:last-child {
+    border-left: none;
+    border-top: 1px solid rgba(201, 169, 97, 0.15);
+    padding-left: 0;
+    padding-top: 2rem;
+  }
+
+  .mega-menu-featured {
+    padding: 1.5rem;
+  }
+
+  /* Mobile Nav Toggle */
+  .mobile-nav-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.1);
+  }
+
+  .mobile-nav-toggle a {
+    flex: 1;
+  }
+
+  .mobile-nav-toggle::after {
+    content: '+';
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--or, #c9a961);
+    transition: transform 0.3s ease;
+    margin-left: 1rem;
+  }
+
+  .mobile-nav-toggle.active::after {
+    transform: rotate(45deg);
+  }
+
+  /* Mobile Featured Products - Horizontal Scroll */
+  .featured-products-grid {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .featured-product-card {
+    flex-direction: column;
+    min-width: 180px;
+    max-width: 180px;
+  }
+
+  .featured-product-img {
+    width: 100%;
+    height: 140px;
+  }
+}
+
+/* Tablet Adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .mega-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+
+  .mega-menu-column:nth-child(3) {
+    border-top: 1px solid rgba(201, 169, 97, 0.15);
+    padding-top: 2.5rem;
+  }
+
+  .mega-menu-column:last-child {
+    border-left: none;
+    border-top: 1px solid rgba(201, 169, 97, 0.15);
+    padding-left: 0;
+    padding-top: 2.5rem;
+  }
+
+  .featured-products-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .featured-product-card {
+    flex: 0 0 calc(50% - 0.5rem);
+  }
+}
+
+/* Prevent Body Scroll when Mobile Menu Open */
+body.mega-menu-open {
+  overflow: hidden;
+}
+
+/* Accessibility - Focus States */
+.mega-menu-list li a:focus,
+.featured-product-card:focus {
+  outline: 2px solid var(--or, #c9a961);
+  outline-offset: 2px;
+}
+
+/* Loading State */
+.mega-menu-wrapper.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Empty State */
+.mega-menu-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.85rem;
+}

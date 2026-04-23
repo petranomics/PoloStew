@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management - PoloStew Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --noir: #1a1a1a;
+            --or: #c75d3a;
+            --blanc: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: var(--noir);
+        }
+
+        .header {
+            background: var(--noir);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--or);
+            color: var(--noir);
+        }
+
+        .btn-primary:hover {
+            background: #c9a431;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--noir);
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--noir);
+        }
+
+        .inventory-table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: var(--noir);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .search-box {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 0.9rem;
+            width: 250px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .product-row {
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .product-row:hover {
+            background: #f9f9f9;
+        }
+
+        .product-main {
+            display: grid;
+            grid-template-columns: 60px 1fr 150px 150px 100px 50px;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            align-items: center;
+        }
+
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .product-name {
+            font-weight: 500;
+        }
+
+        .product-brand {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .expand-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .product-row.expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .sizes-detail {
+            display: none;
+            padding: 1rem 1.5rem 1.5rem 5rem;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .product-row.expanded .sizes-detail {
+            display: block;
+        }
+
+        .sizes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .size-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .size-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .size-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .stock-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .stock-badge.in-stock {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .stock-badge.low-stock {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .stock-badge.out-of-stock {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .size-details {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stock-control {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.75rem;
+        }
+
+        .stock-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .message {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Inventory Management</h1>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='/admin/'">Back to Dashboard</button>
+            <button class="btn btn-primary" onclick="syncInventory()">Sync Inventory to KV</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="message" class="message"></div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Products</div>
+                <div class="stat-value" id="totalProducts">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total SKUs</div>
+                <div class="stat-value" id="totalSkus">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Low Stock Items</div>
+                <div class="stat-value" id="lowStock">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Out of Stock</div>
+                <div class="stat-value" id="outOfStock">-</div>
+            </div>
+        </div>
+
+        <div class="inventory-table">
+            <div class="table-header">
+                <h2>Product Inventory</h2>
+                <input type="text" class="search-box" placeholder="Search products..." id="searchBox" oninput="filterProducts()">
+            </div>
+
+            <div id="productList" class="loading">
+                Loading products...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let products = [];
+        let inventory = {};
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const data = await response.json();
+                products = data.products || [];
+
+                renderProducts();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('productList').innerHTML = '<p style="padding: 2rem; text-align: center; color: #c62828;">Error loading products</p>';
+            }
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productList');
+
+            if (products.length === 0) {
+                container.innerHTML = '<p style="padding: 2rem; text-align: center;">No products found</p>';
+                return;
+            }
+
+            container.innerHTML = products.map(product => `
+                <div class="product-row" onclick="toggleRow(this, '${product.id}')">
+                    <div class="product-main">
+                        <img src="${product.image}" alt="${product.name}" class="product-img">
+                        <div>
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-brand">${product.brand}</div>
+                        </div>
+                        <div>${product.category}</div>
+                        <div>$${product.basePrice}</div>
+                        <div>${product.sizes.length} sizes</div>
+                        <div class="expand-icon">▶</div>
+                    </div>
+                    <div class="sizes-detail">
+                        <!-- Product Images Gallery -->
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Product Images</h3>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: start;">
+                                ${(product.images || []).map((img, idx) => `
+                                    <div style="position: relative; width: 150px; height: 150px;">
+                                        <img src="${img}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 2px solid #e0e0e0;">
+                                        <button onclick="removeImage(event, '${product.id}', '${img}')" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 14px; line-height: 1;">×</button>
+                                        ${idx === 0 ? '<div style="position: absolute; bottom: 5px; left: 5px; background: rgba(212, 175, 55, 0.9); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">Main</div>' : ''}
+                                    </div>
+                                `).join('')}
+                                <div style="width: 150px; height: 150px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="uploadImage(event, '${product.id}')">
+                                    <div style="text-align: center; color: #666;">
+                                        <div style="font-size: 2rem;">+</div>
+                                        <div style="font-size: 0.8rem;">Add Image</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Size Variants -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 600;">Size Variants</h3>
+                            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" ${product.onSale ? 'checked' : ''} onchange="toggleProductSale(event, '${product.id}')">
+                                <span style="font-weight: 600; color: #e53935;">ON SALE</span>
+                            </label>
+                        </div>
+                        <div class="sizes-grid">
+                            ${product.sizes.map(size => {
+                                const discount = size.salePrice ? Math.round(((size.price - size.salePrice) / size.price) * 100) : 0;
+                                return `
+                                <div class="size-card">
+                                    <div class="size-header">
+                                        <span class="size-name">${size.size}</span>
+                                        <span class="stock-badge ${getStockClass(size.stock)}">
+                                            ${size.stock} in stock
+                                        </span>
+                                    </div>
+                                    <div class="size-details">
+                                        <div>SKU: ${size.sku}</div>
+                                        <div>Regular Price: $${size.price}</div>
+                                        ${size.salePrice ? `<div style="color: #e53935; font-weight: 600;">Sale Price: $${size.salePrice} (${discount}% OFF)</div>` : ''}
+                                    </div>
+                                    <div class="stock-control">
+                                        <input type="number" class="stock-input" value="${size.stock}" min="0" id="stock-${size.sku}" placeholder="Stock">
+                                        <button class="btn btn-primary btn-small" onclick="updateStock(event, '${product.id}', '${size.sku}')">Update</button>
+                                    </div>
+                                    ${product.onSale ? `
+                                        <div class="stock-control" style="margin-top: 0.5rem;">
+                                            <input type="number" class="stock-input" value="${size.salePrice || ''}" min="0" max="${size.price}" id="sale-${size.sku}" placeholder="Sale Price">
+                                            <button class="btn btn-primary btn-small" onclick="updateSalePrice(event, '${product.id}', '${size.sku}')">Set Sale</button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `}).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStockClass(stock) {
+            if (stock === 0) return 'out-of-stock';
+            if (stock < 5) return 'low-stock';
+            return 'in-stock';
+        }
+
+        function toggleRow(row, productId) {
+            // Don't toggle if clicking on input or button
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') {
+                return;
+            }
+            row.classList.toggle('expanded');
+        }
+
+        async function updateStock(event, productId, sku) {
+            event.stopPropagation();
+
+            const input = document.getElementById(`stock-${sku}`);
+            const newStock = parseInt(input.value);
+
+            if (isNaN(newStock) || newStock < 0) {
+                showMessage('Invalid stock value', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/inventory/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        productId,
+                        sku,
+                        quantity: newStock,
+                        operation: 'set'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(`Stock updated for ${sku}`, 'success');
+                    updateStats();
+                } else {
+                    showMessage(data.error || 'Failed to update stock', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating stock:', error);
+                showMessage('Error updating stock', 'error');
+            }
+        }
+
+        async function syncInventory() {
+            if (!confirm('This will sync all product inventory from products.json to Vercel KV. Continue?')) {
+                return;
+            }
+
+            try {
+                showMessage('Syncing inventory...', 'success');
+
+                const response = await fetch('/api/inventory/sync', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(`Inventory synced! ${data.syncedItems} items updated.`, 'success');
+                } else {
+                    showMessage(data.error || 'Failed to sync inventory', 'error');
+                }
+            } catch (error) {
+                console.error('Error syncing inventory:', error);
+                showMessage('Error syncing inventory', 'error');
+            }
+        }
+
+        function updateStats() {
+            const totalProducts = products.length;
+            const totalSkus = products.reduce((sum, p) => sum + p.sizes.length, 0);
+            const lowStock = products.reduce((sum, p) =>
+                sum + p.sizes.filter(s => s.stock > 0 && s.stock < 5).length, 0
+            );
+            const outOfStock = products.reduce((sum, p) =>
+                sum + p.sizes.filter(s => s.stock === 0).length, 0
+            );
+
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('totalSkus').textContent = totalSkus;
+            document.getElementById('lowStock').textContent = lowStock;
+            document.getElementById('outOfStock').textContent = outOfStock;
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const rows = document.querySelectorAll('.product-row');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type} show`;
+            setTimeout(() => msg.classList.remove('show'), 5000);
+        }
+
+        // Image Management Functions
+        async function uploadImage(event, productId) {
+            event.stopPropagation();
+
+            // Create file input
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/jpeg,image/jpg,image/png,image/webp';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                try {
+                    showMessage('Uploading image...', 'success');
+
+                    // Read file as base64
+                    const reader = new FileReader();
+                    reader.onload = async (readerEvent) => {
+                        const imageData = readerEvent.target.result;
+
+                        // Upload to Vercel Blob
+                        const uploadRes = await fetch('/api/images/upload', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                                imageData,
+                                filename: file.name,
+                                productId
+                            })
+                        });
+
+                        const uploadData = await uploadRes.json();
+
+                        if (!uploadRes.ok) {
+                            showMessage(uploadData.error || 'Upload failed', 'error');
+                            return;
+                        }
+
+                        // Update product images
+                        const updateRes = await fetch('/api/images/update-product', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                                productId,
+                                images: uploadData.url,
+                                action: 'add'
+                            })
+                        });
+
+                        const updateData = await updateRes.json();
+
+                        if (updateRes.ok) {
+                            showMessage('Image uploaded successfully!', 'success');
+                            loadProducts(); // Reload to show new image
+                        } else {
+                            showMessage(updateData.error || 'Failed to update product', 'error');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    showMessage('Error uploading image', 'error');
+                }
+            };
+            input.click();
+        }
+
+        async function removeImage(event, productId, imageUrl) {
+            event.stopPropagation();
+
+            if (!confirm('Remove this image?')) return;
+
+            try {
+                const res = await fetch('/api/images/update-product', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        productId,
+                        images: imageUrl,
+                        action: 'remove'
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showMessage('Image removed successfully', 'success');
+                    loadProducts(); // Reload to remove image from display
+                } else {
+                    showMessage(data.error || 'Failed to remove image', 'error');
+                }
+            } catch (error) {
+                console.error('Remove error:', error);
+                showMessage('Error removing image', 'error');
+            }
+        }
+
+        // Sale Management Functions
+        async function toggleProductSale(event, productId) {
+            event.stopPropagation();
+            const isOnSale = event.target.checked;
+
+            try {
+                const res = await fetch('/api/products/sale', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        productId,
+                        onSale: isOnSale
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showMessage(`Product ${isOnSale ? 'marked' : 'unmarked'} as on sale`, 'success');
+                    loadProducts();
+                } else {
+                    showMessage(data.error || 'Failed to update sale status', 'error');
+                    event.target.checked = !isOnSale; // Revert checkbox
+                }
+            } catch (error) {
+                console.error('Sale toggle error:', error);
+                showMessage('Error updating sale status', 'error');
+                event.target.checked = !isOnSale; // Revert checkbox
+            }
+        }
+
+        async function updateSalePrice(event, productId, sku) {
+            event.stopPropagation();
+
+            const input = document.getElementById(`sale-${sku}`);
+            const salePrice = parseInt(input.value);
+
+            if (isNaN(salePrice) || salePrice < 0) {
+                showMessage('Invalid sale price', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/products/sale-price', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        productId,
+                        sku,
+                        salePrice
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showMessage('Sale price updated successfully', 'success');
+                    loadProducts();
+                } else {
+                    showMessage(data.error || 'Failed to update sale price', 'error');
+                }
+            } catch (error) {
+                console.error('Sale price error:', error);
+                showMessage('Error updating sale price', 'error');
+            }
+        }
+
+        // Load on page load
+        loadProducts();
+    </script>
+</body>
+</html>
