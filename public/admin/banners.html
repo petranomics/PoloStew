@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Management - POLOSTEW Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+            --clay: #c49a6c;
+            --parchment: #f0e6d3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--ivory);
+            color: var(--noir);
+        }
+
+        header {
+            background: var(--noir);
+            color: var(--ivory);
+            padding: 1.5rem 5%;
+            border-bottom: 3px solid var(--or);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+        }
+
+        .back-btn {
+            background: var(--or);
+            color: var(--noir);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .banner-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .banner-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .banner-preview {
+            position: relative;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .banner-preview-content {
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+        }
+
+        .banner-preview h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .banner-preview p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .banner-preview button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--argent);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .color-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            border: 2px solid var(--argent);
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--noir);
+            color: var(--ivory);
+        }
+
+        .btn-primary:hover {
+            background: #2a2a2a;
+        }
+
+        .btn-secondary {
+            background: var(--or);
+            color: var(--noir);
+        }
+
+        .btn-secondary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background: #e53935;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s;
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .message.success {
+            border-left: 4px solid #4caf50;
+        }
+
+        .message.error {
+            border-left: 4px solid #e53935;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--or);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .file-upload-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--or);
+            color: var(--noir);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .file-upload-btn:hover {
+            opacity: 0.9;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Banner Management</h1>
+            <a href="index.html" class="back-btn">← Back to Admin</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="banner-grid" id="bannerGrid">
+            <!-- Banners will be loaded here -->
+        </div>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <script>
+        let banners = [];
+
+        async function loadBanners() {
+            try {
+                const res = await fetch('/data/banners.json');
+                const data = await res.json();
+                banners = data.banners.sort((a, b) => a.order - b.order);
+                renderBanners();
+            } catch (error) {
+                console.error('Error loading banners:', error);
+                showMessage('Error loading banners', 'error');
+            }
+        }
+
+        function renderBanners() {
+            const grid = document.getElementById('bannerGrid');
+            grid.innerHTML = banners.map((banner, index) => `
+                <div class="banner-card">
+                    <div class="banner-preview" style="background-image: url('${banner.backgroundImage}'); background-color: ${banner.backgroundColor};">
+                        <div class="banner-preview-content" style="color: ${banner.textColor};">
+                            <h2>${banner.title}</h2>
+                            <p>${banner.subtitle}</p>
+                            <button style="background: ${banner.textColor}; color: ${banner.backgroundColor};">
+                                ${banner.buttonText}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Banner Active</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${banner.active ? 'checked' : ''} onchange="toggleBannerActive(${index})">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" value="${banner.title}" onchange="updateBanner(${index}, 'title', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Subtitle</label>
+                        <input type="text" value="${banner.subtitle}" onchange="updateBanner(${index}, 'subtitle', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Background Image URL</label>
+                        <input type="text" value="${banner.backgroundImage}" onchange="updateBanner(${index}, 'backgroundImage', this.value)">
+                        <label for="img-${index}" class="file-upload-btn">Upload Custom Image</label>
+                        <input type="file" id="img-${index}" accept="image/*" onchange="uploadBannerImage(${index}, this)">
+                    </div>
+
+                    <div class="color-input-group">
+                        <div class="form-group">
+                            <label>Background Color</label>
+                            <input type="color" value="${banner.backgroundColor}" onchange="updateBanner(${index}, 'backgroundColor', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <input type="color" value="${banner.textColor}" onchange="updateBanner(${index}, 'textColor', this.value)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Button Text</label>
+                        <input type="text" value="${banner.buttonText}" onchange="updateBanner(${index}, 'buttonText', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Button Link</label>
+                        <input type="text" value="${banner.buttonLink}" onchange="updateBanner(${index}, 'buttonLink', this.value)" placeholder="/category?cat=t-shirts">
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="saveBanner(${index})">Save Changes</button>
+                        <button class="btn btn-danger" onclick="deleteBanner(${index})">Delete Banner</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateBanner(index, field, value) {
+            banners[index][field] = value;
+            renderBanners();
+        }
+
+        function toggleBannerActive(index) {
+            banners[index].active = !banners[index].active;
+        }
+
+        async function uploadBannerImage(index, input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            try {
+                showMessage('Uploading image...', 'success');
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const imageData = e.target.result;
+
+                    // Upload to Vercel Blob
+                    const uploadRes = await fetch('/api/images/upload', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            imageData,
+                            filename: file.name,
+                            productId: `banner-${index}`
+                        })
+                    });
+
+                    const uploadData = await uploadRes.json();
+
+                    if (uploadRes.ok) {
+                        banners[index].backgroundImage = uploadData.url;
+                        renderBanners();
+                        showMessage('Image uploaded successfully!', 'success');
+                    } else {
+                        showMessage(uploadData.error || 'Upload failed', 'error');
+                    }
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Upload error:', error);
+                showMessage('Error uploading image', 'error');
+            }
+        }
+
+        async function saveBanner(index) {
+            try {
+                const res = await fetch('/api/banners/update', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        banners: banners
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showMessage('Banner saved successfully!', 'success');
+                } else {
+                    showMessage(data.error || 'Failed to save banner', 'error');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                showMessage('Error saving banner', 'error');
+            }
+        }
+
+        async function deleteBanner(index) {
+            if (!confirm('Delete this banner?')) return;
+
+            banners.splice(index, 1);
+            await saveBanner(0);
+            renderBanners();
+            showMessage('Banner deleted', 'success');
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type} show`;
+            setTimeout(() => msg.classList.remove('show'), 5000);
+        }
+
+        loadBanners();
+    </script>
+</body>
+</html>

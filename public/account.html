@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - LUXINE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Lexend:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <title>My Account - POLOSTEW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --noir: #0d0d0d;
-            --ivory: #faf9f6;
-            --or: #c9a961;
-            --argent: #e8e6e3;
-            --charbon: #1a1a1a;
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+            --clay: #c49a6c;
+            --parchment: #f0e6d3;
         }
 
         * {
@@ -21,7 +24,7 @@
         }
 
         body {
-            font-family: 'Lexend', sans-serif;
+            font-family: 'DM Sans', sans-serif;
             background: var(--ivory);
             color: var(--noir);
         }
@@ -32,9 +35,9 @@
             width: 100%;
             top: 0;
             z-index: 1000;
-            background: rgba(250, 249, 246, 0.98);
+            background: rgba(250, 246, 240, 0.98);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+            border-bottom: 1px solid var(--argent);
         }
 
         nav {
@@ -47,7 +50,7 @@
         }
 
         .logo {
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
             font-size: 1.8rem;
             letter-spacing: 0.15em;
             color: var(--noir);
@@ -67,7 +70,7 @@
 
         .btn-logout {
             padding: 0.6rem 1.5rem;
-            background: var(--noir);
+            background: var(--or);
             color: white;
             border: none;
             border-radius: 4px;
@@ -115,11 +118,11 @@
             font-size: 2rem;
             color: white;
             margin: 0 auto 1rem;
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
         }
 
         .profile-name {
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
         }
@@ -178,7 +181,7 @@
         }
 
         .section-title {
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             margin-bottom: 2rem;
         }
@@ -202,7 +205,7 @@
         }
 
         .order-number {
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
             font-size: 1.3rem;
         }
 
@@ -284,12 +287,12 @@
         .card-icon {
             width: 50px;
             height: 50px;
-            background: var(--noir);
+            background: var(--charbon);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--ivory);
             font-size: 1.5rem;
         }
 
@@ -358,7 +361,7 @@
         }
 
         .favorite-name {
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
             font-size: 1.2rem;
             margin-bottom: 0.5rem;
         }
@@ -378,7 +381,7 @@
         .btn-cart {
             flex: 1;
             padding: 0.8rem;
-            background: var(--noir);
+            background: var(--or);
             color: white;
             border: none;
             border-radius: 4px;
@@ -470,7 +473,7 @@
     <!-- Header -->
     <header>
         <nav>
-            <a href="index.html" class="logo">LUXINE</a>
+            <a href="index.html" class="logo">POLOSTEW</a>
             <div class="user-info">
                 <span class="user-name" id="userName">Loading...</span>
                 <button class="btn-logout" onclick="logout()">Logout</button>

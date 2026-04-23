@@ -1,4 +1,4 @@
-/* Mega Menu Styles for ThatLuxine */
+/* Mega Menu Styles for PoloStew */
 
 /* Base Navigation Adjustments */
 nav {
@@ -21,8 +21,8 @@ nav {
     width: 100%;
     max-width: none;
     background: white;
-    border-top: 1px solid rgba(201, 169, 97, 0.2);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border-top: 1px solid rgba(232, 224, 212, 0.8);
+    box-shadow: 0 10px 40px rgba(44, 36, 24, 0.06);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
@@ -73,21 +73,21 @@ nav {
 }
 
 .mega-menu-column:last-child {
-    border-left: 1px solid rgba(201, 169, 97, 0.15);
+    border-left: 1px solid rgba(232, 224, 212, 0.8);
     padding-left: 3rem;
 }
 
 /* Column Headings */
 .mega-menu-heading {
-    font-family: 'Bodoni Moda', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 0.85rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: var(--noir, #0d0d0d);
+    color: var(--noir, #2c2418);
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--or, #c9a961);
+    border-bottom: 2px solid var(--or, #c75d3a);
 }
 
 /* Menu Lists */
@@ -101,7 +101,7 @@ nav {
 }
 
 .mega-menu-list li a {
-    color: var(--noir, #0d0d0d);
+    color: var(--noir, #2c2418);
     text-decoration: none;
     font-size: 0.85rem;
     font-weight: 300;
@@ -114,7 +114,7 @@ nav {
 }
 
 .mega-menu-list li a:hover {
-    color: var(--or, #c9a961);
+    color: var(--or, #c75d3a);
     padding-left: 0.75rem;
 }
 
@@ -126,7 +126,7 @@ nav {
     transform: translateY(-50%);
     width: 0;
     height: 1px;
-    background: var(--or, #c9a961);
+    background: var(--or, #c75d3a);
     transition: width 0.25s ease;
 }
 
@@ -136,7 +136,7 @@ nav {
 
 /* Featured Products Column */
 .mega-menu-featured {
-    background: linear-gradient(135deg, var(--ivory, #faf9f6) 0%, #f5f3ef 100%);
+    background: linear-gradient(135deg, var(--ivory, #faf6f0) 0%, #f0e6d3 100%);
     padding: 2rem;
     border-radius: 8px;
     border-left: none;
@@ -183,7 +183,7 @@ nav {
 
 .featured-product-info .brand {
     font-size: 0.7rem;
-    color: var(--or, #c9a961);
+    color: var(--or, #c75d3a);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 0.25rem;
@@ -198,9 +198,9 @@ nav {
 }
 
 .featured-product-info .price {
-    font-family: 'Bodoni Moda', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 0.9rem;
-    color: var(--noir, #0d0d0d);
+    color: var(--noir, #2c2418);
     font-weight: 500;
 }
 
@@ -238,7 +238,7 @@ nav {
     .mega-menu-column:last-child {
         border-left: none;
         padding-left: 0;
-        border-top: 1px solid rgba(201, 169, 97, 0.15);
+        border-top: 1px solid rgba(232, 224, 212, 0.8);
         padding-top: 1.5rem;
     }
 

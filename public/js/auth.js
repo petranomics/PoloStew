@@ -1,5 +1,5 @@
 /**
- * Authentication Client for ThatLuxine
+ * Authentication Client for PoloStew
  * Handles login, registration, and session management
  */
 

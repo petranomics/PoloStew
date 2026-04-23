@@ -1,5 +1,5 @@
 /**
- * Mega Menu Controller for ThatLuxine
+ * Mega Menu Controller for PoloStew
  * Handles dynamic population and interaction of category mega menus
  */
 
@@ -188,8 +188,8 @@ class MegaMenu {
 async function initializeMegaMenu() {
   try {
     // Check if catalog data is cached in localStorage
-    const cachedData = localStorage.getItem('theluxine-catalog');
-    const cacheTime = localStorage.getItem('theluxine-catalog-time');
+    const cachedData = localStorage.getItem('polostew-catalog');
+    const cacheTime = localStorage.getItem('polostew-catalog-time');
     const oneHour = 60 * 60 * 1000;
 
     let catalogData;
@@ -207,8 +207,8 @@ async function initializeMegaMenu() {
       catalogData = await response.json();
 
       // Cache the data
-      localStorage.setItem('theluxine-catalog', JSON.stringify(catalogData));
-      localStorage.setItem('theluxine-catalog-time', Date.now().toString());
+      localStorage.setItem('polostew-catalog', JSON.stringify(catalogData));
+      localStorage.setItem('polostew-catalog-time', Date.now().toString());
       console.log('Loaded catalog from server and cached');
     }
 
@@ -234,7 +234,7 @@ if (document.readyState === 'loading') {
 
 // Expose catalog data for other scripts
 window.getCatalogData = async function() {
-  const cached = localStorage.getItem('theluxine-catalog');
+  const cached = localStorage.getItem('polostew-catalog');
   if (cached) {
     return JSON.parse(cached);
   }

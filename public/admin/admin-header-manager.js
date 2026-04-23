@@ -41,7 +41,7 @@ function renderHeaderSlidesAdmin() {
                 background: #ccc; position: relative; cursor: pointer; border: none;
                 transition: background 0.2s; outline: none;
             }
-            .banner-active-toggle:checked { background: #d4af37; }
+            .banner-active-toggle:checked { background: #d4873a; }
             .banner-active-toggle::after {
                 content: ''; position: absolute; top: 2px; left: 2px;
                 width: 18px; height: 18px; border-radius: 50%; background: #fff;
@@ -67,9 +67,9 @@ function renderHeaderSlidesAdmin() {
                 justify-content: center; border: 2px dashed #ddd; position: relative;
                 cursor: pointer; transition: border-color 0.2s;
             }
-            .banner-image-preview:hover { border-color: #d4af37; }
+            .banner-image-preview:hover { border-color: #d4873a; }
             .banner-image-preview.has-image { border-style: solid; border-color: #e0e0e0; }
-            .banner-image-preview.dragover { border-color: #d4af37; background: #fdf8e8; }
+            .banner-image-preview.dragover { border-color: #d4873a; background: #fdf8e8; }
             .banner-image-preview img { width: 100%; height: 100%; object-fit: cover; }
             .banner-image-placeholder {
                 text-align: center; color: #aaa; font-size: 12px;
@@ -87,7 +87,7 @@ function renderHeaderSlidesAdmin() {
                 border: none; cursor: pointer; transition: all 0.2s;
                 background: #f5f5f5; color: #999; text-align: center;
             }
-            .banner-image-source-btn.active { background: #1a1a1a; color: #d4af37; }
+            .banner-image-source-btn.active { background: #1a1a1a; color: #d4873a; }
             .banner-image-source-btn:hover:not(.active) { background: #eee; }
             .banner-image-url-input {
                 display: flex; flex-direction: column; gap: 4px;
@@ -101,7 +101,7 @@ function renderHeaderSlidesAdmin() {
                 font-size: 12px; font-family: 'Montserrat', sans-serif;
                 transition: border-color 0.2s; outline: none; width: 100%; box-sizing: border-box;
             }
-            .banner-image-url-input input:focus { border-color: #d4af37; }
+            .banner-image-url-input input:focus { border-color: #d4873a; }
             .banner-fields { display: flex; flex-direction: column; gap: 12px; }
             .banner-field { display: flex; flex-direction: column; gap: 4px; }
             .banner-field label {
@@ -113,7 +113,7 @@ function renderHeaderSlidesAdmin() {
                 font-size: 14px; font-family: 'Montserrat', sans-serif;
                 transition: border-color 0.2s; outline: none;
             }
-            .banner-field input:focus { border-color: #d4af37; }
+            .banner-field input:focus { border-color: #d4873a; }
             .banner-field .field-hint {
                 font-size: 10px; color: #bbb; font-family: 'Montserrat', sans-serif;
                 margin-top: 2px;
@@ -124,14 +124,14 @@ function renderHeaderSlidesAdmin() {
                 border-top: 1px solid #f0f0f0;
             }
             .banner-add-btn {
-                background: #fff; border: 2px dashed #d4af37; color: #d4af37;
+                background: #fff; border: 2px dashed #d4873a; color: #d4873a;
                 padding: 12px 24px; border-radius: 8px; font-size: 14px; cursor: pointer;
                 font-family: 'Montserrat', sans-serif; font-weight: 600;
                 letter-spacing: 0.5px; transition: all 0.2s;
             }
-            .banner-add-btn:hover { background: #d4af37; color: #fff; border-style: solid; }
+            .banner-add-btn:hover { background: #d4873a; color: #fff; border-style: solid; }
             .banner-save-btn {
-                background: #1a1a1a; border: none; color: #d4af37;
+                background: #1a1a1a; border: none; color: #d4873a;
                 padding: 12px 28px; border-radius: 8px; font-size: 14px; cursor: pointer;
                 font-family: 'Montserrat', sans-serif; font-weight: 600;
                 letter-spacing: 0.5px; transition: all 0.2s;
@@ -336,7 +336,7 @@ function addHeaderSlide() {
         subtitle: '',
         backgroundImage: '',
         backgroundColor: '#1a1a1a',
-        textColor: '#faf9f6',
+        textColor: '#f5f0e8',
         buttonText: '',
         buttonLink: '',
         imageLink: '',

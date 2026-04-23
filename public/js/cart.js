@@ -1,6 +1,7 @@
 /**
  * Shopping Cart Management
  * Handles add to cart, remove from cart, and cart display
+ * Adapted for single-item vintage model (stock is always 1, no size variants)
  */
 
 class Cart {
@@ -30,51 +31,50 @@ class Cart {
     }
   }
 
-  // Add item to cart
+  // Add item to cart (single-item vintage: no size variant, quantity always 1)
   addToCart(product) {
-    const { id, name, brand, price, image, size, sku } = product;
+    const { id, name, brand, price, image, size, condition, era } = product;
 
-    // Check if item already exists (same product AND same size)
-    const existingItem = this.items.find(item =>
-      item.id === id && item.size === size && item.sku === sku
-    );
+    // Check if item already in cart (one-of-a-kind, no duplicates allowed)
+    const existingItem = this.items.find(item => item.id === id);
 
     if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      this.items.push({
-        id,
-        name,
-        brand,
-        price: parseFloat(price),
-        image,
-        size: size || 'One Size',
-        sku: sku || '',
-        quantity: 1
-      });
+      this.showNotification(`${name} is already in your cart — it's one of a kind`);
+      return false;
     }
 
+    // Add the item — quantity is always 1 for vintage items
+    this.items.push({
+      id,
+      name,
+      brand,
+      price: parseFloat(price),
+      image,
+      size: size || 'One Size',
+      condition: condition || '',
+      era: era || '',
+      quantity: 1
+    });
+
     this.saveCart();
-    this.showNotification(`${name} ${size ? `(${size})` : ''} added to cart`);
+    this.showNotification(`${name} reserved — added to cart`);
     return true;
   }
 
-  // Remove item from cart
+  // Remove item from cart (releases the reservation)
   removeFromCart(productId) {
     this.items = this.items.filter(item => item.id !== productId);
     this.saveCart();
   }
 
-  // Update item quantity
+  // Update item quantity — capped at 1 for vintage items
   updateQuantity(productId, quantity) {
     const item = this.items.find(item => item.id === productId);
     if (item) {
       if (quantity <= 0) {
         this.removeFromCart(productId);
-      } else {
-        item.quantity = quantity;
-        this.saveCart();
       }
+      // Quantity stays at 1 — vintage items cannot be increased
     }
   }
 
@@ -133,14 +133,41 @@ class Cart {
 // Initialize cart
 window.cart = new Cart();
 
-// Global function to add to cart from product cards
+// Global function to add to cart from product cards (vintage single-item model)
 function addToCart(button) {
   const productCard = button.closest('.product-card');
+  const productId = productCard.dataset.productId || productCard.id || `product-${Date.now()}`;
+
+  // If productManager is available, use it for full product data
+  if (window.productManager) {
+    const product = window.productManager.getProduct(productId);
+    if (product) {
+      if (window.productManager.isSold(product)) {
+        window.cart.showNotification('This item has been sold');
+        return;
+      }
+
+      const price = product.salePrice || product.basePrice;
+      window.cart.addToCart({
+        id: productId,
+        name: product.name,
+        brand: product.brand,
+        price: price,
+        image: product.images ? product.images[0] : product.image,
+        size: product.size || 'One Size',
+        condition: product.condition || '',
+        era: product.era || ''
+      });
+      return;
+    }
+  }
+
+  // Fallback: read from DOM
   const product = {
-    id: productCard.dataset.productId || productCard.id || `product-${Date.now()}`,
+    id: productId,
     name: productCard.querySelector('.product-name')?.textContent || 'Product',
     brand: productCard.querySelector('.product-brand')?.textContent || 'Brand',
-    price: productCard.querySelector('.product-price')?.textContent.replace('$', '') || '0',
+    price: productCard.querySelector('.product-price')?.textContent.replace('$', '').replace(',', '') || '0',
     image: productCard.querySelector('.product-image')?.src || ''
   };
 
@@ -172,11 +199,11 @@ async function toggleWishlist(button) {
     if (isInWishlist) {
       await window.auth.removeFromWishlist(productId);
       button.classList.remove('active');
-      button.textContent = '♡';
+      button.textContent = '\u2661';
     } else {
       await window.auth.addToWishlist(productId);
       button.classList.add('active');
-      button.textContent = '♥';
+      button.textContent = '\u2665';
     }
   } catch (error) {
     console.error('Wishlist error:', error);

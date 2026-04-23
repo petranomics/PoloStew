@@ -3,16 +3,19 @@
   <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <title>Product - LUXINE</title>
-      <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Lexend:wght@200;300;400;500&display=swap" rel="stylesheet">
+        <title>Product - POLOSTEW</title>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
       <style>
                 :root {
-                              --noir: #0d0d0d;
-                              --ivory: #faf9f6;
-                              --or: #c9a961;
-                              --argent: #e8e6e3;
-                              --charbon: #1a1a1a;
-                              --dor: #d4af37;
+                              --noir: #2c2418;
+                              --ivory: #faf6f0;
+                              --or: #c75d3a;
+                              --argent: #e8e0d4;
+                              --charbon: #3d3226;
+                              --dor: #d4873a;
+                              --sage: #8a9a7b;
+                              --clay: #c49a6c;
+                              --parchment: #f0e6d3;
                 }
 
                 * {
@@ -22,7 +25,7 @@
                 }
 
                 body {
-                              font-family: 'Lexend', sans-serif;
+                              font-family: 'DM Sans', sans-serif;
                               background: var(--ivory);
                               color: var(--noir);
                               min-height: 100vh;
@@ -34,9 +37,9 @@
                               width: 100%;
                               top: 0;
                               z-index: 1000;
-                              background: rgba(250, 249, 246, 0.98);
+                              background: rgba(250, 246, 240, 0.98);
                               backdrop-filter: blur(20px);
-                              border-bottom: 1px solid rgba(201, 169, 97, 0.15);
+                              border-bottom: 1px solid var(--argent);
                               transition: all 0.3s ease;
                 }
 
@@ -48,7 +51,7 @@
                 }
 
                 .logo {
-                              font-family: 'Bodoni Moda', serif;
+                              font-family: 'Playfair Display', serif;
                               font-size: 1.8rem;
                               font-weight: 600;
                               letter-spacing: 0.3em;
@@ -117,6 +120,29 @@
                               transform: scale(1.05);
                 }
 
+                /* Sold overlay on product page */
+                .sold-overlay-page {
+                              position: absolute;
+                              inset: 0;
+                              background: rgba(0, 0, 0, 0.55);
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              z-index: 3;
+                }
+
+                .sold-overlay-page .sold-stamp {
+                              background: #e53935;
+                              color: white;
+                              padding: 0.8rem 3rem;
+                              font-size: 1.5rem;
+                              font-weight: 600;
+                              letter-spacing: 0.25em;
+                              text-transform: uppercase;
+                              border-radius: 4px;
+                              transform: rotate(-15deg);
+                }
+
                 .thumbnail-container {
                               display: flex;
                               gap: 0.75rem;
@@ -183,7 +209,7 @@
                 }
 
                 .product-title {
-                              font-family: 'Bodoni Moda', serif;
+                              font-family: 'Playfair Display', serif;
                               font-size: 2.5rem;
                               font-weight: 500;
                               margin-bottom: 1rem;
@@ -193,7 +219,7 @@
                 .product-price {
                               font-size: 1.75rem;
                               font-weight: 500;
-                              margin-bottom: 2rem;
+                              margin-bottom: 1.5rem;
                 }
 
                 .product-description {
@@ -205,60 +231,61 @@
                               border-bottom: 1px solid var(--argent);
                 }
 
-                /* Size Selector */
-                .size-selector {
-                              margin-bottom: 2rem;
-                              padding-bottom: 2rem;
+                /* Vintage Info Badges */
+                .vintage-info {
+                              display: flex;
+                              flex-wrap: wrap;
+                              gap: 0.75rem;
+                              margin-bottom: 1.5rem;
+                              padding-bottom: 1.5rem;
                               border-bottom: 1px solid var(--argent);
                 }
 
-                .size-selector h4 {
-                              font-size: 0.9rem;
-                              font-weight: 600;
-                              margin-bottom: 1rem;
+                .info-badge {
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              padding: 0.75rem 1.25rem;
+                              border: 1px solid var(--argent);
+                              border-radius: 8px;
+                              min-width: 100px;
+                              text-align: center;
+                }
+
+                .info-badge-label {
+                              font-size: 0.65rem;
                               text-transform: uppercase;
-                              letter-spacing: 0.05em;
+                              letter-spacing: 0.1em;
+                              color: #999;
+                              margin-bottom: 0.25rem;
                 }
 
-                .size-btn {
-                              padding: 0.75rem 1.5rem;
-                              margin-right: 0.5rem;
-                              margin-bottom: 0.5rem;
-                              border: 1px solid var(--argent);
-                              background: transparent;
-                              border-radius: 6px;
-                              cursor: pointer;
-                              transition: all 0.3s ease;
-                              font-family: inherit;
-                              font-size: 0.9rem;
-                }
-
-                .size-btn:hover {
-                              border-color: var(--or);
-                              background: rgba(201, 169, 97, 0.1);
-                }
-
-                .size-btn.selected {
-                              background: var(--noir);
-                              color: var(--ivory);
-                              border-color: var(--noir);
-                }
-
-                .size-btn:disabled {
-                              opacity: 0.4;
-                              cursor: not-allowed;
-                              text-decoration: line-through;
-                }
-
-                .size-dropdown {
-                              width: 100%;
-                              padding: 0.75rem;
-                              border: 1px solid var(--argent);
-                              border-radius: 6px;
-                              font-family: inherit;
+                .info-badge-value {
                               font-size: 0.95rem;
-                              cursor: pointer;
-                              background: white;
+                              font-weight: 500;
+                }
+
+                .info-badge--size .info-badge-value { color: var(--or); }
+                .info-badge--condition .info-badge-value { color: #4a7c59; }
+                .info-badge--era .info-badge-value { color: #6b5b95; }
+
+                /* One-of-a-kind messaging */
+                .vintage-notice {
+                              display: flex;
+                              align-items: center;
+                              gap: 0.75rem;
+                              padding: 0.85rem 1.25rem;
+                              background: rgba(199, 93, 58, 0.08);
+                              border: 1px solid rgba(199, 93, 58, 0.2);
+                              border-radius: 8px;
+                              margin-bottom: 1.5rem;
+                              font-size: 0.85rem;
+                              color: #666;
+                }
+
+                .vintage-notice svg {
+                              flex-shrink: 0;
+                              color: var(--or);
                 }
 
                 /* Actions */
@@ -269,48 +296,6 @@
                               margin-bottom: 2rem;
                 }
 
-                .quantity-selector {
-                              display: flex;
-                              align-items: center;
-                              gap: 1rem;
-                }
-
-                .quantity-selector label {
-                              font-size: 0.9rem;
-                              font-weight: 500;
-                }
-
-                .quantity-controls {
-                              display: flex;
-                              align-items: center;
-                              border: 1px solid var(--argent);
-                              border-radius: 8px;
-                              overflow: hidden;
-                }
-
-                .quantity-btn {
-                              width: 40px;
-                              height: 40px;
-                              border: none;
-                              background: transparent;
-                              font-size: 1.25rem;
-                              cursor: pointer;
-                              transition: background 0.3s;
-                }
-
-                .quantity-btn:hover {
-                              background: var(--argent);
-                }
-
-                .quantity-input {
-                              width: 50px;
-                              height: 40px;
-                              border: none;
-                              text-align: center;
-                              font-size: 1rem;
-                              font-family: inherit;
-                }
-
                 .action-buttons {
                               display: flex;
                               gap: 1rem;
@@ -319,8 +304,8 @@
                 .add-to-cart-btn {
                               flex: 1;
                               padding: 1rem 2rem;
-                              background: var(--noir);
-                              color: var(--ivory);
+                              background: var(--or);
+                              color: white;
                               border: none;
                               border-radius: 8px;
                               font-size: 1rem;
@@ -332,8 +317,20 @@
                 }
 
                 .add-to-cart-btn:hover {
-                              background: var(--charbon);
+                              background: var(--sage);
                               transform: translateY(-2px);
+                }
+
+                .add-to-cart-btn:disabled {
+                              background: #999;
+                              cursor: not-allowed;
+                              transform: none;
+                }
+
+                .add-to-cart-btn.sold-out {
+                              background: #e53935;
+                              cursor: not-allowed;
+                              transform: none;
                 }
 
                 .wishlist-btn-large {
@@ -351,7 +348,7 @@
 
                 .wishlist-btn-large:hover {
                               border-color: var(--or);
-                              background: rgba(201, 169, 97, 0.1);
+                              background: rgba(199, 93, 58, 0.1);
                 }
 
                 .wishlist-btn-large.active {
@@ -457,6 +454,15 @@
                               .wishlist-btn-large {
                                                 width: 100%;
                               }
+
+                              .vintage-info {
+                                                gap: 0.5rem;
+                              }
+
+                              .info-badge {
+                                                min-width: 80px;
+                                                padding: 0.5rem 0.75rem;
+                              }
                 }
 
                 /* Toast Notification */
@@ -465,7 +471,7 @@
                               bottom: 30px;
                               left: 50%;
                               transform: translateX(-50%) translateY(100px);
-                              background: var(--noir);
+                              background: var(--charbon);
                               color: var(--ivory);
                               padding: 1rem 2rem;
                               border-radius: 8px;
@@ -484,7 +490,7 @@
   <body>
         <header>
                   <nav>
-                                <a href="index.html" class="logo">LUXINE</a>
+                                <a href="index.html" class="logo">POLOSTEW</a>
                                 <div class="nav-icons">
                                                   <svg class="nav-icon" onclick="window.location.href='index.html#search'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                                         <circle cx="11" cy="11" r="8"></circle>
@@ -507,7 +513,7 @@
                   <div class="product-container">
                                 <!-- Image Gallery -->
                                 <div class="product-gallery">
-                                                  <div class="main-image-container">
+                                                  <div class="main-image-container" id="mainImageContainer">
                                                                         <img id="mainImage" class="main-image" src="" alt="Product Image">
                                                   </div>
                                                   <div class="thumbnail-container" id="thumbnailContainer">
@@ -530,21 +536,35 @@
                                                                         Product description will appear here.
                                                   </div>
 
-                                                  <!-- Size Selector -->
-                                                  <div id="sizeSelectorContainer"></div>
+                                                  <!-- Vintage Info Badges (size, condition, era) -->
+                                                  <div class="vintage-info" id="vintageInfo" style="display: none;">
+                                                                        <div class="info-badge info-badge--size">
+                                                                                      <span class="info-badge-label">Size</span>
+                                                                                      <span class="info-badge-value" id="infoSize">--</span>
+                                                                        </div>
+                                                                        <div class="info-badge info-badge--condition">
+                                                                                      <span class="info-badge-label">Condition</span>
+                                                                                      <span class="info-badge-value" id="infoCondition">--</span>
+                                                                        </div>
+                                                                        <div class="info-badge info-badge--era">
+                                                                                      <span class="info-badge-label">Era</span>
+                                                                                      <span class="info-badge-value" id="infoEra">--</span>
+                                                                        </div>
+                                                  </div>
+
+                                                  <!-- One-of-a-kind notice -->
+                                                  <div class="vintage-notice" id="vintageNotice">
+                                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                                                                      <path d="M2 17l10 5 10-5"></path>
+                                                                                      <path d="M2 12l10 5 10-5"></path>
+                                                                        </svg>
+                                                                        <span>One of a kind — when it's gone, it's gone</span>
+                                                  </div>
 
                                                   <div class="product-actions">
-                                                                        <div class="quantity-selector">
-                                                                                                  <label>Quantity:</label>
-                                                                                                <div class="quantity-controls">
-                                                                                                                            <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
-                                                                                                                            <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="10">
-                                                                                                                            <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
-                                                                                                  </div>
-                                                                        </div>
-
                                                                       <div class="action-buttons">
-                                                                                              <button class="add-to-cart-btn" onclick="addToCartFromPage()">Add to Cart</button>
+                                                                                              <button class="add-to-cart-btn" id="addToCartBtn" onclick="addToCartFromPage()">Add to Cart</button>
                                                                                               <button class="wishlist-btn-large" id="wishlistBtn" onclick="toggleWishlist()">
                                                                                                                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                                                                                                                           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -573,7 +593,7 @@
                                                                                                                           </svg>
                                                                                               </div>
                                                                                             <div class="detail-content">
-                                                                                                                        <p>Free shipping on orders over $100. Standard delivery 3-5 business days. Express delivery available. 30-day return policy for unworn items with original packaging.</p>
+                                                                                                                        <p>Free shipping on orders over $100. Standard delivery 3-5 business days. Express delivery available. All vintage items are final sale.</p>
                                                                                               </div>
                                                                     </div>
                                                 </div>
@@ -587,7 +607,6 @@
       <script>
                 // Product data
                 let currentProduct = null;
-                let selectedSize = null;
                 let currentImageIndex = 0;
 
                 // Initialize page
@@ -626,10 +645,10 @@
                               if (!currentProduct) return;
 
                               // Update page content
-                              document.title = `${currentProduct.name} - LUXINE`;
+                              document.title = `${currentProduct.name} - POLOSTEW`;
                               document.getElementById('productBrand').textContent = currentProduct.brand;
                               document.getElementById('productTitle').textContent = currentProduct.name;
-                              document.getElementById('productDescription').textContent = currentProduct.description || 'Experience luxury with this exceptional product from our curated collection.';
+                              document.getElementById('productDescription').textContent = currentProduct.description || 'A unique vintage piece from our curated collection.';
                               document.getElementById('productNameBreadcrumb').textContent = currentProduct.name;
 
                               // Category link
@@ -653,17 +672,67 @@
                               const images = currentProduct.images || [currentProduct.image];
                               renderGallery(images);
 
-                              // Size selector
-                              renderSizeSelector();
+                              // Vintage info badges (size, condition, era)
+                              renderVintageInfo();
 
-                              // Set initial price (first size)
-                              if (currentProduct.sizes && currentProduct.sizes.length > 0) {
-                                                selectedSize = currentProduct.sizes[0];
-                                                updatePriceDisplay();
+                              // Set price display using basePrice
+                              updatePriceDisplay();
+
+                              // Handle sold-out state
+                              if (currentProduct.stock === 0) {
+                                                renderSoldState();
                               }
 
                               // Check wishlist status
                               checkWishlistStatus();
+                }
+
+                function renderVintageInfo() {
+                              const vintageInfo = document.getElementById('vintageInfo');
+                              const hasVintageData = currentProduct.size || currentProduct.condition || currentProduct.era;
+
+                              if (hasVintageData) {
+                                                vintageInfo.style.display = 'flex';
+
+                                                if (currentProduct.size) {
+                                                              document.getElementById('infoSize').textContent = currentProduct.size;
+                                                } else {
+                                                              document.querySelector('.info-badge--size').style.display = 'none';
+                                                }
+
+                                                if (currentProduct.condition) {
+                                                              document.getElementById('infoCondition').textContent = currentProduct.condition;
+                                                } else {
+                                                              document.querySelector('.info-badge--condition').style.display = 'none';
+                                                }
+
+                                                if (currentProduct.era) {
+                                                              document.getElementById('infoEra').textContent = currentProduct.era;
+                                                } else {
+                                                              document.querySelector('.info-badge--era').style.display = 'none';
+                                                }
+                              }
+                }
+
+                function renderSoldState() {
+                              // Add sold overlay to image
+                              const imageContainer = document.getElementById('mainImageContainer');
+                              const overlay = document.createElement('div');
+                              overlay.className = 'sold-overlay-page';
+                              overlay.innerHTML = '<span class="sold-stamp">SOLD OUT</span>';
+                              imageContainer.appendChild(overlay);
+
+                              // Update add-to-cart button
+                              const addToCartBtn = document.getElementById('addToCartBtn');
+                              addToCartBtn.textContent = 'SOLD OUT';
+                              addToCartBtn.classList.add('sold-out');
+                              addToCartBtn.disabled = true;
+
+                              // Update notice
+                              const notice = document.getElementById('vintageNotice');
+                              notice.querySelector('span').textContent = 'This item has been sold';
+                              notice.style.borderColor = 'rgba(229, 57, 53, 0.2)';
+                              notice.style.background = 'rgba(229, 57, 53, 0.05)';
                 }
 
                 function renderGallery(images) {
@@ -721,134 +790,71 @@
                               });
                 }
 
-                function renderSizeSelector() {
-                              const container = document.getElementById('sizeSelectorContainer');
-                              if (!currentProduct.sizes || currentProduct.sizes.length === 0) return;
-
-                              // Only show size selector if multiple sizes or clothing
-                              if (currentProduct.sizes.length === 1 && currentProduct.category !== 'streetwear') {
-                                                selectedSize = currentProduct.sizes[0];
-                                                return;
-                              }
-
-                              const sizeDiv = document.createElement('div');
-                              sizeDiv.className = 'size-selector';
-                              sizeDiv.innerHTML = '<h4>Select Size</h4>';
-
-                              if (currentProduct.category === 'streetwear') {
-                                                // Button-style selector for clothing
-                                                currentProduct.sizes.forEach((size, index) => {
-                                                                      const btn = document.createElement('button');
-                                                                      btn.className = 'size-btn';
-                                                                      if (index === 0) btn.classList.add('selected');
-                                                                      btn.textContent = size.size;
-                                                                      btn.disabled = size.stock === 0;
-                                                                      btn.onclick = () => selectSize(size, btn);
-                                                                      sizeDiv.appendChild(btn);
-                                                });
-                              } else {
-                                                // Dropdown for other products
-                                                const select = document.createElement('select');
-                                                select.className = 'size-dropdown';
-                                                currentProduct.sizes.forEach((size, index) => {
-                                                                      const option = document.createElement('option');
-                                                                      option.value = index;
-                                                                      const price = size.salePrice || size.price;
-                                                                      option.textContent = `${size.size} - $${price}`;
-                                                                      if (size.stock === 0) {
-                                                                                                option.textContent += ' (Out of Stock)';
-                                                                                                option.disabled = true;
-                                                                      }
-                                                                      select.appendChild(option);
-                                                });
-                                                select.onchange = (e) => {
-                                                                      const size = currentProduct.sizes[e.target.value];
-                                                                      selectSize(size, null);
-                                                };
-                                                sizeDiv.appendChild(select);
-                              }
-
-                              container.appendChild(sizeDiv);
-                }
-
-                function selectSize(size, button) {
-                              selectedSize = size;
-
-                              // Update button states
-                              if (button) {
-                                                document.querySelectorAll('.size-btn').forEach(btn => {
-                                                                      btn.classList.remove('selected');
-                                                });
-                                                button.classList.add('selected');
-                              }
-
-                              updatePriceDisplay();
-                }
-
                 function updatePriceDisplay() {
-                              if (!selectedSize) return;
+                              if (!currentProduct) return;
 
                               const priceElement = document.getElementById('productPrice');
-                              if (selectedSize.salePrice) {
-                                                const discount = Math.round(((selectedSize.price - selectedSize.salePrice) / selectedSize.price) * 100);
+                              if (currentProduct.salePrice) {
+                                                const discount = Math.round(((currentProduct.basePrice - currentProduct.salePrice) / currentProduct.basePrice) * 100);
                                                 priceElement.innerHTML = `
-                                                                      <span style="text-decoration: line-through; color: #999; margin-right: 0.5rem;">$${selectedSize.price}</span>
-                                                                      <span style="color: #e53935; font-weight: 600;">$${selectedSize.salePrice}</span>
+                                                                      <span style="text-decoration: line-through; color: #999; margin-right: 0.5rem;">$${currentProduct.basePrice}</span>
+                                                                      <span style="color: #e53935; font-weight: 600;">$${currentProduct.salePrice}</span>
                                                                       <span style="background: #e53935; color: white; padding: 0.15rem 0.5rem; font-size: 0.7rem; border-radius: 3px; margin-left: 0.5rem;">${discount}% OFF</span>
                                                 `;
                               } else {
-                                                priceElement.textContent = `$${selectedSize.price.toLocaleString()}`;
+                                                priceElement.textContent = `$${currentProduct.basePrice.toLocaleString()}`;
                               }
-                }
-
-                function changeQuantity(delta) {
-                              const input = document.getElementById('quantity');
-                              let value = parseInt(input.value) + delta;
-                              value = Math.max(1, Math.min(10, value));
-                              input.value = value;
                 }
 
                 function addToCartFromPage() {
-                              if (!selectedSize) {
-                                                showToast('Please select a size');
+                              if (!currentProduct) return;
+
+                              if (currentProduct.stock === 0) {
+                                                showToast('This item has been sold');
                                                 return;
                               }
 
-                              if (selectedSize.stock === 0) {
-                                                showToast('This size is out of stock');
-                                                return;
+                              // Check if already in cart (one-of-a-kind)
+                              if (window.cart) {
+                                                const existingItem = window.cart.items.find(item => item.id === currentProduct.id);
+                                                if (existingItem) {
+                                                              showToast('This one-of-a-kind item is already in your cart');
+                                                              return;
+                                                }
                               }
 
-                              const quantity = parseInt(document.getElementById('quantity').value);
-                              const price = selectedSize.salePrice || selectedSize.price;
+                              const price = currentProduct.salePrice || currentProduct.basePrice;
 
                               const cartItem = {
                                                 id: currentProduct.id,
                                                 name: currentProduct.name,
                                                 brand: currentProduct.brand,
                                                 price: price,
-                                                originalPrice: selectedSize.price,
-                                                salePrice: selectedSize.salePrice || null,
+                                                originalPrice: currentProduct.basePrice,
+                                                salePrice: currentProduct.salePrice || null,
                                                 image: currentProduct.images ? currentProduct.images[0] : currentProduct.image,
-                                                size: selectedSize.size,
-                                                sku: selectedSize.sku,
-                                                quantity: quantity
+                                                size: currentProduct.size || 'One Size',
+                                                condition: currentProduct.condition || '',
+                                                era: currentProduct.era || '',
+                                                quantity: 1
                               };
 
                               // Use cart.js if available, otherwise localStorage
                               if (window.cart) {
-                                                window.cart.addToCart(cartItem);
-                                                showToast(`Added ${quantity} item(s) to cart`);
+                                                const added = window.cart.addToCart(cartItem);
+                                                if (added) {
+                                                              showToast('Reserved — added to cart');
+                                                }
                               } else {
                                                 let cart = JSON.parse(localStorage.getItem('luxineCart') || '[]');
-                                                const existingIndex = cart.findIndex(item => item.id === cartItem.id && item.sku === cartItem.sku);
+                                                const existingIndex = cart.findIndex(item => item.id === cartItem.id);
                                                 if (existingIndex > -1) {
-                                                                      cart[existingIndex].quantity += quantity;
-                                                } else {
-                                                                      cart.push(cartItem);
+                                                              showToast('This one-of-a-kind item is already in your cart');
+                                                              return;
                                                 }
+                                                cart.push(cartItem);
                                                 localStorage.setItem('luxineCart', JSON.stringify(cart));
-                                                showToast(`Added ${quantity} item(s) to cart`);
+                                                showToast('Reserved — added to cart');
                               }
                 }
 

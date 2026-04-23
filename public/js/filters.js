@@ -1,6 +1,7 @@
 /**
  * Product Filters & Sorting
- * Handles filtering by price, brand, sale status, and sorting
+ * Handles filtering by price, brand, category, condition, era, and sorting
+ * Updated for vintage single-item model
  */
 
 class ProductFilters {
@@ -14,7 +15,10 @@ class ProductFilters {
       priceRange: { min: 0, max: Infinity },
       onSale: false,
       featured: false,
-      category: null
+      category: null,
+      conditions: [],   // Excellent, Good, Fair
+      eras: [],          // 70s, 80s, 90s, 2000s
+      inStockOnly: false // Hide sold items
     };
 
     this.sortBy = 'newest'; // newest, price-low, price-high, name-az
@@ -34,9 +38,19 @@ class ProductFilters {
       filtered = filtered.filter(p => this.filters.brands.includes(p.brand));
     }
 
-    // Filter by price range (using base price)
+    // Filter by condition
+    if (this.filters.conditions.length > 0) {
+      filtered = filtered.filter(p => this.filters.conditions.includes(p.condition));
+    }
+
+    // Filter by era
+    if (this.filters.eras.length > 0) {
+      filtered = filtered.filter(p => this.filters.eras.includes(p.era));
+    }
+
+    // Filter by price range (using basePrice, or salePrice if on sale)
     filtered = filtered.filter(p => {
-      const price = p.onSale && p.sizes[0].salePrice ? p.sizes[0].salePrice : p.basePrice;
+      const price = p.salePrice || p.basePrice;
       return price >= this.filters.priceRange.min && price <= this.filters.priceRange.max;
     });
 
@@ -48,6 +62,11 @@ class ProductFilters {
     // Filter by featured
     if (this.filters.featured) {
       filtered = filtered.filter(p => p.featured === true);
+    }
+
+    // Filter by in-stock only (hide sold items)
+    if (this.filters.inStockOnly) {
+      filtered = filtered.filter(p => p.stock > 0);
     }
 
     // Apply sorting
@@ -72,15 +91,15 @@ class ProductFilters {
         break;
       case 'price-low':
         sorted.sort((a, b) => {
-          const priceA = a.onSale && a.sizes[0].salePrice ? a.sizes[0].salePrice : a.basePrice;
-          const priceB = b.onSale && b.sizes[0].salePrice ? b.sizes[0].salePrice : b.basePrice;
+          const priceA = a.salePrice || a.basePrice;
+          const priceB = b.salePrice || b.basePrice;
           return priceA - priceB;
         });
         break;
       case 'price-high':
         sorted.sort((a, b) => {
-          const priceA = a.onSale && a.sizes[0].salePrice ? a.sizes[0].salePrice : a.basePrice;
-          const priceB = b.onSale && b.sizes[0].salePrice ? b.sizes[0].salePrice : b.basePrice;
+          const priceA = a.salePrice || a.basePrice;
+          const priceB = b.salePrice || b.basePrice;
           return priceB - priceA;
         });
         break;
@@ -136,6 +155,46 @@ class ProductFilters {
     return this.applyFilters();
   }
 
+  // Toggle condition filter
+  toggleCondition(condition) {
+    const index = this.filters.conditions.indexOf(condition);
+    if (index > -1) {
+      this.filters.conditions.splice(index, 1);
+    } else {
+      this.filters.conditions.push(condition);
+    }
+    return this.applyFilters();
+  }
+
+  // Set condition filter
+  setConditionFilter(conditions) {
+    this.filters.conditions = Array.isArray(conditions) ? conditions : [conditions];
+    return this.applyFilters();
+  }
+
+  // Toggle era filter
+  toggleEra(era) {
+    const index = this.filters.eras.indexOf(era);
+    if (index > -1) {
+      this.filters.eras.splice(index, 1);
+    } else {
+      this.filters.eras.push(era);
+    }
+    return this.applyFilters();
+  }
+
+  // Set era filter
+  setEraFilter(eras) {
+    this.filters.eras = Array.isArray(eras) ? eras : [eras];
+    return this.applyFilters();
+  }
+
+  // Toggle in-stock only filter
+  toggleInStockOnly() {
+    this.filters.inStockOnly = !this.filters.inStockOnly;
+    return this.applyFilters();
+  }
+
   // Set sort order
   setSortBy(sortBy) {
     this.sortBy = sortBy;
@@ -149,7 +208,10 @@ class ProductFilters {
       priceRange: { min: 0, max: Infinity },
       onSale: false,
       featured: false,
-      category: this.filters.category // Keep category filter
+      category: this.filters.category, // Keep category filter
+      conditions: [],
+      eras: [],
+      inStockOnly: false
     };
     this.sortBy = 'newest';
     return this.applyFilters();
@@ -161,11 +223,27 @@ class ProductFilters {
     return Array.from(brands).sort();
   }
 
+  // Get all unique conditions
+  getAllConditions() {
+    const conditions = new Set(this.allProducts.map(p => p.condition).filter(Boolean));
+    return Array.from(conditions).sort();
+  }
+
+  // Get all unique eras
+  getAllEras() {
+    const eras = new Set(this.allProducts.map(p => p.era).filter(Boolean));
+    return Array.from(eras).sort();
+  }
+
+  // Get all categories
+  getAllCategories() {
+    const categories = new Set(this.allProducts.map(p => p.category).filter(Boolean));
+    return Array.from(categories).sort();
+  }
+
   // Get price range
   getPriceRange() {
-    const prices = this.allProducts.map(p =>
-      p.onSale && p.sizes[0].salePrice ? p.sizes[0].salePrice : p.basePrice
-    );
+    const prices = this.allProducts.map(p => p.salePrice || p.basePrice);
     return {
       min: Math.min(...prices),
       max: Math.max(...prices)
@@ -178,7 +256,9 @@ class ProductFilters {
       total: this.allProducts.length,
       filtered: this.filteredProducts.length,
       onSale: this.allProducts.filter(p => p.onSale).length,
-      featured: this.allProducts.filter(p => p.featured).length
+      featured: this.allProducts.filter(p => p.featured).length,
+      inStock: this.allProducts.filter(p => p.stock > 0).length,
+      sold: this.allProducts.filter(p => p.stock === 0).length
     };
   }
 }

@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LUXINE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Lexend:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <title>Login - POLOSTEW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --noir: #0d0d0d;
-            --ivory: #faf9f6;
-            --or: #c9a961;
-            --argent: #e8e6e3;
-            --charbon: #1a1a1a;
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+            --clay: #c49a6c;
+            --parchment: #f0e6d3;
         }
 
         * {
@@ -21,7 +24,7 @@
         }
 
         body {
-            font-family: 'Lexend', sans-serif;
+            font-family: 'DM Sans', sans-serif;
             background: linear-gradient(135deg, var(--ivory) 0%, var(--argent) 100%);
             min-height: 100vh;
             display: flex;
@@ -42,12 +45,12 @@
         }
 
         .login-brand {
-            background: var(--noir);
+            background: var(--charbon);
             padding: 4rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            color: white;
+            color: var(--ivory);
             position: relative;
             overflow: hidden;
         }
@@ -59,7 +62,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, transparent 0%, rgba(201,169,97,0.1) 100%);
+            background: linear-gradient(135deg, transparent 0%, rgba(138, 154, 123, 0.08) 100%);
         }
 
         .brand-content {
@@ -68,7 +71,7 @@
         }
 
         .logo {
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
             font-size: 3rem;
             letter-spacing: 0.15em;
             margin-bottom: 2rem;
@@ -114,7 +117,7 @@
         }
 
         .form-title {
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
             color: var(--noir);
@@ -177,7 +180,7 @@
             border: 2px solid var(--argent);
             border-radius: 8px;
             font-size: 1rem;
-            font-family: 'Lexend', sans-serif;
+            font-family: 'DM Sans', sans-serif;
             transition: all 0.3s ease;
         }
 
@@ -226,9 +229,9 @@
         }
 
         .btn-submit:hover {
-            background: var(--noir);
+            background: var(--sage);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(44, 36, 24, 0.15);
         }
 
         .divider {
@@ -336,8 +339,8 @@
         <!-- Brand Section -->
         <div class="login-brand">
             <div class="brand-content">
-                <div class="logo">LUXINE</div>
-                <p class="brand-tagline">Your gateway to curated luxury. Access exclusive collections, manage your wishlist, and track your orders.</p>
+                <div class="logo">POLOSTEW</div>
+                <p class="brand-tagline">Your gateway to curated vintage finds. Access your collection, manage your wishlist, and track your orders.</p>
                 
                 <div class="brand-features">
                     <div class="feature-item">
@@ -410,7 +413,7 @@
         const CREDENTIALS = {
             // Admin account
             admin: {
-                email: 'admin@theluxine.com',
+                email: 'admin@polostew.com',
                 password: 'admin123',
                 role: 'admin',
                 name: 'Admin User'
@@ -469,7 +472,7 @@
             }
 
             if (!user) {
-                showAlert('Invalid email or password. Try:<br><strong>Admin:</strong> admin@theluxine.com / admin123<br><strong>User:</strong> demo@example.com / demo123', 'error');
+                showAlert('Invalid email or password. Try:<br><strong>Admin:</strong> admin@polostew.com / admin123<br><strong>User:</strong> demo@example.com / demo123', 'error');
                 return;
             }
 
