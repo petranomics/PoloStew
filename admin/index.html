@@ -1116,11 +1116,10 @@ async function generateAIDescription() {
   btn.disabled = true;
 
   try {
-    var response = await fetch('http://72.60.120.245:3000/agent/describe', {
+    var response = await fetch('/api/ai/describe', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': 'armadillo-agent-2026'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         name: name,
