@@ -3,29 +3,59 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const VPS_URL = process.env.VPS_AGENT_URL || 'http://72.60.120.245:3000';
-  const VPS_KEY = process.env.VPS_AGENT_KEY || 'armadillo-agent-2026';
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'No API key configured' });
+  }
+
+  const { name, brand, category, condition, era } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: 'Product name is required' });
+  }
 
   try {
-    const response = await fetch(`${VPS_URL.replace('/agent/analyze', '')}/agent/describe`, {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': VPS_KEY,
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify(req.body),
-      signal: AbortSignal.timeout(90000),
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 200,
+        messages: [{
+          role: 'user',
+          content: `You are a vintage clothing expert writing product descriptions for an online thrift store called PoloStew. Write a short, authentic description (2-3 sentences max) for this item. Be specific about what makes it special. Mention era-specific details. Sound like a knowledgeable thrift store owner, not a corporate copywriter. Keep it casual and real.
+
+Item: ${name}
+Brand: ${brand || 'Unknown'}
+Category: ${category || 'Clothing'}
+Condition: ${condition || 'Good'}
+Era: ${era || 'Vintage'}
+
+Write ONLY the description text, nothing else. No quotes, no labels, no formatting.`
+        }],
+      }),
     });
 
     if (!response.ok) {
       const err = await response.text();
-      return res.status(response.status).json({ error: err || 'AI service error' });
+      console.error('Haiku API error:', err);
+      return res.status(500).json({ error: 'AI service error' });
     }
 
-    const data = await response.json();
-    return res.status(200).json(data);
+    const result = await response.json();
+    const text = result.content?.[0]?.text?.trim();
+
+    if (!text) {
+      return res.status(500).json({ error: 'No response from AI' });
+    }
+
+    return res.status(200).json({ description: text });
   } catch (error) {
-    console.error('AI describe proxy error:', error.message);
+    console.error('AI describe error:', error.message);
     return res.status(503).json({ error: 'AI service unavailable' });
   }
 }
