@@ -1102,9 +1102,8 @@ async function generateAIDescription() {
   var imageUrl = '';
   if (uploadedImages.length > 0 && uploadedImages[0].blobUrl) {
     imageUrl = uploadedImages[0].blobUrl;
-  } else if (uploadedImages.length > 0 && uploadedImages[0].dataUrl) {
-    imageUrl = uploadedImages[0].dataUrl;
   }
+  // Don't send dataUrl — it's too large and causes 413 errors
 
   if (!name) {
     errorEl.textContent = 'Please enter a product name first.';
