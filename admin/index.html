@@ -255,6 +255,33 @@ table tbody tr:hover { background: #f9f8f5; }
 }
 @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
+/* Measurement row styling */
+.measurement-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.measurement-row input {
+  width: 100%; padding: 10px; border: 1px solid var(--argent);
+  border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+}
+.measurement-row .measurement-value-wrap {
+  position: relative;
+}
+.measurement-row .measurement-value-wrap::after {
+  content: '"'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  color: #888; font-size: 13px; pointer-events: none;
+}
+.measurement-row .measurement-value-wrap input {
+  padding-right: 24px;
+}
+.measurement-remove-btn {
+  background: transparent; border: none; color: var(--danger);
+  font-size: 18px; cursor: pointer; padding: 4px 8px; line-height: 1;
+}
+.measurement-remove-btn:hover { color: #b71c1c; }
+
 @media (max-width: 768px) {
   .dashboard { grid-template-columns: 1fr; }
   .filters { flex-direction: column; }
@@ -335,11 +362,12 @@ table tbody tr:hover { background: #f9f8f5; }
       </div>
       <select id="categoryFilter" class="filter-select" onchange="applyAllFilters()">
         <option value="all">All Categories</option>
-        <option value="T-Shirts">T-Shirts</option>
-        <option value="Shorts">Shorts</option>
-        <option value="Outerwear">Outerwear</option>
-        <option value="Bottoms">Bottoms</option>
-        <option value="Jerseys">Jerseys</option>
+        <option value="Vintage Tees & Graphic Shirts">Vintage Tees & Graphic Shirts</option>
+        <option value="Jerseys (Sports & Soccer)">Jerseys (Sports & Soccer)</option>
+        <option value="Jackets & Outerwear">Jackets & Outerwear</option>
+        <option value="Sweatshirts & Hoodies">Sweatshirts & Hoodies</option>
+        <option value="Shirts & Button-Ups">Shirts & Button-Ups</option>
+        <option value="Bundles & Lots">Bundles & Lots</option>
       </select>
       <select id="brandFilter" class="filter-select" onchange="applyAllFilters()">
         <option value="all">All Brands</option>
@@ -361,6 +389,7 @@ table tbody tr:hover { background: #f9f8f5; }
               <th>Name</th>
               <th>Category</th>
               <th>Brand</th>
+              <th>Color</th>
               <th>Size</th>
               <th>Condition</th>
               <th>Era</th>
@@ -399,13 +428,14 @@ table tbody tr:hover { background: #f9f8f5; }
       <div class="form-row">
         <div class="form-group">
           <label for="productCategory">Category *</label>
-          <select id="productCategory" required>
+          <select id="productCategory" required onchange="updateConditionalFields()">
             <option value="">Select Category</option>
-            <option value="T-Shirts">T-Shirts</option>
-            <option value="Shorts">Shorts</option>
-            <option value="Outerwear">Outerwear</option>
-            <option value="Bottoms">Bottoms</option>
-            <option value="Jerseys">Jerseys</option>
+            <option value="Vintage Tees & Graphic Shirts">Vintage Tees & Graphic Shirts</option>
+            <option value="Jerseys (Sports & Soccer)">Jerseys (Sports & Soccer)</option>
+            <option value="Jackets & Outerwear">Jackets & Outerwear</option>
+            <option value="Sweatshirts & Hoodies">Sweatshirts & Hoodies</option>
+            <option value="Shirts & Button-Ups">Shirts & Button-Ups</option>
+            <option value="Bundles & Lots">Bundles & Lots</option>
           </select>
         </div>
         <div class="form-group">
@@ -433,9 +463,11 @@ table tbody tr:hover { background: #f9f8f5; }
           <label for="productCondition">Condition *</label>
           <select id="productCondition" required>
             <option value="">Select Condition</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
+            <option value="New / Deadstock">New / Deadstock</option>
+            <option value="Excellent (no flaws)">Excellent (no flaws)</option>
+            <option value="Very Good (light wear)">Very Good (light wear)</option>
+            <option value="Good (visible wear)">Good (visible wear)</option>
+            <option value="Fair (notable wear or repairs)">Fair (notable wear or repairs)</option>
           </select>
         </div>
         <div class="form-group">
@@ -447,6 +479,69 @@ table tbody tr:hover { background: #f9f8f5; }
             <option value="90s">90s</option>
             <option value="2000s">2000s</option>
           </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="productColor">Color</label>
+        <input type="text" id="productColor" placeholder='e.g. White, Forest Green'>
+      </div>
+
+      <div class="form-group">
+        <label>Measurements</label>
+        <div id="measurementsContainer" style="display:flex;flex-direction:column;gap:10px"></div>
+        <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addMeasurementRow()">+ Add measurement</button>
+      </div>
+
+      <div class="form-group">
+        <label for="productFeatures">Features (one per line — becomes bullet list)</label>
+        <textarea id="productFeatures" placeholder="Mesh body
+Screen printed name and numbers
+NFL shield branding"></textarea>
+      </div>
+
+      <!-- Jersey-specific conditional fields -->
+      <div id="jerseyFields" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="productTeam">Team</label>
+            <input type="text" id="productTeam" placeholder='e.g. Chicago Bulls'>
+          </div>
+          <div class="form-group">
+            <label for="productPlayer">Player</label>
+            <input type="text" id="productPlayer" placeholder='e.g. Michael Jordan #23'>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="productYear">Season/Year</label>
+          <input type="text" id="productYear" placeholder='e.g. 2008-2010'>
+        </div>
+      </div>
+
+      <!-- Tee-specific conditional fields -->
+      <div id="teeFields" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="productPrintType">Print Type</label>
+            <select id="productPrintType">
+              <option value="">Select Print Type</option>
+              <option value="Screen print">Screen print</option>
+              <option value="Heat transfer">Heat transfer</option>
+              <option value="Embroidered">Embroidered</option>
+              <option value="Sublimated">Sublimated</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="productTagType">Tag Type</label>
+            <select id="productTagType">
+              <option value="">Select Tag Type</option>
+              <option value="Single-stitch">Single-stitch</option>
+              <option value="Double-stitch">Double-stitch</option>
+              <option value="Tagless">Tagless</option>
+              <option value="Reprint">Reprint</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -493,141 +588,181 @@ let products = [
     id: "tshirt-vintage-nike-swoosh",
     name: "Vintage Nike Swoosh Tee",
     brand: "Nike",
-    category: "T-Shirts",
+    category: "Vintage Tees & Graphic Shirts",
     description: "Classic 90s single-stitch Nike tee with center swoosh. Slightly faded \u2014 perfect vintage wash. No holes or stains.",
     price: 45,
     size: "L",
-    condition: "Excellent",
+    color: "White",
+    condition: "Excellent (no flaws)",
     era: "90s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: { "Pit to Pit": "22\"", "Length": "29\"", "Sleeve": "8.5\"" },
+    features: ["Single-stitch construction", "Center swoosh logo", "Soft vintage wash"],
+    printType: "Screen print",
+    tagType: "Single-stitch"
   },
   {
     id: "tshirt-metallica-pushead",
     name: "Metallica Pushead Tour Tee",
     brand: "Band Tees",
-    category: "T-Shirts",
+    category: "Vintage Tees & Graphic Shirts",
     description: "Original 1989 Metallica 'And Justice for All' tour tee with Pushead artwork on back. Single stitch, minor cracking on graphic. True vintage piece.",
     price: 120,
     size: "XL",
-    condition: "Good",
+    color: "Black",
+    condition: "Good (visible wear)",
     era: "80s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: { "Pit to Pit": "24\"", "Length": "30\"", "Sleeve": "9\"" },
+    features: ["Pushead back artwork", "1989 tour dates print", "Single-stitch construction"],
+    printType: "Screen print",
+    tagType: "Single-stitch"
   },
   {
     id: "shorts-umbro-checkerboard",
     name: "Umbro Checkerboard Shorts",
     brand: "Umbro",
-    category: "Shorts",
+    category: "Vintage Tees & Graphic Shirts",
     description: "Classic 90s Umbro checkerboard soccer shorts in black and white. Elastic waistband with drawstring. Lightweight nylon, no damage.",
     price: 35,
     size: "M",
-    condition: "Excellent",
+    color: "Black/White",
+    condition: "Excellent (no flaws)",
     era: "90s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: {},
+    features: ["Iconic Umbro checkerboard print", "Elastic waistband with drawstring", "Lightweight nylon"]
   },
   {
     id: "shorts-champion-mesh",
     name: "Champion Mesh Basketball Shorts",
     brand: "Champion",
-    category: "Shorts",
+    category: "Vintage Tees & Graphic Shirts",
     description: "Vintage Champion mesh basketball shorts in navy with embroidered C logo. Elastic waist, side pockets. Minor pilling on inside.",
     price: 30,
     size: "L",
-    condition: "Good",
+    color: "Navy",
+    condition: "Good (visible wear)",
     era: "90s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: {},
+    features: ["Embroidered Champion C logo", "Mesh body for breathability", "Side pockets", "Elastic waistband"]
   },
   {
     id: "outerwear-starter-bulls",
     name: "Starter Chicago Bulls Jacket",
     brand: "Starter",
-    category: "Outerwear",
+    category: "Jackets & Outerwear",
     description: "Iconic 90s Starter satin jacket in Chicago Bulls red and black. Full snap front, embroidered bull logo on chest and large script on back. Clean lining, no rips.",
     price: 185,
     size: "XL",
-    condition: "Excellent",
+    color: "Red/Black",
+    condition: "Excellent (no flaws)",
     era: "90s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: { "Pit to Pit": "26\"", "Length": "29\"", "Sleeve": "26\"" },
+    features: ["Iconic Starter satin construction", "Embroidered Bulls logo on chest", "Large script across back", "Full snap front closure"]
   },
   {
     id: "outerwear-carhartt-detroit",
     name: "Carhartt Detroit Jacket",
     brand: "Carhartt",
-    category: "Outerwear",
+    category: "Jackets & Outerwear",
     description: "Worn-in Carhartt Detroit jacket in duck brown canvas. Blanket-lined interior. Beautiful patina and natural distressing from years of use. Small repair on left cuff.",
     price: 95,
     size: "L",
-    condition: "Fair",
+    color: "Duck Brown",
+    condition: "Fair (notable wear or repairs)",
     era: "2000s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: { "Pit to Pit": "25\"", "Length": "27\"", "Sleeve": "25\"" },
+    features: ["Heavyweight duck canvas", "Blanket-lined interior", "Natural patina from wear", "Small repair on left cuff"]
   },
   {
     id: "bottoms-levis-501-stonewash",
     name: "Levi's 501 Stonewash Jeans",
     brand: "Levi's",
-    category: "Bottoms",
+    category: "Bundles & Lots",
     description: "Classic Levi's 501 button-fly jeans in medium stonewash. Made in USA with red tab. Broken in perfectly, no holes. Great natural fading on thighs.",
     price: 65,
     size: "32x30",
-    condition: "Good",
+    color: "Medium Stonewash",
+    condition: "Good (visible wear)",
     era: "90s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: {},
+    features: ["Made in USA", "Red tab", "Button-fly closure", "Natural fading on thighs"]
   },
   {
     id: "bottoms-dickies-874",
     name: "Dickies 874 Original Fit",
     brand: "Dickies",
-    category: "Bottoms",
+    category: "Bundles & Lots",
     description: "Vintage Dickies 874 work pants in khaki. Classic straight leg fit. These have the old-style Dickies tag. Clean with minimal wear.",
     price: 40,
     size: "34x32",
-    condition: "Excellent",
+    color: "Khaki",
+    condition: "Excellent (no flaws)",
     era: "2000s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: {},
+    features: ["Old-style Dickies tag", "Straight leg fit", "874 original cut"]
   },
   {
     id: "jersey-mitchell-ness-jordan",
     name: "Mitchell & Ness Bulls Jordan #23",
     brand: "Mitchell & Ness",
-    category: "Jerseys",
+    category: "Jerseys (Sports & Soccer)",
     description: "Mitchell & Ness hardwood classics Michael Jordan Chicago Bulls jersey. Stitched lettering and numbers. Red with white and black trim. Pristine condition.",
     price: 130,
     size: "L",
-    condition: "Excellent",
+    color: "Red",
+    condition: "Excellent (no flaws)",
     era: "2000s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: { "Pit to Pit": "24\"", "Length": "32\"", "Sleeve": "0\"" },
+    features: ["Stitched lettering and numbers", "Hardwood Classics line", "Pristine condition"],
+    team: "Chicago Bulls",
+    player: "Michael Jordan #23",
+    year: "1995-1996"
   },
   {
     id: "jersey-starter-cowboys",
     name: "Starter Dallas Cowboys Jersey",
     brand: "Starter",
-    category: "Jerseys",
+    category: "Jerseys (Sports & Soccer)",
     description: "90s Starter Dallas Cowboys Aikman #8 jersey. Screen-printed numbers with mesh body. Some light snags on mesh but graphics are clean. Classic piece from the dynasty era.",
     price: 55,
     size: "XL",
-    condition: "Good",
+    color: "White/Blue",
+    condition: "Good (visible wear)",
     era: "90s",
     stock: 1,
     image: "",
-    images: []
+    images: [],
+    measurements: { "Pit to Pit": "26\"", "Length": "31\"", "Sleeve": "10\"" },
+    features: ["Mesh body for breathability", "Screen-printed name and numbers", "NFL shield branding"],
+    team: "Dallas Cowboys",
+    player: "Troy Aikman #8",
+    year: "1992-1995"
   }
 ];
 
@@ -655,7 +790,24 @@ function saveProducts() {
 }
 
 /* ── Category Display Names (for matching JSON lowercase to Title Case) ── */
-const categoryOrder = ['T-Shirts', 'Shorts', 'Outerwear', 'Bottoms', 'Jerseys'];
+const categoryOrder = [
+  'Vintage Tees & Graphic Shirts',
+  'Jerseys (Sports & Soccer)',
+  'Jackets & Outerwear',
+  'Sweatshirts & Hoodies',
+  'Shirts & Button-Ups',
+  'Bundles & Lots'
+];
+
+/* ── Common measurement defaults per category ── */
+const measurementDefaults = {
+  'Vintage Tees & Graphic Shirts': ['Pit to Pit', 'Length', 'Sleeve'],
+  'Jerseys (Sports & Soccer)': ['Pit to Pit', 'Length', 'Sleeve'],
+  'Sweatshirts & Hoodies': ['Pit to Pit', 'Length', 'Sleeve'],
+  'Jackets & Outerwear': ['Pit to Pit', 'Length', 'Sleeve'],
+  'Shirts & Button-Ups': ['Pit to Pit', 'Length', 'Sleeve', 'Shoulder'],
+  'Bundles & Lots': []
+};
 
 /* ── Init ── */
 function init() {
@@ -726,6 +878,7 @@ function renderListView(items) {
       '<td><strong>' + p.name + '</strong></td>' +
       '<td>' + p.category + '</td>' +
       '<td>' + p.brand + '</td>' +
+      '<td>' + (p.color || '-') + '</td>' +
       '<td>' + (p.size || '-') + '</td>' +
       '<td>' + (p.condition || '-') + '</td>' +
       '<td>' + (p.era || '-') + '</td>' +
@@ -780,7 +933,7 @@ function renderCategoryView(items) {
     var table = document.createElement('table');
     table.innerHTML =
       '<thead><tr>' +
-        '<th>Image</th><th>Name</th><th>Brand</th><th>Size</th>' +
+        '<th>Image</th><th>Name</th><th>Brand</th><th>Color</th><th>Size</th>' +
         '<th>Condition</th><th>Era</th><th>Price</th><th>Status</th><th>Actions</th>' +
       '</tr></thead>';
     var tb = document.createElement('tbody');
@@ -797,6 +950,7 @@ function renderCategoryView(items) {
         '<td>' + imgTag + '</td>' +
         '<td><strong>' + p.name + '</strong></td>' +
         '<td>' + p.brand + '</td>' +
+        '<td>' + (p.color || '-') + '</td>' +
         '<td>' + (p.size || '-') + '</td>' +
         '<td>' + (p.condition || '-') + '</td>' +
         '<td>' + (p.era || '-') + '</td>' +
@@ -860,6 +1014,15 @@ function openAddModal() {
   document.getElementById('productId').value = '';
   document.getElementById('productStock').value = '1';
   document.getElementById('aiError').style.display = 'none';
+  document.getElementById('productColor').value = '';
+  document.getElementById('productFeatures').value = '';
+  document.getElementById('productTeam').value = '';
+  document.getElementById('productPlayer').value = '';
+  document.getElementById('productYear').value = '';
+  document.getElementById('productPrintType').value = '';
+  document.getElementById('productTagType').value = '';
+  renderMeasurementsForm({});
+  updateConditionalFields();
   uploadedImages = [];
   renderImagePreviews();
   var d = document.getElementById('dropZone');
@@ -883,6 +1046,15 @@ function editProduct(id) {
   document.getElementById('productEra').value = p.era || '';
   document.getElementById('productStock').value = p.stock;
   document.getElementById('productDescription').value = p.description || '';
+  document.getElementById('productColor').value = p.color || '';
+  document.getElementById('productFeatures').value = (p.features || []).join('\n');
+  document.getElementById('productTeam').value = p.team || '';
+  document.getElementById('productPlayer').value = p.player || '';
+  document.getElementById('productYear').value = p.year || '';
+  document.getElementById('productPrintType').value = p.printType || '';
+  document.getElementById('productTagType').value = p.tagType || '';
+  renderMeasurementsForm(p.measurements || {});
+  updateConditionalFields();
   document.getElementById('aiError').style.display = 'none';
 
   uploadedImages = [];
@@ -894,6 +1066,76 @@ function editProduct(id) {
   });
   renderImagePreviews();
   document.getElementById('productModal').classList.add('active');
+}
+
+/* ── Conditional fields ── */
+function updateConditionalFields() {
+  var cat = document.getElementById('productCategory').value;
+  var jerseyFields = document.getElementById('jerseyFields');
+  var teeFields = document.getElementById('teeFields');
+  jerseyFields.style.display = (cat === 'Jerseys (Sports & Soccer)') ? '' : 'none';
+  teeFields.style.display = (cat === 'Vintage Tees & Graphic Shirts') ? '' : 'none';
+
+  // Pre-populate measurement defaults if container is empty
+  var container = document.getElementById('measurementsContainer');
+  if (container && container.children.length === 0) {
+    var defaults = measurementDefaults[cat] || [];
+    var prefill = {};
+    defaults.forEach(function(label) { prefill[label] = ''; });
+    renderMeasurementsForm(prefill);
+  }
+}
+
+/* ── Measurements ── */
+function renderMeasurementsForm(measurementsObj) {
+  var container = document.getElementById('measurementsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  var entries = Object.entries(measurementsObj || {});
+  if (entries.length === 0) {
+    var cat = document.getElementById('productCategory').value;
+    var defaults = measurementDefaults[cat] || [];
+    entries = defaults.map(function(label) { return [label, '']; });
+  }
+  entries.forEach(function(pair) {
+    addMeasurementRow(pair[0], pair[1]);
+  });
+}
+
+function addMeasurementRow(label, value) {
+  var container = document.getElementById('measurementsContainer');
+  if (!container) return;
+  var row = document.createElement('div');
+  row.className = 'measurement-row';
+  // Strip trailing " from value for display
+  var displayVal = value || '';
+  if (typeof displayVal === 'string' && displayVal.endsWith('"')) {
+    displayVal = displayVal.slice(0, -1);
+  }
+  row.innerHTML =
+    '<input type="text" class="measurement-label" placeholder="Label (e.g. Pit to Pit)" value="' + (label || '').replace(/"/g, '&quot;') + '">' +
+    '<div class="measurement-value-wrap"><input type="text" class="measurement-value" placeholder="Value" value="' + String(displayVal).replace(/"/g, '&quot;') + '"></div>' +
+    '<button type="button" class="measurement-remove-btn" title="Remove">×</button>';
+  row.querySelector('.measurement-remove-btn').addEventListener('click', function() {
+    row.remove();
+  });
+  container.appendChild(row);
+}
+
+function collectMeasurements() {
+  var container = document.getElementById('measurementsContainer');
+  var result = {};
+  if (!container) return result;
+  container.querySelectorAll('.measurement-row').forEach(function(row) {
+    var label = row.querySelector('.measurement-label').value.trim();
+    var val = row.querySelector('.measurement-value').value.trim();
+    if (label && val) {
+      // Append " suffix if not present
+      if (!val.endsWith('"')) val = val + '"';
+      result[label] = val;
+    }
+  });
+  return result;
 }
 
 function deleteProduct(id) {
@@ -963,19 +1205,38 @@ document.getElementById('productForm').addEventListener('submit', async function
     var newBrand = document.getElementById('newBrandInput').value.trim();
     var selectedBrand = document.getElementById('productBrand').value;
 
+    var category = document.getElementById('productCategory').value;
+    var featuresText = document.getElementById('productFeatures').value || '';
+    var featuresArr = featuresText.split('\n')
+      .map(function(s) { return s.trim(); })
+      .filter(function(s) { return s.length > 0; });
+
     var pd = {
       name: document.getElementById('productName').value,
-      category: document.getElementById('productCategory').value,
+      category: category,
       brand: newBrand || selectedBrand,
       price: parseFloat(document.getElementById('productPrice').value),
       size: document.getElementById('productSize').value,
+      color: document.getElementById('productColor').value.trim(),
       condition: document.getElementById('productCondition').value,
       era: document.getElementById('productEra').value,
       stock: parseInt(document.getElementById('productStock').value),
       image: imageUrls[0] || '',
       images: imageUrls,
-      description: document.getElementById('productDescription').value
+      description: document.getElementById('productDescription').value,
+      measurements: collectMeasurements(),
+      features: featuresArr
     };
+
+    if (category === 'Jerseys (Sports & Soccer)') {
+      pd.team = document.getElementById('productTeam').value.trim();
+      pd.player = document.getElementById('productPlayer').value.trim();
+      pd.year = document.getElementById('productYear').value.trim();
+    }
+    if (category === 'Vintage Tees & Graphic Shirts') {
+      pd.printType = document.getElementById('productPrintType').value;
+      pd.tagType = document.getElementById('productTagType').value;
+    }
 
     if (id) {
       var idx = products.findIndex(function(p) { return p.id == id; });
@@ -1122,6 +1383,15 @@ async function generateAIDescription() {
   var category = document.getElementById('productCategory').value;
   var condition = document.getElementById('productCondition').value;
   var era = document.getElementById('productEra').value;
+  var color = document.getElementById('productColor').value.trim();
+  var measurements = collectMeasurements();
+  var featuresText = document.getElementById('productFeatures').value || '';
+  var features = featuresText.split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});
+  var team = document.getElementById('productTeam').value.trim();
+  var player = document.getElementById('productPlayer').value.trim();
+  var year = document.getElementById('productYear').value.trim();
+  var printType = document.getElementById('productPrintType').value;
+  var tagType = document.getElementById('productTagType').value;
   var imageUrl = '';
   if (uploadedImages.length > 0 && uploadedImages[0].blobUrl) {
     imageUrl = uploadedImages[0].blobUrl;
@@ -1149,6 +1419,14 @@ async function generateAIDescription() {
         category: category,
         condition: condition,
         era: era,
+        color: color,
+        measurements: measurements,
+        features: features,
+        team: team,
+        player: player,
+        year: year,
+        printType: printType,
+        tagType: tagType,
         imageUrl: imageUrl
       })
     });

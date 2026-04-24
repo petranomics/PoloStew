@@ -268,6 +268,103 @@
                 .info-badge--size .info-badge-value { color: var(--or); }
                 .info-badge--condition .info-badge-value { color: #4a7c59; }
                 .info-badge--era .info-badge-value { color: #6b5b95; }
+                .info-badge--color .info-badge-value { color: var(--charbon); }
+
+                /* Jersey-specific block */
+                .jersey-meta {
+                              background: linear-gradient(135deg, rgba(199, 93, 58, 0.05), rgba(212, 135, 58, 0.05));
+                              border: 1px solid rgba(199, 93, 58, 0.2);
+                              border-radius: 10px;
+                              padding: 1.25rem 1.5rem;
+                              margin-bottom: 1.5rem;
+                }
+                .jersey-meta-row {
+                              display: flex; gap: 1.5rem; flex-wrap: wrap;
+                }
+                .jersey-meta-item {
+                              display: flex; flex-direction: column;
+                }
+                .jersey-meta-label {
+                              font-size: 0.7rem;
+                              text-transform: uppercase;
+                              letter-spacing: 0.12em;
+                              color: #999;
+                              margin-bottom: 0.2rem;
+                }
+                .jersey-meta-value {
+                              font-family: 'Playfair Display', serif;
+                              font-size: 1.1rem;
+                              color: var(--noir);
+                              font-weight: 500;
+                }
+
+                /* Measurements table */
+                .measurements-table {
+                              width: 100%;
+                              border-collapse: collapse;
+                              margin-bottom: 1.5rem;
+                              border: 1px solid var(--argent);
+                              border-radius: 8px;
+                              overflow: hidden;
+                }
+                .measurements-table th,
+                .measurements-table td {
+                              padding: 0.75rem 1rem;
+                              text-align: left;
+                              border-bottom: 1px solid var(--argent);
+                              font-size: 0.9rem;
+                }
+                .measurements-table th {
+                              background: var(--parchment);
+                              font-weight: 500;
+                              text-transform: uppercase;
+                              letter-spacing: 0.08em;
+                              font-size: 0.7rem;
+                              color: #666;
+                }
+                .measurements-table tr:last-child th,
+                .measurements-table tr:last-child td {
+                              border-bottom: none;
+                }
+                .measurements-table td.measurement-value {
+                              text-align: right;
+                              font-weight: 500;
+                              color: var(--noir);
+                }
+
+                /* Features list */
+                .features-list {
+                              list-style: none;
+                              padding: 0;
+                              margin: 0 0 1.5rem 0;
+                }
+                .features-list li {
+                              position: relative;
+                              padding-left: 1.5rem;
+                              padding-bottom: 0.5rem;
+                              font-size: 0.95rem;
+                              color: #444;
+                              line-height: 1.6;
+                }
+                .features-list li::before {
+                              content: '';
+                              position: absolute;
+                              left: 0;
+                              top: 0.55rem;
+                              width: 6px;
+                              height: 6px;
+                              border-radius: 50%;
+                              background: var(--or);
+                }
+
+                .product-section-heading {
+                              font-family: 'Playfair Display', serif;
+                              font-size: 1.15rem;
+                              color: var(--noir);
+                              margin-bottom: 0.75rem;
+                              margin-top: 0.5rem;
+                              font-weight: 500;
+                }
 
                 /* One-of-a-kind messaging */
                 .vintage-notice {
@@ -536,11 +633,33 @@
                                                                         Product description will appear here.
                                                   </div>
 
-                                                  <!-- Vintage Info Badges (size, condition, era) -->
+                                                  <!-- Jersey-specific Team / Player block -->
+                                                  <div class="jersey-meta" id="jerseyMeta" style="display: none;">
+                                                                        <div class="jersey-meta-row">
+                                                                                      <div class="jersey-meta-item" id="jerseyTeamWrap">
+                                                                                                          <span class="jersey-meta-label">Team</span>
+                                                                                                          <span class="jersey-meta-value" id="jerseyTeam">--</span>
+                                                                                      </div>
+                                                                                      <div class="jersey-meta-item" id="jerseyPlayerWrap">
+                                                                                                          <span class="jersey-meta-label">Player</span>
+                                                                                                          <span class="jersey-meta-value" id="jerseyPlayer">--</span>
+                                                                                      </div>
+                                                                                      <div class="jersey-meta-item" id="jerseyYearWrap">
+                                                                                                          <span class="jersey-meta-label">Season</span>
+                                                                                                          <span class="jersey-meta-value" id="jerseyYear">--</span>
+                                                                                      </div>
+                                                                        </div>
+                                                  </div>
+
+                                                  <!-- Vintage Info Badges (size, color, condition, era) -->
                                                   <div class="vintage-info" id="vintageInfo" style="display: none;">
                                                                         <div class="info-badge info-badge--size">
                                                                                       <span class="info-badge-label">Size</span>
                                                                                       <span class="info-badge-value" id="infoSize">--</span>
+                                                                        </div>
+                                                                        <div class="info-badge info-badge--color" id="infoColorWrap">
+                                                                                      <span class="info-badge-label">Color</span>
+                                                                                      <span class="info-badge-value" id="infoColor">--</span>
                                                                         </div>
                                                                         <div class="info-badge info-badge--condition">
                                                                                       <span class="info-badge-label">Condition</span>
@@ -550,6 +669,20 @@
                                                                                       <span class="info-badge-label">Era</span>
                                                                                       <span class="info-badge-value" id="infoEra">--</span>
                                                                         </div>
+                                                  </div>
+
+                                                  <!-- Features list -->
+                                                  <div id="featuresWrap" style="display: none;">
+                                                                        <h3 class="product-section-heading">Features</h3>
+                                                                        <ul class="features-list" id="featuresList"></ul>
+                                                  </div>
+
+                                                  <!-- Measurements table -->
+                                                  <div id="measurementsWrap" style="display: none;">
+                                                                        <h3 class="product-section-heading">Measurements</h3>
+                                                                        <table class="measurements-table">
+                                                                                      <tbody id="measurementsBody"></tbody>
+                                                                        </table>
                                                   </div>
 
                                                   <!-- One-of-a-kind notice -->
@@ -651,10 +784,19 @@
                               document.getElementById('productDescription').textContent = currentProduct.description || 'A unique vintage piece from our curated collection.';
                               document.getElementById('productNameBreadcrumb').textContent = currentProduct.name;
 
-                              // Category link
+                              // Category link — map display name back to slug for the URL.
+                              const displayToSlug = {
+                                                'Vintage Tees & Graphic Shirts': 'vintage-tees',
+                                                'Jerseys (Sports & Soccer)': 'jerseys',
+                                                'Jackets & Outerwear': 'jackets-outerwear',
+                                                'Sweatshirts & Hoodies': 'sweatshirts-hoodies',
+                                                'Shirts & Button-Ups': 'shirts-button-ups',
+                                                'Bundles & Lots': 'bundles-lots'
+                              };
                               const categoryLink = document.getElementById('categoryLink');
                               categoryLink.textContent = currentProduct.category;
-                              categoryLink.href = `category.html?category=${currentProduct.category}`;
+                              const slug = displayToSlug[currentProduct.category] || encodeURIComponent(currentProduct.category);
+                              categoryLink.href = `category.html?cat=${slug}`;
 
                               // Badge for sale or featured
                               const badge = document.getElementById('productBadge');
@@ -672,8 +814,17 @@
                               const images = currentProduct.images || [currentProduct.image];
                               renderGallery(images);
 
-                              // Vintage info badges (size, condition, era)
+                              // Vintage info badges (size, color, condition, era)
                               renderVintageInfo();
+
+                              // Jersey-specific team/player/year block
+                              renderJerseyMeta();
+
+                              // Features bullet list
+                              renderFeaturesList();
+
+                              // Measurements table
+                              renderMeasurementsTable();
 
                               // Set price display using basePrice
                               updatePriceDisplay();
@@ -689,7 +840,7 @@
 
                 function renderVintageInfo() {
                               const vintageInfo = document.getElementById('vintageInfo');
-                              const hasVintageData = currentProduct.size || currentProduct.condition || currentProduct.era;
+                              const hasVintageData = currentProduct.size || currentProduct.color || currentProduct.condition || currentProduct.era;
 
                               if (hasVintageData) {
                                                 vintageInfo.style.display = 'flex';
@@ -698,6 +849,12 @@
                                                               document.getElementById('infoSize').textContent = currentProduct.size;
                                                 } else {
                                                               document.querySelector('.info-badge--size').style.display = 'none';
+                                                }
+
+                                                if (currentProduct.color) {
+                                                              document.getElementById('infoColor').textContent = currentProduct.color;
+                                                } else {
+                                                              document.getElementById('infoColorWrap').style.display = 'none';
                                                 }
 
                                                 if (currentProduct.condition) {
@@ -712,6 +869,70 @@
                                                               document.querySelector('.info-badge--era').style.display = 'none';
                                                 }
                               }
+                }
+
+                function renderJerseyMeta() {
+                              const jerseyMeta = document.getElementById('jerseyMeta');
+                              const isJersey = currentProduct.category === 'Jerseys (Sports & Soccer)';
+                              const hasJerseyData = currentProduct.team || currentProduct.player || currentProduct.year;
+                              if (!isJersey || !hasJerseyData) {
+                                                jerseyMeta.style.display = 'none';
+                                                return;
+                              }
+                              jerseyMeta.style.display = '';
+                              if (currentProduct.team) {
+                                                document.getElementById('jerseyTeam').textContent = currentProduct.team;
+                              } else {
+                                                document.getElementById('jerseyTeamWrap').style.display = 'none';
+                              }
+                              if (currentProduct.player) {
+                                                document.getElementById('jerseyPlayer').textContent = currentProduct.player;
+                              } else {
+                                                document.getElementById('jerseyPlayerWrap').style.display = 'none';
+                              }
+                              if (currentProduct.year) {
+                                                document.getElementById('jerseyYear').textContent = currentProduct.year;
+                              } else {
+                                                document.getElementById('jerseyYearWrap').style.display = 'none';
+                              }
+                }
+
+                function renderFeaturesList() {
+                              const wrap = document.getElementById('featuresWrap');
+                              const list = document.getElementById('featuresList');
+                              const features = Array.isArray(currentProduct.features) ? currentProduct.features.filter(Boolean) : [];
+                              if (features.length === 0) {
+                                                wrap.style.display = 'none';
+                                                return;
+                              }
+                              wrap.style.display = '';
+                              list.innerHTML = features.map(function(f) {
+                                                return '<li>' + escapeHtml(f) + '</li>';
+                              }).join('');
+                }
+
+                function renderMeasurementsTable() {
+                              const wrap = document.getElementById('measurementsWrap');
+                              const tbody = document.getElementById('measurementsBody');
+                              const m = currentProduct.measurements || {};
+                              const entries = Object.entries(m).filter(function(e) { return e[1] && String(e[1]).trim().length > 0; });
+                              if (entries.length === 0) {
+                                                wrap.style.display = 'none';
+                                                return;
+                              }
+                              wrap.style.display = '';
+                              tbody.innerHTML = entries.map(function(e) {
+                                                return '<tr><th>' + escapeHtml(e[0]) + '</th><td class="measurement-value">' + escapeHtml(e[1]) + '</td></tr>';
+                              }).join('');
+                }
+
+                function escapeHtml(s) {
+                              return String(s)
+                                                .replace(/&/g, '&amp;')
+                                                .replace(/</g, '&lt;')
+                                                .replace(/>/g, '&gt;')
+                                                .replace(/"/g, '&quot;')
+                                                .replace(/'/g, '&#39;');
                 }
 
                 function renderSoldState() {

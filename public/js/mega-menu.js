@@ -185,16 +185,21 @@ class MegaMenu {
 /**
  * Load catalog data and initialize mega menu
  */
+// Bump CATALOG_CACHE_VERSION whenever the catalog category structure changes,
+// to force clients to fetch fresh data instead of using stale localStorage.
+const CATALOG_CACHE_VERSION = 'v2-vintage-categories';
+
 async function initializeMegaMenu() {
   try {
     // Check if catalog data is cached in localStorage
     const cachedData = localStorage.getItem('polostew-catalog');
     const cacheTime = localStorage.getItem('polostew-catalog-time');
+    const cacheVersion = localStorage.getItem('polostew-catalog-version');
     const oneHour = 60 * 60 * 1000;
 
     let catalogData;
 
-    if (cachedData && cacheTime && (Date.now() - parseInt(cacheTime)) < oneHour) {
+    if (cachedData && cacheTime && cacheVersion === CATALOG_CACHE_VERSION && (Date.now() - parseInt(cacheTime)) < oneHour) {
       // Use cached data
       catalogData = JSON.parse(cachedData);
       console.log('Loaded catalog from cache');
@@ -209,6 +214,7 @@ async function initializeMegaMenu() {
       // Cache the data
       localStorage.setItem('polostew-catalog', JSON.stringify(catalogData));
       localStorage.setItem('polostew-catalog-time', Date.now().toString());
+      localStorage.setItem('polostew-catalog-version', CATALOG_CACHE_VERSION);
       console.log('Loaded catalog from server and cached');
     }
 
