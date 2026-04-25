@@ -352,8 +352,10 @@ table tbody tr:hover { background: #f9f8f5; }
           <button id="btnListView" class="active" onclick="setView('list')">List View</button>
           <button id="btnCategoryView" onclick="setView('category')">Category View</button>
         </div>
+        <button id="btnShopifySync" class="btn btn-secondary" onclick="syncFromShopify()" title="Pull products from Shopify">↻ Sync from Shopify</button>
         <button class="btn btn-primary" onclick="openAddModal()">+ ADD NEW PRODUCT</button>
       </div>
+      <div id="shopifySyncStatus" style="display:none;width:100%;margin-top:12px;padding:10px 14px;border-radius:6px;font-size:13px;"></div>
     </div>
 
     <div class="filters">
@@ -787,6 +789,97 @@ function saveProducts() {
   try {
     localStorage.setItem('polostew_admin_products', JSON.stringify(products));
   } catch(e) { console.warn('Failed to save products:', e); }
+}
+
+/* ── Shopify Sync ── */
+function showSyncStatus(message, type) {
+  var el = document.getElementById('shopifySyncStatus');
+  if (!el) return;
+  var colors = {
+    info: { bg: '#e8f0fe', color: '#1967d2', border: '#aecbfa' },
+    success: { bg: '#e6f4ea', color: '#137333', border: '#a8dab5' },
+    error: { bg: '#fce8e6', color: '#c5221f', border: '#fad2cf' },
+    warning: { bg: '#fef7e0', color: '#b06000', border: '#fdd663' }
+  };
+  var c = colors[type] || colors.info;
+  el.style.display = 'block';
+  el.style.background = c.bg;
+  el.style.color = c.color;
+  el.style.border = '1px solid ' + c.border;
+  el.textContent = message;
+}
+
+async function syncFromShopify() {
+  var btn = document.getElementById('btnShopifySync');
+  if (!btn) return;
+  var origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Syncing...';
+  showSyncStatus('Fetching products from Shopify...', 'info');
+
+  try {
+    var response = await fetch('/api/shopify/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+      var errData = await response.json().catch(function() { return {}; });
+      throw new Error(errData.error || 'Sync failed (' + response.status + ')');
+    }
+
+    var data = await response.json();
+    var shopifyProducts = data.products || [];
+
+    if (shopifyProducts.length === 0) {
+      showSyncStatus('No products found in Shopify.', 'warning');
+      return;
+    }
+
+    var added = 0, updated = 0, skipped = 0;
+    shopifyProducts.forEach(function(sp) {
+      var existing = products.find(function(p) { return p.shopifyId === sp.shopifyId; });
+      if (existing) {
+        // Update synced fields only — preserve user-edited vintage fields
+        existing.name = sp.name;
+        existing.brand = sp.brand;
+        existing.price = sp.price;
+        existing.stock = sp.stock;
+        existing.image = existing.image || sp.image;
+        existing.images = (existing.images && existing.images.length > 0) ? existing.images : sp.images;
+        if (!existing.category && sp.category) existing.category = sp.category;
+        updated++;
+      } else {
+        // Brand new — import
+        sp.id = nextId++;
+        sp.condition = sp.condition || 'Good (visible wear)';
+        sp.era = sp.era || '';
+        sp.size = sp.size || '';
+        sp.color = sp.color || '';
+        sp.measurements = sp.measurements || {};
+        sp.features = sp.features || [];
+        sp.description = sp.description || '';
+        products.push(sp);
+        added++;
+      }
+    });
+
+    saveProducts();
+    updateBrandDropdowns();
+    applyAllFilters();
+    updateStats();
+
+    var msg = 'Synced ' + shopifyProducts.length + ' product(s): ' +
+              added + ' new, ' + updated + ' updated' +
+              (skipped > 0 ? ', ' + skipped + ' skipped' : '');
+    showSyncStatus(msg, 'success');
+  } catch (err) {
+    console.error('Shopify sync error:', err);
+    showSyncStatus('Sync failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
 }
 
 /* ── Category Display Names (for matching JSON lowercase to Title Case) ── */
