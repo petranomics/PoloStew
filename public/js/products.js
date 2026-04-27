@@ -22,11 +22,63 @@ class ProductManager {
 
       if (data.products) {
         this.products = data.products;
+        this.renderProductsGrid();
         this.updateProductCards();
       }
     } catch (error) {
       console.error('Error loading products:', error);
+      const grid = document.querySelector('[data-products-grid]');
+      if (grid) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#999;">Couldn\'t load products. Please refresh.</div>';
+      }
     }
+  }
+
+  // Render product cards into any container marked [data-products-grid]
+  renderProductsGrid() {
+    const grids = document.querySelectorAll('[data-products-grid]');
+    if (grids.length === 0) return;
+
+    if (this.products.length === 0) {
+      grids.forEach(grid => {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#999;">No products yet. Add some from the admin.</div>';
+      });
+      return;
+    }
+
+    const html = this.products.map(p => this.buildCardHTML(p)).join('');
+    grids.forEach(grid => { grid.innerHTML = html; });
+  }
+
+  buildCardHTML(p) {
+    const img = (p.images && p.images[0])
+      ? p.images[0]
+      : 'https://placehold.co/400x500/f0e6d3/2c2418?text=PoloStew';
+    let badge = '';
+    if (p.onSale) {
+      badge = '<span class="product-badge sale-badge" style="background:#e53935;">SALE</span>';
+    } else if (p.featured) {
+      badge = '<span class="product-badge">Featured</span>';
+    }
+    const esc = (s) => String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return (
+      '<div class="product-card" data-product-id="' + esc(p.id) + '" ' +
+      'onclick="window.location.href=\'product?id=\' + this.dataset.productId">' +
+        '<div class="product-image-container">' +
+          '<img src="' + esc(img) + '" alt="' + esc(p.name) + '" class="product-image" />' +
+          badge +
+          '<button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(this)">&#9825;</button>' +
+        '</div>' +
+        '<div class="product-info">' +
+          '<p class="product-brand">' + esc(p.brand) + (p.era ? ' / ' + esc(p.era) : '') + '</p>' +
+          '<h3 class="product-name">' + esc(p.name) + '</h3>' +
+          '<p class="product-price">$' + (p.basePrice || 0) + '</p>' +
+          '<button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(this)">Add to Cart</button>' +
+        '</div>' +
+      '</div>'
+    );
   }
 
   // Get product by ID
