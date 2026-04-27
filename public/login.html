@@ -71,10 +71,16 @@
         }
 
         .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            letter-spacing: 0.15em;
+            display: flex;
+            justify-content: center;
             margin-bottom: 2rem;
+        }
+
+        .logo img {
+            max-width: 100%;
+            width: 320px;
+            height: auto;
+            display: block;
         }
 
         .brand-tagline {
@@ -339,7 +345,7 @@
         <!-- Brand Section -->
         <div class="login-brand">
             <div class="brand-content">
-                <div class="logo"><img src="/images/polostew-logo.png" alt="PoloStew" style="height:80px;width:auto;display:block;"></div>
+                <div class="logo"><img src="/images/polostew-logo.png" alt="PoloStew"></div>
                 <p class="brand-tagline">Your gateway to curated vintage finds. Access your collection, manage your wishlist, and track your orders.</p>
                 
                 <div class="brand-features">

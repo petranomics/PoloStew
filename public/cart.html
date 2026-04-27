@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Shopping Cart - POLOSTEW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --dor: #d4873a;
+            --sage: #8a9a7b;
+            --clay: #c49a6c;
+            --parchment: #f0e6d3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--ivory);
+            color: var(--noir);
+            min-height: 100vh;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(250, 246, 240, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--argent);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+        }
+
+        .nav-icons { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-icon { width: 24px; height: 24px; cursor: pointer; opacity: 0.8; transition: opacity 0.3s; }
+        .nav-icon:hover { opacity: 1; }
+        .cart-icon-wrap { position: relative; }
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: var(--or);
+            color: white;
+            font-size: 0.65rem;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        main { padding-top: 110px; max-width: 1100px; margin: 0 auto; padding-left: 5%; padding-right: 5%; padding-bottom: 4rem; }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #777;
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+        }
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .cart-items { background: white; border: 1px solid var(--argent); border-radius: 12px; overflow: hidden; }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 110px 1fr auto;
+            gap: 1.25rem;
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--argent);
+            align-items: center;
+        }
+        .cart-item:last-child { border-bottom: none; }
+
+        .cart-item-image {
+            width: 110px;
+            height: 110px;
+            background: var(--parchment);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            color: rgba(44, 36, 24, 0.3);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            overflow: hidden;
+            object-fit: cover;
+        }
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-brand {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--or);
+            margin-bottom: 0.4rem;
+        }
+        .cart-item-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            margin-bottom: 0.4rem;
+            color: var(--noir);
+        }
+        .cart-item-name a { color: inherit; text-decoration: none; }
+        .cart-item-name a:hover { color: var(--or); }
+        .cart-item-meta {
+            font-size: 0.8rem;
+            color: #888;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .cart-item-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: right;
+        }
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 0.5rem;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .cart-item-remove:hover { color: var(--or); }
+
+        .cart-empty {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: white;
+            border: 1px solid var(--argent);
+            border-radius: 12px;
+        }
+        .cart-empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+        .cart-empty-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .cart-empty-text { color: #888; margin-bottom: 1.5rem; }
+
+        .summary {
+            background: white;
+            border: 1px solid var(--argent);
+            border-radius: 12px;
+            padding: 1.75rem;
+            position: sticky;
+            top: 100px;
+        }
+        .summary h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--argent);
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            color: #444;
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 2px solid var(--or);
+            color: var(--noir);
+        }
+        .checkout-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1.25rem;
+            background: var(--or);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .checkout-btn:hover { background: var(--charbon); transform: translateY(-1px); }
+        .checkout-btn:disabled { background: #999; cursor: not-allowed; transform: none; }
+
+        .continue-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--or);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+        .continue-link:hover { color: var(--charbon); }
+
+        .vintage-notice {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--charbon);
+            color: var(--ivory);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        @media (max-width: 900px) {
+            .cart-layout { grid-template-columns: 1fr; }
+            .summary { position: static; }
+        }
+        @media (max-width: 600px) {
+            .cart-item { grid-template-columns: 80px 1fr; gap: 0.85rem; padding: 1rem; }
+            .cart-item-image { width: 80px; height: 80px; }
+            .cart-item-price-wrap { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; }
+            .cart-item-price { text-align: left; }
+            .page-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo" aria-label="PoloStew home"><img src="/images/polostew-logo.png" alt="PoloStew" style="height:42px;width:auto;display:block;"></a>
+            <div class="nav-icons">
+                <svg class="nav-icon" onclick="window.location.href='/#search'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <svg class="nav-icon" onclick="window.location.href='/account'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <div class="cart-icon-wrap">
+                    <svg class="nav-icon" onclick="window.location.href='/cart'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span class="cart-badge">0</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="page-title">Shopping Cart</h1>
+        <p class="page-subtitle" id="itemCountSubtitle">Loading…</p>
+
+        <div class="cart-layout" id="cartLayout">
+            <div id="cartItemsContainer"></div>
+            <aside class="summary" id="summary" style="display: none;">
+                <h3>Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">$0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span style="color: var(--sage);">Complimentary</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="total">$0</span>
+                </div>
+                <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">Proceed to Checkout</button>
+                <p class="vintage-notice">
+                    All vintage items are one-of-a-kind. Final sale.
+                </p>
+            </aside>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/js/cart.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', renderCartPage);
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function renderCartPage() {
+            const container = document.getElementById('cartItemsContainer');
+            const summary = document.getElementById('summary');
+            const subtitle = document.getElementById('itemCountSubtitle');
+
+            const items = (window.cart && window.cart.items) || [];
+
+            if (items.length === 0) {
+                subtitle.textContent = 'Your cart is empty';
+                summary.style.display = 'none';
+                container.innerHTML = `
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <h2 class="cart-empty-title">Nothing in your cart yet</h2>
+                        <p class="cart-empty-text">Start hunting — every piece is one of a kind.</p>
+                        <a href="/" class="checkout-btn" style="display:inline-block;text-decoration:none;width:auto;padding:0.85rem 2rem;">Browse Vintage</a>
+                    </div>`;
+                return;
+            }
+
+            subtitle.textContent = items.length + ' item' + (items.length === 1 ? '' : 's') + ' reserved for you';
+
+            const html = '<div class="cart-items">' + items.map(function(item) {
+                const meta = [];
+                if (item.size) meta.push('Size: ' + escapeHtml(item.size));
+                if (item.condition) meta.push(escapeHtml(item.condition));
+                if (item.era) meta.push(escapeHtml(item.era));
+                const imgHtml = item.image
+                    ? '<img src="' + escapeHtml(item.image) + '" alt="' + escapeHtml(item.name) + '">'
+                    : escapeHtml(item.brand || '');
+                return (
+                    '<div class="cart-item">' +
+                        '<div class="cart-item-image">' + imgHtml + '</div>' +
+                        '<div>' +
+                            '<p class="cart-item-brand">' + escapeHtml(item.brand || '') + '</p>' +
+                            '<h3 class="cart-item-name"><a href="/product?id=' + encodeURIComponent(item.id) + '">' + escapeHtml(item.name) + '</a></h3>' +
+                            (meta.length ? '<p class="cart-item-meta">' + meta.join(' • ') + '</p>' : '') +
+                        '</div>' +
+                        '<div>' +
+                            '<p class="cart-item-price">$' + item.price.toLocaleString() + '</p>' +
+                            '<button class="cart-item-remove" onclick="removeCartItem(\'' + item.id.replace(/'/g, "\\'") + '\')">Remove</button>' +
+                        '</div>' +
+                    '</div>'
+                );
+            }).join('') + '</div>' +
+            '<a href="/" class="continue-link">← Continue shopping</a>';
+
+            container.innerHTML = html;
+
+            const total = items.reduce(function(sum, i) { return sum + (i.price || 0); }, 0);
+            document.getElementById('subtotal').textContent = '$' + total.toLocaleString();
+            document.getElementById('total').textContent = '$' + total.toLocaleString();
+            summary.style.display = 'block';
+        }
+
+        function removeCartItem(productId) {
+            if (window.cart) {
+                window.cart.removeFromCart(productId);
+                showToast('Removed from cart');
+                renderCartPage();
+            }
+        }
+
+        async function checkout() {
+            if (!window.cart || window.cart.items.length === 0) {
+                showToast('Your cart is empty');
+                return;
+            }
+
+            let isLoggedIn = false;
+            if (window.auth) {
+                isLoggedIn = await window.auth.checkAuth();
+            }
+
+            if (!isLoggedIn) {
+                window.location.href = '/login.html?redirect=' + encodeURIComponent('/cart');
+                return;
+            }
+
+            const total = window.cart.getTotal();
+            const count = window.cart.getCount();
+            window.cart.clearCart();
+            renderCartPage();
+            alert('Order placed! ' + count + ' item' + (count > 1 ? 's' : '') + ' for $' + total.toLocaleString() + '. Thank you for shopping with PoloStew!');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+    </script>
+</body>
+</html>
