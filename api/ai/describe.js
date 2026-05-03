@@ -1,3 +1,5 @@
+import { logUsage } from '../../lib/usage-logger.mjs';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -72,6 +74,8 @@ ${detailLines.join('\n')}
 
 Write ONLY the description text, nothing else. No quotes, no labels, no formatting.`;
 
+  const model = 'claude-haiku-4-5-20251001';
+  const startedAt = Date.now();
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -81,7 +85,7 @@ Write ONLY the description text, nothing else. No quotes, no labels, no formatti
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model,
         max_tokens: 250,
         messages: [{
           role: 'user',
@@ -102,6 +106,16 @@ Write ONLY the description text, nothing else. No quotes, no labels, no formatti
     if (!text) {
       return res.status(500).json({ error: 'No response from AI' });
     }
+
+    await logUsage({
+      app: 'polostew',
+      endpoint: '/api/ai/describe',
+      model,
+      provider: 'anthropic',
+      response: result,
+      latencyMs: Date.now() - startedAt,
+      metadata: { category, isJersey, isTee },
+    });
 
     return res.status(200).json({ description: text });
   } catch (error) {
