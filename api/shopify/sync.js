@@ -1,3 +1,5 @@
+import { getShopifyAccessToken } from '../../lib/shopifyAuth.mjs';
+
 // Maps Shopify product types to PoloStew categories
 const CATEGORY_MAP = {
   't-shirt': 'Vintage Tees & Graphic Shirts',
@@ -30,16 +32,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const shopUrl = process.env.SHOPIFY_STORE_URL; // e.g. polostew.myshopify.com
-  const accessToken = process.env.SHOPIFY_ADMIN_TOKEN; // shpat_...
-
-  if (!shopUrl || !accessToken) {
-    return res.status(500).json({
-      error: 'Shopify not configured. Set SHOPIFY_STORE_URL and SHOPIFY_ADMIN_TOKEN env vars.',
-    });
-  }
+  const shopUrl = process.env.SHOPIFY_STORE_URL;
 
   try {
+    const accessToken = await getShopifyAccessToken();
     const apiUrl = `https://${shopUrl}/admin/api/2024-01/products.json?limit=250`;
     const shopifyRes = await fetch(apiUrl, {
       headers: {
