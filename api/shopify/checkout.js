@@ -8,7 +8,15 @@
  * cartCreate mutation publicly callable. The customer is then redirected
  * to Shopify's hosted checkout — Shopify handles payment, fulfillment,
  * and writes the order back to its admin natively.
+ *
+ * Why we rewrite the checkoutUrl host: Shopify returns checkoutUrl using
+ * the merchant's *primary* storefront domain. When that's been pointed at
+ * the same custom domain as this Vercel deployment, /checkouts/* lands at
+ * Vercel and 404s. Forcing the *.myshopify.com host makes checkout work
+ * for every onboarded merchant regardless of their Shopify domain config.
  */
+
+import { isValidShopHostname } from '../../lib/shopifyAuth.mjs';
 
 const STOREFRONT_API_VERSION = '2024-10';
 
@@ -35,6 +43,9 @@ export default async function handler(req, res) {
   const shop = process.env.SHOPIFY_STORE_URL;
   if (!shop) {
     return res.status(500).json({ error: 'SHOPIFY_STORE_URL not configured' });
+  }
+  if (!isValidShopHostname(shop)) {
+    return res.status(500).json({ error: 'SHOPIFY_STORE_URL must be <store>.myshopify.com' });
   }
 
   const { items } = req.body || {};
@@ -85,12 +96,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: result.userErrors[0].message });
     }
 
-    const checkoutUrl = result.cart && result.cart.checkoutUrl;
-    if (!checkoutUrl) {
+    const rawCheckoutUrl = result.cart && result.cart.checkoutUrl;
+    if (!rawCheckoutUrl) {
       return res.status(500).json({ error: 'No checkoutUrl returned from Shopify' });
     }
 
-    return res.status(200).json({ checkoutUrl });
+    const url = new URL(rawCheckoutUrl);
+    url.host = shop;
+    return res.status(200).json({ checkoutUrl: url.toString() });
   } catch (error) {
     console.error('Checkout error:', error);
     return res.status(500).json({ error: error.message });
