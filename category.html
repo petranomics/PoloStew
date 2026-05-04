@@ -678,7 +678,7 @@
                                 // Apply initial category filter if set.
                                 // Products store the full display-name in `category`, so we filter by that.
                                 if (currentCategory && categoryInfo[currentCategory]) {
-                                              productFilters.setCategoryFilter(categoryInfo[currentCategory].title);
+                                              productFilters.setCategoryFilters([categoryInfo[currentCategory].title]);
                                 }
 
                                 // Build filter sidebar
@@ -740,30 +740,35 @@
 
                   function toggleCategoryFilter(category) {
                                 if (!productFilters) return;
-                                // For category, we use single-select behavior via setCategoryFilter
-                                // If checkbox is checked, set category; if unchecked, clear it.
-                                // `category` here is the URL slug; we filter by its display name.
-                                const checkbox = document.querySelector(`#filterCategories input[value="${category}"]`);
-                                if (checkbox && checkbox.checked) {
-                                              // Uncheck other category checkboxes
-                                              document.querySelectorAll('#filterCategories input').forEach(cb => {
-                                                            if (cb.value !== category) cb.checked = false;
-                                              });
-                                              currentCategory = category;
-                                              const info = categoryInfo[category];
-                                              productFilters.setCategoryFilter(info ? info.title : category);
+                                // `category` is the URL slug; we filter by its display-name title.
+                                const info = categoryInfo[category];
+                                const displayName = info ? info.title : category;
+                                productFilters.toggleCategory(displayName);
+                                updateCategoryHeader();
+                  }
 
-                                              // Update page header
-                                              if (info) {
-                                                            document.getElementById('categoryTitle').textContent = info.title;
-                                                            document.getElementById('categorySubtitle').textContent = info.subtitle;
-                                              }
-                                } else {
-                                              currentCategory = '';
-                                              productFilters.setCategoryFilter(null);
-                                              document.getElementById('categoryTitle').textContent = 'All Vintage';
-                                              document.getElementById('categorySubtitle').textContent = 'Every piece is one of a kind — browse our full collection of curated vintage sportswear';
+                  function updateCategoryHeader() {
+                                if (!productFilters) return;
+                                const selected = productFilters.filters.categories;
+                                const titleEl = document.getElementById('categoryTitle');
+                                const subEl = document.getElementById('categorySubtitle');
+
+                                if (selected.length === 0) {
+                                              titleEl.textContent = 'All Vintage';
+                                              subEl.textContent = 'Every piece is one of a kind — browse our full collection of curated vintage sportswear';
+                                              return;
                                 }
+
+                                if (selected.length === 1) {
+                                              const slug = Object.keys(categoryInfo).find(k => categoryInfo[k].title === selected[0]);
+                                              const info = slug ? categoryInfo[slug] : null;
+                                              titleEl.textContent = info ? info.title : selected[0];
+                                              subEl.textContent = info ? info.subtitle : '';
+                                              return;
+                                }
+
+                                titleEl.textContent = 'Selected Categories';
+                                subEl.textContent = selected.length + ' categories selected — ' + selected.join(' · ');
                   }
 
                   function toggleConditionFilter(condition) {

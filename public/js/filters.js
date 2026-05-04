@@ -15,7 +15,7 @@ class ProductFilters {
       priceRange: { min: 0, max: Infinity },
       onSale: false,
       featured: false,
-      category: null,
+      categories: [],   // Multi-select category filter
       conditions: [],   // Excellent, Good, Fair
       eras: [],          // 70s, 80s, 90s, 2000s
       inStockOnly: false // Hide sold items
@@ -28,9 +28,9 @@ class ProductFilters {
   applyFilters() {
     let filtered = [...this.allProducts];
 
-    // Filter by category
-    if (this.filters.category) {
-      filtered = filtered.filter(p => p.category === this.filters.category);
+    // Filter by category (multi-select)
+    if (this.filters.categories.length > 0) {
+      filtered = filtered.filter(p => this.filters.categories.includes(p.category));
     }
 
     // Filter by brands
@@ -149,9 +149,20 @@ class ProductFilters {
     return this.applyFilters();
   }
 
-  // Set category filter
-  setCategoryFilter(category) {
-    this.filters.category = category;
+  // Set the full set of selected categories (replaces current selection)
+  setCategoryFilters(categories) {
+    this.filters.categories = Array.isArray(categories) ? categories.filter(Boolean) : [];
+    return this.applyFilters();
+  }
+
+  // Toggle a single category in/out of the selection
+  toggleCategory(category) {
+    const index = this.filters.categories.indexOf(category);
+    if (index > -1) {
+      this.filters.categories.splice(index, 1);
+    } else {
+      this.filters.categories.push(category);
+    }
     return this.applyFilters();
   }
 
@@ -208,7 +219,7 @@ class ProductFilters {
       priceRange: { min: 0, max: Infinity },
       onSale: false,
       featured: false,
-      category: this.filters.category, // Keep category filter
+      categories: this.filters.categories, // Preserve category selection
       conditions: [],
       eras: [],
       inStockOnly: false
