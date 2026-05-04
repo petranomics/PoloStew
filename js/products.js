@@ -34,7 +34,9 @@ class ProductManager {
     }
   }
 
-  // Render product cards into any container marked [data-products-grid]
+  // Render product cards into any container marked [data-products-grid].
+  // If any products are flagged `featured`, show only those (curated homepage view).
+  // If none are flagged, fall back to all products so the homepage isn't empty.
   renderProductsGrid() {
     const grids = document.querySelectorAll('[data-products-grid]');
     if (grids.length === 0) return;
@@ -46,7 +48,9 @@ class ProductManager {
       return;
     }
 
-    const html = this.products.map(p => this.buildCardHTML(p)).join('');
+    const featured = this.products.filter(p => p.featured === true);
+    const toRender = featured.length > 0 ? featured : this.products;
+    const html = toRender.map(p => this.buildCardHTML(p)).join('');
     grids.forEach(grid => { grid.innerHTML = html; });
   }
 

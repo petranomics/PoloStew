@@ -1,11 +1,26 @@
 /**
  * Public Products API
- * GET /api/products - Get all products or single product
- * Returns product data with sizes and inventory
+ * GET /api/products            -> { products: [...] }
+ * GET /api/products?id=<id>    -> { product: {...} }
+ *
+ * Source of truth is KV (key `published:products`), populated by the admin
+ * via /api/admin/publish. If KV is empty (first-time setup, fresh deploy),
+ * fall back to data/products.json so the site isn't empty.
  */
 
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { kv } from '@vercel/kv';
+
+async function loadProducts() {
+  const published = await kv.get('published:products');
+  if (published && Array.isArray(published.products) && published.products.length > 0) {
+    return published.products;
+  }
+  const path = join(process.cwd(), 'data', 'products.json');
+  const file = JSON.parse(readFileSync(path, 'utf8'));
+  return file.products || [];
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -13,24 +28,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Read products from JSON file
-    const productsPath = join(process.cwd(), 'data', 'products.json');
-    const productsData = readFileSync(productsPath, 'utf8');
-    const { products } = JSON.parse(productsData);
+    const products = await loadProducts();
 
-    // If product ID is provided, return single product
     const { id } = req.query;
     if (id) {
-      const product = products.find(p => p.id === id);
-      if (!product) {
-        return res.status(404).json({ error: 'Product not found' });
-      }
+      const product = products.find((p) => p.id === id);
+      if (!product) return res.status(404).json({ error: 'Product not found' });
       return res.status(200).json({ product });
     }
 
-    // Return all products
     return res.status(200).json({ products });
-
   } catch (error) {
     console.error('Products API error:', error);
     return res.status(500).json({ error: 'Internal server error' });

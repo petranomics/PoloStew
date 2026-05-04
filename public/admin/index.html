@@ -790,6 +790,28 @@ function saveProducts() {
   try {
     localStorage.setItem('polostew_admin_products', JSON.stringify(products));
   } catch(e) { console.warn('Failed to save products:', e); }
+  publishProducts();
+}
+
+let publishTimer = null;
+function publishProducts() {
+  // Debounce: bursts of saveProducts() (e.g. Shopify sync) collapse into one POST.
+  clearTimeout(publishTimer);
+  publishTimer = setTimeout(function() {
+    fetch('/api/admin/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ products: products })
+    }).catch(function(err) { console.warn('Publish failed:', err); });
+  }, 500);
+}
+
+function toggleFeatured(id) {
+  var p = products.find(function(x) { return x.id == id; });
+  if (!p) return;
+  p.featured = !p.featured;
+  saveProducts();
+  applyAllFilters();
 }
 
 /* ── Shopify Sync ── */
@@ -990,6 +1012,7 @@ function renderListView(items) {
       '<td>$' + p.price.toLocaleString() + '</td>' +
       '<td>' + statusBadge + '</td>' +
       '<td><div class="action-buttons">' +
+        '<button class="btn-star" title="' + (p.featured ? 'Featured on homepage — click to unfeature' : 'Feature on homepage') + '" onclick="toggleFeatured(\'' + p.id + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:4px 6px;color:' + (p.featured ? '#d4873a' : '#ccc') + ';">' + (p.featured ? '★' : '☆') + '</button>' +
         '<button class="btn btn-secondary btn-sm" onclick="editProduct(\'' + p.id + '\')">Edit</button>' +
         '<button class="btn btn-danger btn-sm" onclick="deleteProduct(\'' + p.id + '\')">Delete</button>' +
       '</div></td>' +
@@ -1062,6 +1085,7 @@ function renderCategoryView(items) {
         '<td>$' + p.price.toLocaleString() + '</td>' +
         '<td>' + statusBadge + '</td>' +
         '<td><div class="action-buttons">' +
+          '<button class="btn-star" title="' + (p.featured ? 'Featured — click to unfeature' : 'Feature on homepage') + '" onclick="toggleFeatured(\'' + p.id + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:4px 6px;color:' + (p.featured ? '#d4873a' : '#ccc') + ';">' + (p.featured ? '★' : '☆') + '</button>' +
           '<button class="btn btn-secondary btn-sm" onclick="editProduct(\'' + p.id + '\')">Edit</button>' +
           '<button class="btn btn-danger btn-sm" onclick="deleteProduct(\'' + p.id + '\')">Delete</button>' +
         '</div></td>' +
