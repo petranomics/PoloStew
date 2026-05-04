@@ -760,7 +760,7 @@
                                                 // Fetch product from API
                                                 const response = await fetch('/api/products');
                                                 const data = await response.json();
-                                                currentProduct = data.products.find(p => p.id === productId);
+                                                currentProduct = data.products.find(p => String(p.id) === String(productId));
 
                                                 if (!currentProduct) {
                                                                       window.location.href = 'index.html';

@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
     const { id } = req.query;
     if (id) {
-      const product = products.find((p) => p.id === id);
+      const product = products.find((p) => String(p.id) === String(id));
       if (!product) return res.status(404).json({ error: 'Product not found' });
       return res.status(200).json({ product });
     }

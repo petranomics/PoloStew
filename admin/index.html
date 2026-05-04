@@ -784,6 +784,9 @@ function loadProducts() {
       }
     }
   } catch(e) { /* use defaults */ }
+  // Re-publish on load so any normalization changes (price→basePrice, id→string)
+  // reach the live site without the admin needing to touch a product.
+  publishProducts();
 }
 
 function saveProducts() {
