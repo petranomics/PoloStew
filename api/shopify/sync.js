@@ -1,4 +1,4 @@
-import { getShopifyAccessToken } from '../../lib/shopifyAuth.mjs';
+import { getShopifyToken } from '../../lib/shopifyAuth.mjs';
 
 // Maps Shopify product types to PoloStew categories
 const CATEGORY_MAP = {
@@ -33,9 +33,17 @@ export default async function handler(req, res) {
   }
 
   const shopUrl = process.env.SHOPIFY_STORE_URL;
+  if (!shopUrl) {
+    return res.status(500).json({ error: 'SHOPIFY_STORE_URL not configured' });
+  }
 
   try {
-    const accessToken = await getShopifyAccessToken();
+    const accessToken = await getShopifyToken(shopUrl);
+    if (!accessToken) {
+      return res.status(412).json({
+        error: 'Shopify not connected. Click "Connect Shopify" in admin to install the app on your store.',
+      });
+    }
     const apiUrl = `https://${shopUrl}/admin/api/2024-01/products.json?limit=250`;
     const shopifyRes = await fetch(apiUrl, {
       headers: {

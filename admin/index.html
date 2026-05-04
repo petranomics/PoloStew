@@ -352,6 +352,7 @@ table tbody tr:hover { background: #f9f8f5; }
           <button id="btnListView" class="active" onclick="setView('list')">List View</button>
           <button id="btnCategoryView" onclick="setView('category')">Category View</button>
         </div>
+        <button id="btnShopifyConnect" class="btn btn-secondary" onclick="connectShopify()" title="Install app on Shopify store (one-time)">⚡ Connect Shopify</button>
         <button id="btnShopifySync" class="btn btn-secondary" onclick="syncFromShopify()" title="Pull products from Shopify">↻ Sync from Shopify</button>
         <button class="btn btn-primary" onclick="openAddModal()">+ ADD NEW PRODUCT</button>
       </div>
@@ -792,6 +793,17 @@ function saveProducts() {
 }
 
 /* ── Shopify Sync ── */
+function connectShopify() {
+  window.location.href = '/api/shopify/auth/install';
+}
+
+(function checkShopifyConnected() {
+  if (new URLSearchParams(window.location.search).get('shopify') === 'connected') {
+    showSyncStatus('Shopify connected. You can now sync products.', 'success');
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
 function showSyncStatus(message, type) {
   var el = document.getElementById('shopifySyncStatus');
   if (!el) return;
