@@ -33,7 +33,7 @@ class Cart {
 
   // Add item to cart (single-item vintage: no size variant, quantity always 1)
   addToCart(product) {
-    const { id, name, brand, price, image, size, condition, era } = product;
+    const { id, name, brand, price, image, size, condition, era, variantId } = product;
 
     // Check if item already in cart (one-of-a-kind, no duplicates allowed)
     const existingItem = this.items.find(item => item.id === id);
@@ -53,6 +53,7 @@ class Cart {
       size: size || 'One Size',
       condition: condition || '',
       era: era || '',
+      variantId: variantId || '',
       quantity: 1
     });
 
@@ -156,7 +157,8 @@ function addToCart(button) {
         image: product.images ? product.images[0] : product.image,
         size: product.size || 'One Size',
         condition: product.condition || '',
-        era: product.era || ''
+        era: product.era || '',
+        variantId: product.variantId || ''
       });
       return;
     }

@@ -341,6 +341,7 @@ window.addToCart = function(button) {
     size: product.size || 'One Size',
     condition: product.condition || '',
     era: product.era || '',
+    variantId: product.variantId || '',
     quantity: 1
   };
 

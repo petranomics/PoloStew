@@ -413,21 +413,34 @@
                 return;
             }
 
-            let isLoggedIn = false;
-            if (window.auth) {
-                isLoggedIn = await window.auth.checkAuth();
-            }
+            const btn = document.getElementById('checkoutBtn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Redirecting to checkout…';
 
-            if (!isLoggedIn) {
-                window.location.href = '/login.html?redirect=' + encodeURIComponent('/cart');
-                return;
-            }
+            try {
+                const res = await fetch('/api/shopify/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: window.cart.items.map(function(i) {
+                            return { variantId: i.variantId, quantity: i.quantity || 1 };
+                        })
+                    })
+                });
 
-            const total = window.cart.getTotal();
-            const count = window.cart.getCount();
-            window.cart.clearCart();
-            renderCartPage();
-            alert('Order placed! ' + count + ' item' + (count > 1 ? 's' : '') + ' for $' + total.toLocaleString() + '. Thank you for shopping with PoloStew!');
+                const data = await res.json();
+                if (data.checkoutUrl) {
+                    window.location.href = data.checkoutUrl;
+                    return;
+                }
+                throw new Error(data.error || 'Checkout failed');
+            } catch (err) {
+                console.error('Checkout error:', err);
+                btn.disabled = false;
+                btn.textContent = originalText;
+                showToast(err.message || 'Couldn\'t start checkout. Please try again.');
+            }
         }
 
         function showToast(message) {
