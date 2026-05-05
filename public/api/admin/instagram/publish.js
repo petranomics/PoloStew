@@ -9,11 +9,13 @@
  */
 
 import { kv } from '@vercel/kv';
+import { requireAdmin } from '../../../lib/admin-auth.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!(await requireAdmin(req, res))) return;
 
   const { handle, profileUrl, tiles } = req.body || {};
   if (!Array.isArray(tiles)) {

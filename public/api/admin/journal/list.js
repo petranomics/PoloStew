@@ -7,11 +7,14 @@
  */
 
 import { kv } from '@vercel/kv';
+import { requireAdmin } from '../../../lib/admin-auth.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!(await requireAdmin(req, res))) return;
+
   try {
     const stored = (await kv.get('journal:posts')) || { posts: [] };
     const posts = Array.isArray(stored.posts) ? stored.posts : [];

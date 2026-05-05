@@ -8,20 +8,13 @@
  */
 
 import { put } from '@vercel/blob';
-import { parseCookies, verifyAuth, verifyAdmin } from '../middleware/auth.js';
+import { requireAdmin } from '../../lib/admin-auth.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
-  // Verify admin authentication
-  parseCookies(req);
-  const authResult = await verifyAuth(req, res);
-  if (authResult !== true) return;
-
-  const adminResult = await verifyAdmin(req, res);
-  if (adminResult !== true) return;
+  if (!(await requireAdmin(req, res))) return;
 
   try {
     const { imageData, filename, productId } = req.body;

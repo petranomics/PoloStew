@@ -6,17 +6,17 @@
  * source of truth, with the data/products.json file as a fallback when
  * nothing has been published yet.
  *
- * Auth: open for now to match the rest of admin (admin UI itself has no
- * login gate today — see project_api_auth_needed memory). Tighten before
- * public launch.
+ * Auth: gated by the admin password (see lib/admin-auth.mjs).
  */
 
 import { kv } from '@vercel/kv';
+import { requireAdmin } from '../../lib/admin-auth.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!(await requireAdmin(req, res))) return;
 
   const { products } = req.body || {};
   if (!Array.isArray(products)) {

@@ -14,6 +14,7 @@
  */
 
 import { kv } from '@vercel/kv';
+import { requireAdmin } from '../../../lib/admin-auth.mjs';
 
 const KV_KEY = 'journal:posts';
 
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!(await requireAdmin(req, res))) return;
 
   const { post } = req.body || {};
   if (!post || typeof post !== 'object') {

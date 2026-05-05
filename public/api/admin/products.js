@@ -6,16 +6,10 @@
 
 import { kv } from '@vercel/kv';
 import { v4 as uuidv4 } from 'uuid';
-import { parseCookies, verifyAuth, verifyAdmin } from '../middleware/auth.js';
+import { requireAdmin } from '../../lib/admin-auth.mjs';
 
 export default async function handler(req, res) {
-  // Parse cookies, verify auth, then verify admin
-  parseCookies(req);
-  const authResult = await verifyAuth(req, res);
-  if (authResult !== true) return;
-
-  const adminResult = await verifyAdmin(req, res);
-  if (adminResult !== true) return;
+  if (!(await requireAdmin(req, res))) return;
 
   // GET - List all products
   if (req.method === 'GET') {

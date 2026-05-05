@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - POLOSTEW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--ivory); color: var(--noir); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .login-card {
+            background: white;
+            border: 1px solid var(--argent);
+            border-radius: 14px;
+            padding: 2.5rem 2.25rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(44, 36, 24, 0.06);
+        }
+        .brand { text-align: center; margin-bottom: 2rem; }
+        .brand img { height: 48px; width: auto; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 500; text-align: center; margin-bottom: 0.4rem; }
+        .subtitle { text-align: center; color: #777; font-size: 0.9rem; margin-bottom: 2rem; }
+        label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: #555; margin-bottom: 0.5rem; }
+        input[type=password] {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--argent);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: white;
+        }
+        input[type=password]:focus { outline: none; border-color: var(--or); }
+        .btn {
+            display: block;
+            width: 100%;
+            background: var(--or);
+            color: white;
+            border: none;
+            padding: 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-top: 1.5rem;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--charbon); }
+        .btn:disabled { background: #999; cursor: not-allowed; }
+        .err { color: #b95448; font-size: 0.85rem; text-align: center; margin-top: 1rem; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+    <form class="login-card" onsubmit="onSubmit(event)">
+        <div class="brand"><img src="/images/polostew-logo.png" alt="PoloStew"></div>
+        <h1>Admin</h1>
+        <p class="subtitle">Enter your password to manage the store.</p>
+
+        <label for="pw">Password</label>
+        <input type="password" id="pw" autocomplete="current-password" autofocus>
+
+        <button class="btn" type="submit" id="btn">Sign In</button>
+        <div class="err" id="err"></div>
+    </form>
+
+    <script>
+        async function onSubmit(e) {
+            e.preventDefault();
+            const password = document.getElementById('pw').value;
+            const btn = document.getElementById('btn');
+            const err = document.getElementById('err');
+            err.textContent = '';
+            btn.disabled = true;
+            btn.textContent = 'Signing in…';
+            try {
+                const res = await fetch('/api/admin/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const params = new URLSearchParams(window.location.search);
+                    const next = params.get('next');
+                    const target = next && next.startsWith('/admin') ? next : '/admin';
+                    window.location.href = target;
+                    return;
+                }
+                err.textContent = data.error || 'Sign in failed';
+            } catch (e2) {
+                err.textContent = 'Network error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        }
+    </script>
+</body>
+</html>

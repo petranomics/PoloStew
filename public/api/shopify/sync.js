@@ -1,4 +1,5 @@
 import { getShopifyToken } from '../../lib/shopifyAuth.mjs';
+import { requireAdmin } from '../../lib/admin-auth.mjs';
 
 // Maps Shopify product types to PoloStew categories
 const CATEGORY_MAP = {
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!(await requireAdmin(req, res))) return;
 
   const shopUrl = process.env.SHOPIFY_STORE_URL;
   if (!shopUrl) {

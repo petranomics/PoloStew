@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - Inventory Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="/admin/admin-auth-guard.js"></script>
 <style>
 :root {
   --noir: #2c2418;
@@ -341,6 +342,8 @@ table tbody tr:hover { background: #f9f8f5; }
       <button id="tabBanners" onclick="switchAdminTab('banners')">Banners</button>
       <button onclick="window.location.href='/admin/instagram'">Instagram</button>
       <button onclick="window.location.href='/admin/journal'">Journal</button>
+      <button id="tabSettings" onclick="switchAdminTab('settings')">Settings</button>
+      <button onclick="window.adminLogout && window.adminLogout()" style="margin-left:1rem;color:#b95448;">Log Out</button>
     </div>
   </div>
 </div>
@@ -1593,6 +1596,81 @@ init();
 
 </div>
 
+<div id="settingsSection" style="display:none;">
+  <div class="container" style="margin-top:40px;max-width:680px;">
+    <div class="section-header">
+      <h2>Settings</h2>
+    </div>
+    <div style="background:white;border:1px solid #e8e0d4;border-radius:12px;padding:1.75rem;">
+      <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:0.4rem;">Change Admin Password</h3>
+      <p style="font-size:0.85rem;color:#666;margin-bottom:1.25rem;">Use a strong password. Minimum 8 characters.</p>
+      <form onsubmit="changePassword(event)">
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:0.4rem;">Current Password</label>
+          <input type="password" id="pwCurrent" autocomplete="current-password" required style="width:100%;padding:0.7rem 0.85rem;border:1px solid #e8e0d4;border-radius:6px;font-family:inherit;font-size:0.95rem;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:0.4rem;">New Password</label>
+          <input type="password" id="pwNext" autocomplete="new-password" required minlength="8" style="width:100%;padding:0.7rem 0.85rem;border:1px solid #e8e0d4;border-radius:6px;font-family:inherit;font-size:0.95rem;">
+        </div>
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:0.4rem;">Confirm New Password</label>
+          <input type="password" id="pwConfirm" autocomplete="new-password" required minlength="8" style="width:100%;padding:0.7rem 0.85rem;border:1px solid #e8e0d4;border-radius:6px;font-family:inherit;font-size:0.95rem;">
+        </div>
+        <button type="submit" id="pwBtn" style="background:#c75d3a;color:white;border:none;padding:0.7rem 1.2rem;border-radius:6px;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:500;">Update Password</button>
+        <span id="pwMsg" style="margin-left:0.75rem;font-size:0.85rem;"></span>
+      </form>
+    </div>
+  </div>
+  <script>
+    async function changePassword(e) {
+      e.preventDefault();
+      const current = document.getElementById('pwCurrent').value;
+      const next = document.getElementById('pwNext').value;
+      const confirm = document.getElementById('pwConfirm').value;
+      const msg = document.getElementById('pwMsg');
+      const btn = document.getElementById('pwBtn');
+      msg.textContent = '';
+      msg.style.color = '';
+      if (next !== confirm) {
+        msg.textContent = 'New passwords don\'t match';
+        msg.style.color = '#b95448';
+        return;
+      }
+      if (next.length < 8) {
+        msg.textContent = 'New password must be at least 8 characters';
+        msg.style.color = '#b95448';
+        return;
+      }
+      btn.disabled = true; btn.textContent = 'Updating…';
+      try {
+        const res = await fetch('/api/admin/auth/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ current: current, next: next })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.textContent = 'Password updated';
+          msg.style.color = '#8a9a7b';
+          document.getElementById('pwCurrent').value = '';
+          document.getElementById('pwNext').value = '';
+          document.getElementById('pwConfirm').value = '';
+        } else {
+          msg.textContent = data.error || 'Update failed';
+          msg.style.color = '#b95448';
+        }
+      } catch (err) {
+        msg.textContent = 'Network error';
+        msg.style.color = '#b95448';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      }
+    }
+  </script>
+</div>
+
 <div id="bannerSection" style="display:none;">
 
 <!-- Header/Carousel Management Section -->
@@ -1611,18 +1689,25 @@ init();
 function switchAdminTab(tab) {
   var bannerSection = document.getElementById('bannerSection');
   var inventorySection = document.getElementById('inventorySection');
+  var settingsSection = document.getElementById('settingsSection');
   var tabBanners = document.getElementById('tabBanners');
   var tabInventory = document.getElementById('tabInventory');
+  var tabSettings = document.getElementById('tabSettings');
+  bannerSection.style.display = 'none';
+  inventorySection.style.display = 'none';
+  if (settingsSection) settingsSection.style.display = 'none';
+  tabBanners.classList.remove('active');
+  tabInventory.classList.remove('active');
+  if (tabSettings) tabSettings.classList.remove('active');
   if (tab === 'banners') {
     bannerSection.style.display = 'block';
-    inventorySection.style.display = 'none';
     tabBanners.classList.add('active');
-    tabInventory.classList.remove('active');
+  } else if (tab === 'settings' && settingsSection) {
+    settingsSection.style.display = 'block';
+    if (tabSettings) tabSettings.classList.add('active');
   } else {
-    bannerSection.style.display = 'none';
     inventorySection.style.display = 'block';
     tabInventory.classList.add('active');
-    tabBanners.classList.remove('active');
   }
 }
 </script>

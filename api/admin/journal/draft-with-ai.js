@@ -11,11 +11,13 @@
  */
 
 import { logUsage } from '../../../lib/usage-logger.mjs';
+import { requireAdmin } from '../../../lib/admin-auth.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!(await requireAdmin(req, res))) return;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
