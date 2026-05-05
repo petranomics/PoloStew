@@ -828,6 +828,81 @@
             letter-spacing: 0.1em;
         }
 
+        /* Instagram row */
+        .ig-row {
+            background: var(--ivory);
+            border-top: 1px solid var(--argent);
+            padding: 4rem 5% 3rem;
+        }
+        .ig-row-inner {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .ig-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .ig-row-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--noir);
+        }
+        .ig-row-handle {
+            color: var(--or);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+        .ig-row-handle:hover { color: var(--charbon); }
+        .ig-tiles {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+        }
+        .ig-tile {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background: var(--parchment);
+            display: block;
+            text-decoration: none;
+        }
+        .ig-tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .ig-tile:hover img { transform: scale(1.05); }
+        .ig-tile-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(44, 36, 24, 0.0);
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+        }
+        .ig-tile:hover .ig-tile-overlay {
+            background: rgba(44, 36, 24, 0.45);
+            opacity: 1;
+        }
+        @media (max-width: 900px) {
+            .ig-tiles { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .ig-tiles { grid-template-columns: repeat(2, 1fr); }
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -1582,6 +1657,46 @@
     </div>
 
     <!-- Footer -->
+    <!-- Instagram Row -->
+    <section class="ig-row" id="igRow" style="display:none;">
+        <div class="ig-row-inner">
+            <div class="ig-row-header">
+                <div class="ig-row-title" id="igRowTitle">Follow us on Instagram</div>
+                <a class="ig-row-handle" id="igRowHandle" href="#" target="_blank" rel="noopener">@polostew →</a>
+            </div>
+            <div class="ig-tiles" id="igTiles"></div>
+        </div>
+    </section>
+    <script>
+        (async function loadInstagram() {
+            try {
+                const res = await fetch('/api/instagram');
+                if (!res.ok) return;
+                const data = await res.json();
+                const tiles = (data && data.tiles) || [];
+                if (tiles.length === 0) return;
+
+                const handle = (data.handle || '').replace(/^@/, '');
+                const profileUrl = data.profileUrl || (handle ? 'https://instagram.com/' + handle : '#');
+                if (handle) document.getElementById('igRowHandle').textContent = '@' + handle + ' →';
+                document.getElementById('igRowHandle').href = profileUrl;
+
+                const container = document.getElementById('igTiles');
+                container.innerHTML = tiles.slice(0, 6).map(function (t) {
+                    const link = t.link || profileUrl;
+                    const img = t.image || '';
+                    return (
+                        '<a class="ig-tile" href="' + link + '" target="_blank" rel="noopener">' +
+                            (img ? '<img src="' + img + '" alt="" loading="lazy">' : '') +
+                            '<div class="ig-tile-overlay">View</div>' +
+                        '</a>'
+                    );
+                }).join('');
+                document.getElementById('igRow').style.display = 'block';
+            } catch (e) { /* fail silent — IG row stays hidden */ }
+        })();
+    </script>
+
     <footer>
         <div class="footer-content">
             <div>
@@ -1614,6 +1729,7 @@
             <div class="footer-section">
                 <h4>Company</h4>
                 <ul class="footer-links">
+                    <li><a href="/journal">Journal</a></li>
                     <li><a href="#">About Us</a></li>
                     <li><a href="#">Sustainability</a></li>
                     <li><a href="#">Careers</a></li>

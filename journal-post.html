@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Journal — POLOSTEW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --parchment: #f0e6d3;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--ivory); color: var(--noir); min-height: 100vh; }
+        header { position: fixed; width: 100%; top: 0; z-index: 1000; background: rgba(250, 246, 240, 0.98); backdrop-filter: blur(20px); border-bottom: 1px solid var(--argent); }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 5%; }
+        .nav-icons { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-icon { width: 24px; height: 24px; cursor: pointer; opacity: 0.8; transition: opacity 0.3s; }
+        .nav-icon:hover { opacity: 1; }
+        main { padding-top: 110px; max-width: 760px; margin: 0 auto; padding-left: 5%; padding-right: 5%; padding-bottom: 5rem; }
+        .back-link { display: inline-block; color: var(--or); text-decoration: none; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1.5rem; }
+        .back-link:hover { color: var(--charbon); }
+        .post-cover { width: 100%; aspect-ratio: 16 / 9; background: var(--parchment); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
+        .post-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .post-meta { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--or); margin-bottom: 0.75rem; }
+        .post-title { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 500; line-height: 1.2; margin-bottom: 2rem; }
+        @media (max-width: 600px) { .post-title { font-size: 1.9rem; } }
+        .post-body { font-size: 1.05rem; line-height: 1.75; color: #333; }
+        .post-body h1, .post-body h2, .post-body h3 { font-family: 'Playfair Display', serif; font-weight: 500; color: var(--noir); margin: 2rem 0 1rem; }
+        .post-body h2 { font-size: 1.7rem; }
+        .post-body h3 { font-size: 1.3rem; }
+        .post-body p { margin-bottom: 1.25rem; }
+        .post-body a { color: var(--or); }
+        .post-body ul, .post-body ol { margin: 1rem 0 1.25rem 1.5rem; }
+        .post-body li { margin-bottom: 0.4rem; }
+        .post-body blockquote { border-left: 3px solid var(--or); padding-left: 1.25rem; margin: 1.5rem 0; color: #555; font-style: italic; }
+        .post-body code { background: var(--parchment); padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.95rem; }
+        .post-body img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; }
+        .not-found { text-align: center; padding: 5rem 2rem; color: #888; }
+        .not-found h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--noir); }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" aria-label="PoloStew home"><img src="/images/polostew-logo.png" alt="PoloStew" style="height:42px;width:auto;display:block;"></a>
+            <div class="nav-icons">
+                <svg class="nav-icon" onclick="window.location.href='/#search'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                <svg class="nav-icon" onclick="window.location.href='/account'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <svg class="nav-icon" onclick="window.location.href='/cart'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <a class="back-link" href="/journal">← Back to Journal</a>
+        <article id="postArticle"></article>
+    </main>
+
+    <script>
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function fmtDate(s) {
+            if (!s) return '';
+            try { return new Date(s).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); }
+            catch (e) { return ''; }
+        }
+
+        // Tiny markdown renderer — handles headings, bold/italic, links, lists, blockquotes,
+        // inline code, images, paragraphs. Sanitizes by escaping then selectively re-injecting.
+        function renderMarkdown(md) {
+            const lines = (md || '').split(/\r?\n/);
+            const out = [];
+            let inList = null;     // 'ul' | 'ol' | null
+            let inBlockquote = false;
+            let paraLines = [];
+
+            function flushPara() {
+                if (paraLines.length === 0) return;
+                const text = paraLines.join(' ');
+                out.push('<p>' + inline(text) + '</p>');
+                paraLines = [];
+            }
+            function closeList() { if (inList) { out.push('</' + inList + '>'); inList = null; } }
+            function closeBlockquote() { if (inBlockquote) { out.push('</blockquote>'); inBlockquote = false; } }
+
+            function inline(s) {
+                let t = escapeHtml(s);
+                // images: ![alt](url)
+                t = t.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+                // links: [text](url)
+                t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+                // bold
+                t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                // italic
+                t = t.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+                // inline code
+                t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+                return t;
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                const raw = lines[i];
+                const line = raw.trimEnd();
+
+                if (/^\s*$/.test(line)) {
+                    flushPara();
+                    closeList();
+                    closeBlockquote();
+                    continue;
+                }
+
+                let m;
+                if ((m = /^(#{1,3})\s+(.*)$/.exec(line))) {
+                    flushPara(); closeList(); closeBlockquote();
+                    out.push('<h' + m[1].length + '>' + inline(m[2]) + '</h' + m[1].length + '>');
+                    continue;
+                }
+                if ((m = /^[-*]\s+(.*)$/.exec(line))) {
+                    flushPara(); closeBlockquote();
+                    if (inList !== 'ul') { closeList(); out.push('<ul>'); inList = 'ul'; }
+                    out.push('<li>' + inline(m[1]) + '</li>');
+                    continue;
+                }
+                if ((m = /^\d+\.\s+(.*)$/.exec(line))) {
+                    flushPara(); closeBlockquote();
+                    if (inList !== 'ol') { closeList(); out.push('<ol>'); inList = 'ol'; }
+                    out.push('<li>' + inline(m[1]) + '</li>');
+                    continue;
+                }
+                if ((m = /^>\s?(.*)$/.exec(line))) {
+                    flushPara(); closeList();
+                    if (!inBlockquote) { out.push('<blockquote>'); inBlockquote = true; }
+                    out.push('<p>' + inline(m[1]) + '</p>');
+                    continue;
+                }
+                closeList();
+                closeBlockquote();
+                paraLines.push(line);
+            }
+            flushPara();
+            closeList();
+            closeBlockquote();
+            return out.join('\n');
+        }
+
+        function getSlug() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('slug') || '';
+        }
+
+        (async function load() {
+            const container = document.getElementById('postArticle');
+            const slug = getSlug();
+            if (!slug) {
+                container.innerHTML = '<div class="not-found"><h2>No post specified</h2></div>';
+                return;
+            }
+            try {
+                const res = await fetch('/api/journal?slug=' + encodeURIComponent(slug));
+                if (res.status === 404) {
+                    container.innerHTML = '<div class="not-found"><h2>Post not found</h2><p>It may have been unpublished or moved.</p></div>';
+                    return;
+                }
+                const data = await res.json();
+                const post = data && data.post;
+                if (!post) {
+                    container.innerHTML = '<div class="not-found"><h2>Post not found</h2></div>';
+                    return;
+                }
+                document.title = (post.title || 'Journal') + ' — POLOSTEW';
+                const cover = post.coverImage
+                    ? '<div class="post-cover"><img src="' + escapeHtml(post.coverImage) + '" alt="' + escapeHtml(post.title) + '"></div>'
+                    : '';
+                container.innerHTML =
+                    cover +
+                    '<div class="post-meta">' + escapeHtml(fmtDate(post.publishedAt)) + '</div>' +
+                    '<h1 class="post-title">' + escapeHtml(post.title || 'Untitled') + '</h1>' +
+                    '<div class="post-body">' + renderMarkdown(post.body || '') + '</div>';
+            } catch (e) {
+                container.innerHTML = '<div class="not-found"><h2>Couldn\'t load post</h2></div>';
+            }
+        })();
+    </script>
+</body>
+</html>

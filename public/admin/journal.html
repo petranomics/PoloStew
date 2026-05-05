@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal - POLOSTEW Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+            --parchment: #f0e6d3;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--ivory); color: var(--noir); }
+        header { background: var(--noir); color: var(--ivory); padding: 1.5rem 5%; border-bottom: 3px solid var(--or); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 500; letter-spacing: 0.1em; }
+        .back-btn { background: var(--or); color: var(--noir); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 500; text-decoration: none; display: inline-block; }
+        .back-btn:hover { opacity: 0.9; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem 5%; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+        .section-header h2 { font-family: 'Playfair Display', serif; font-weight: 500; }
+        .btn { background: var(--or); color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; text-decoration: none; display: inline-block; }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary { background: white; color: var(--noir); border: 1px solid var(--argent); }
+        .btn-danger { background: #b95448; color: white; }
+        .btn-success { background: var(--sage); color: white; }
+        .post-list { display: grid; gap: 0.75rem; }
+        .post-row { background: white; border: 1px solid var(--argent); border-radius: 10px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .post-row-info { flex: 1; min-width: 0; }
+        .post-row-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .post-row-meta { font-size: 0.8rem; color: #777; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 12px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        .badge-draft { background: var(--parchment); color: var(--charbon); }
+        .badge-published { background: var(--sage); color: white; }
+        .post-row-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        .editor { background: white; border: 1px solid var(--argent); border-radius: 12px; padding: 2rem; }
+        .editor label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 0.4rem; margin-top: 1.25rem; }
+        .editor label:first-of-type { margin-top: 0; }
+        .editor input[type=text], .editor textarea {
+            width: 100%; padding: 0.7rem 0.85rem; border: 1px solid var(--argent); border-radius: 6px;
+            font-family: inherit; font-size: 0.95rem; background: white;
+        }
+        .editor input:focus, .editor textarea:focus { outline: none; border-color: var(--or); }
+        .editor textarea { resize: vertical; }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 700px) { .row-2 { grid-template-columns: 1fr; } }
+        .editor-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; align-items: center; flex-wrap: wrap; }
+        .save-msg { font-size: 0.85rem; }
+        .save-msg.ok { color: var(--sage); }
+        .save-msg.err { color: #b95448; }
+
+        .ai-card { background: var(--parchment); border: 1px dashed var(--or); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; }
+        .ai-card h3 { font-family: 'Playfair Display', serif; margin-bottom: 0.4rem; font-weight: 500; font-size: 1.1rem; }
+        .ai-card p { font-size: 0.85rem; color: #555; margin-bottom: 0.75rem; }
+        .ai-card .row-2 { gap: 0.75rem; }
+        .ai-card input { background: white; }
+
+        .empty { text-align: center; padding: 3rem 1rem; color: #777; }
+        .hidden { display: none; }
+        .cover-preview { width: 100%; max-width: 320px; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: var(--parchment); margin-top: 0.5rem; }
+        .cover-preview img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Journal</h1>
+            <a href="/admin" class="back-btn">← Back to Admin</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- LIST VIEW -->
+        <div id="listView">
+            <div class="section-header">
+                <h2>Posts</h2>
+                <button class="btn" onclick="newPost()">+ New Post</button>
+            </div>
+            <div id="postList" class="post-list"></div>
+        </div>
+
+        <!-- EDITOR VIEW -->
+        <div id="editorView" class="hidden">
+            <div class="section-header">
+                <h2 id="editorTitle">New Post</h2>
+                <button class="btn btn-secondary" onclick="backToList()">← Back to list</button>
+            </div>
+
+            <div class="ai-card">
+                <h3>Draft with AI</h3>
+                <p>Give a topic and optional tone notes. AI fills title, excerpt, and body — you edit before publishing.</p>
+                <div class="row-2">
+                    <input type="text" id="aiTopic" placeholder="Topic — e.g., 'How to spot a real 90s Starter jacket'">
+                    <input type="text" id="aiTone" placeholder="Tone notes (optional) — e.g., 'punchy, opinionated'">
+                </div>
+                <button class="btn" onclick="draftWithAi()" id="aiBtn" style="margin-top:0.75rem;">Draft</button>
+                <span class="save-msg" id="aiMsg" style="margin-left:0.75rem;"></span>
+            </div>
+
+            <div class="editor">
+                <label for="postTitle">Title</label>
+                <input type="text" id="postTitle">
+
+                <label for="postSlug">Slug (URL — leave blank to auto-generate)</label>
+                <input type="text" id="postSlug" placeholder="my-post-slug">
+
+                <div class="row-2">
+                    <div>
+                        <label for="postCover">Cover image</label>
+                        <input type="file" id="postCoverFile" accept="image/*" onchange="onCoverUpload(this)">
+                        <input type="text" id="postCover" placeholder="Or paste an image URL" style="margin-top:0.5rem;">
+                        <div class="cover-preview" id="coverPreview" style="display:none;"><img id="coverImg" src="" alt=""></div>
+                    </div>
+                    <div>
+                        <label for="postExcerpt">Excerpt (1-2 sentences shown on the journal index)</label>
+                        <textarea id="postExcerpt" rows="4"></textarea>
+                    </div>
+                </div>
+
+                <label for="postBody">Body (markdown)</label>
+                <textarea id="postBody" rows="20" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:0.9rem;"></textarea>
+
+                <div class="editor-actions">
+                    <button class="btn btn-secondary" onclick="saveDraft()" id="saveDraftBtn">Save Draft</button>
+                    <button class="btn btn-success" onclick="publishPost()" id="publishBtn">Publish</button>
+                    <button class="btn btn-danger hidden" onclick="deletePost()" id="deleteBtn">Delete</button>
+                    <span class="save-msg" id="saveMsg"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let posts = [];
+        let editing = null; // current post being edited (null = new)
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function fmtDate(s) {
+            if (!s) return '—';
+            try { return new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+            catch (e) { return ''; }
+        }
+        function showMsg(id, text, kind) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = 'save-msg ' + (kind || 'ok');
+            setTimeout(function () { if (el.textContent === text) el.textContent = ''; }, 4000);
+        }
+
+        async function loadPosts() {
+            const list = document.getElementById('postList');
+            try {
+                const res = await fetch('/api/admin/journal/list');
+                const data = await res.json();
+                posts = data.posts || [];
+                if (posts.length === 0) {
+                    list.innerHTML = '<div class="empty">No posts yet. Click "New Post" to start.</div>';
+                    return;
+                }
+                list.innerHTML = posts.map(function (p) {
+                    const badge = p.status === 'published'
+                        ? '<span class="badge badge-published">Published</span>'
+                        : '<span class="badge badge-draft">Draft</span>';
+                    return (
+                        '<div class="post-row">' +
+                            '<div class="post-row-info">' +
+                                '<div class="post-row-title">' + escapeHtml(p.title || 'Untitled') + ' ' + badge + '</div>' +
+                                '<div class="post-row-meta">' +
+                                    '<span>Updated ' + escapeHtml(fmtDate(p.updatedAt || p.createdAt)) + '</span>' +
+                                    (p.publishedAt ? '<span>Published ' + escapeHtml(fmtDate(p.publishedAt)) + '</span>' : '') +
+                                    '<span>/' + escapeHtml(p.slug || '') + '</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="post-row-actions">' +
+                                '<button class="btn btn-secondary" onclick="editPost(\'' + p.id + '\')">Edit</button>' +
+                                (p.status === 'published'
+                                    ? '<a class="btn btn-secondary" href="/journal/' + encodeURIComponent(p.slug) + '" target="_blank">View</a>'
+                                    : '') +
+                            '</div>' +
+                        '</div>'
+                    );
+                }).join('');
+            } catch (e) {
+                list.innerHTML = '<div class="empty">Couldn\'t load posts.</div>';
+            }
+        }
+
+        function newPost() {
+            editing = null;
+            document.getElementById('editorTitle').textContent = 'New Post';
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postSlug').value = '';
+            document.getElementById('postExcerpt').value = '';
+            document.getElementById('postBody').value = '';
+            document.getElementById('postCover').value = '';
+            document.getElementById('coverPreview').style.display = 'none';
+            document.getElementById('deleteBtn').classList.add('hidden');
+            document.getElementById('aiTopic').value = '';
+            document.getElementById('aiTone').value = '';
+            showView('editor');
+        }
+
+        function editPost(id) {
+            const p = posts.find(function (x) { return x.id === id; });
+            if (!p) return;
+            editing = p;
+            document.getElementById('editorTitle').textContent = 'Edit Post';
+            document.getElementById('postTitle').value = p.title || '';
+            document.getElementById('postSlug').value = p.slug || '';
+            document.getElementById('postExcerpt').value = p.excerpt || '';
+            document.getElementById('postBody').value = p.body || '';
+            document.getElementById('postCover').value = p.coverImage || '';
+            updateCoverPreview(p.coverImage);
+            document.getElementById('deleteBtn').classList.remove('hidden');
+            showView('editor');
+        }
+
+        function updateCoverPreview(url) {
+            const wrap = document.getElementById('coverPreview');
+            const img = document.getElementById('coverImg');
+            if (url) {
+                img.src = url;
+                wrap.style.display = 'block';
+            } else {
+                wrap.style.display = 'none';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('postCover').addEventListener('input', function (e) {
+                updateCoverPreview(e.target.value);
+            });
+        });
+
+        async function onCoverUpload(input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function () {
+                try {
+                    const res = await fetch('/api/images/upload', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            imageData: reader.result,
+                            filename: 'journal-cover-' + Date.now() + '.jpg',
+                            productId: 'journal',
+                        }),
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.url) {
+                        document.getElementById('postCover').value = data.url;
+                        updateCoverPreview(data.url);
+                        showMsg('saveMsg', 'Cover uploaded', 'ok');
+                    } else {
+                        showMsg('saveMsg', data.error || 'Upload failed', 'err');
+                    }
+                } catch (e) {
+                    showMsg('saveMsg', 'Upload error', 'err');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showView(view) {
+            document.getElementById('listView').classList.toggle('hidden', view !== 'list');
+            document.getElementById('editorView').classList.toggle('hidden', view !== 'editor');
+            window.scrollTo(0, 0);
+        }
+        function backToList() {
+            showView('list');
+            loadPosts();
+        }
+
+        function gatherPost(status) {
+            return {
+                id: editing ? editing.id : undefined,
+                title: document.getElementById('postTitle').value.trim(),
+                slug: document.getElementById('postSlug').value.trim(),
+                excerpt: document.getElementById('postExcerpt').value.trim(),
+                coverImage: document.getElementById('postCover').value.trim(),
+                body: document.getElementById('postBody').value,
+                status,
+            };
+        }
+
+        async function savePostWithStatus(status) {
+            const post = gatherPost(status);
+            if (!post.title) {
+                showMsg('saveMsg', 'Title is required', 'err');
+                return;
+            }
+            const draftBtn = document.getElementById('saveDraftBtn');
+            const pubBtn = document.getElementById('publishBtn');
+            draftBtn.disabled = true; pubBtn.disabled = true;
+            try {
+                const res = await fetch('/api/admin/journal/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ post }),
+                });
+                const data = await res.json();
+                if (res.ok && data.post) {
+                    editing = data.post;
+                    document.getElementById('postSlug').value = data.post.slug;
+                    document.getElementById('editorTitle').textContent = 'Edit Post';
+                    document.getElementById('deleteBtn').classList.remove('hidden');
+                    showMsg('saveMsg', status === 'published' ? 'Published' : 'Draft saved', 'ok');
+                } else {
+                    showMsg('saveMsg', data.error || 'Save failed', 'err');
+                }
+            } catch (e) {
+                showMsg('saveMsg', 'Save error', 'err');
+            } finally {
+                draftBtn.disabled = false; pubBtn.disabled = false;
+            }
+        }
+
+        function saveDraft() { savePostWithStatus('draft'); }
+        function publishPost() { savePostWithStatus('published'); }
+
+        async function deletePost() {
+            if (!editing) return;
+            if (!confirm('Delete this post permanently?')) return;
+            try {
+                const res = await fetch('/api/admin/journal/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: editing.id }),
+                });
+                if (res.ok) backToList();
+                else showMsg('saveMsg', 'Delete failed', 'err');
+            } catch (e) {
+                showMsg('saveMsg', 'Delete error', 'err');
+            }
+        }
+
+        async function draftWithAi() {
+            const topic = document.getElementById('aiTopic').value.trim();
+            const tone = document.getElementById('aiTone').value.trim();
+            if (!topic) {
+                showMsg('aiMsg', 'Add a topic first', 'err');
+                return;
+            }
+            const btn = document.getElementById('aiBtn');
+            btn.disabled = true;
+            const original = btn.textContent;
+            btn.textContent = 'Drafting…';
+            showMsg('aiMsg', 'Asking AI…', 'ok');
+            try {
+                const res = await fetch('/api/admin/journal/draft-with-ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, tone }),
+                });
+                const data = await res.json();
+                if (res.ok && data.title) {
+                    document.getElementById('postTitle').value = data.title;
+                    document.getElementById('postExcerpt').value = data.excerpt || '';
+                    document.getElementById('postBody').value = data.body || '';
+                    showMsg('aiMsg', 'Draft loaded — edit and save', 'ok');
+                } else {
+                    showMsg('aiMsg', data.error || 'AI draft failed', 'err');
+                }
+            } catch (e) {
+                showMsg('aiMsg', 'AI error', 'err');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = original;
+            }
+        }
+
+        loadPosts();
+    </script>
+</body>
+</html>

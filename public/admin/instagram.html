@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Row - POLOSTEW Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+            --parchment: #f0e6d3;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--ivory); color: var(--noir); }
+        header { background: var(--noir); color: var(--ivory); padding: 1.5rem 5%; border-bottom: 3px solid var(--or); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 500; letter-spacing: 0.1em; }
+        .back-btn { background: var(--or); color: var(--noir); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 500; text-decoration: none; display: inline-block; }
+        .back-btn:hover { opacity: 0.9; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem 5%; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+        .section-header h2 { font-family: 'Playfair Display', serif; font-weight: 500; }
+        .card { background: white; border: 1px solid var(--argent); border-radius: 12px; padding: 1.75rem; margin-bottom: 1.5rem; }
+        .card h3 { font-family: 'Playfair Display', serif; margin-bottom: 1rem; font-weight: 500; }
+        label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 0.4rem; }
+        input[type=text] { width: 100%; padding: 0.7rem 0.85rem; border: 1px solid var(--argent); border-radius: 6px; font-family: inherit; font-size: 0.95rem; background: white; }
+        input[type=text]:focus { outline: none; border-color: var(--or); }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        @media (max-width: 700px) { .tile-grid { grid-template-columns: repeat(2, 1fr); } .row { grid-template-columns: 1fr; } }
+        .tile {
+            border: 1px dashed var(--argent);
+            border-radius: 8px;
+            padding: 1rem;
+            background: var(--parchment);
+        }
+        .tile-preview {
+            aspect-ratio: 1 / 1;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .tile-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .tile input[type=file] { display: none; }
+        .tile-btns { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+        .btn { background: var(--or); color: white; border: none; padding: 0.55rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 500; text-decoration: none; display: inline-block; }
+        .btn:hover { opacity: 0.9; }
+        .btn-secondary { background: white; color: var(--noir); border: 1px solid var(--argent); }
+        .btn-danger { background: #b95448; color: white; }
+        .save-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; align-items: center; }
+        .save-msg { font-size: 0.85rem; }
+        .save-msg.ok { color: var(--sage); }
+        .save-msg.err { color: #b95448; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Instagram Row</h1>
+            <a href="/admin" class="back-btn">← Back to Admin</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="section-header">
+            <h2>Footer Instagram Tiles</h2>
+            <p style="font-size:0.9rem;color:#666;">Up to 6 tiles. Shown on the homepage above the footer.</p>
+        </div>
+
+        <div class="card">
+            <h3>Profile</h3>
+            <div class="row">
+                <div>
+                    <label for="handle">Handle (without @)</label>
+                    <input type="text" id="handle" placeholder="polostew">
+                </div>
+                <div>
+                    <label for="profileUrl">Profile URL (optional — auto-filled from handle)</label>
+                    <input type="text" id="profileUrl" placeholder="https://instagram.com/polostew">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Tiles</h3>
+            <div class="tile-grid" id="tileGrid"></div>
+        </div>
+
+        <div class="save-row">
+            <button class="btn" onclick="save()" id="saveBtn">Save & Publish</button>
+            <span class="save-msg" id="saveMsg"></span>
+        </div>
+    </div>
+
+    <script>
+        const TILE_COUNT = 6;
+        let tiles = Array.from({ length: TILE_COUNT }, () => ({ image: '', link: '' }));
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function renderTiles() {
+            const grid = document.getElementById('tileGrid');
+            grid.innerHTML = tiles.map(function (t, i) {
+                const preview = t.image
+                    ? '<img src="' + escapeHtml(t.image) + '" alt="">'
+                    : 'No image';
+                return (
+                    '<div class="tile">' +
+                        '<div class="tile-preview">' + preview + '</div>' +
+                        '<div class="tile-btns">' +
+                            '<label for="file-' + i + '" class="btn btn-secondary">Upload</label>' +
+                            '<input type="file" id="file-' + i + '" accept="image/*" onchange="onUpload(' + i + ', this)">' +
+                            (t.image ? '<button class="btn btn-danger" onclick="clearTile(' + i + ')">Remove</button>' : '') +
+                        '</div>' +
+                        '<label>Link to post (optional — defaults to profile)</label>' +
+                        '<input type="text" value="' + escapeHtml(t.link || '') + '" onchange="onLinkChange(' + i + ', this.value)" placeholder="https://instagram.com/p/..." style="font-size:0.85rem;">' +
+                    '</div>'
+                );
+            }).join('');
+        }
+
+        function clearTile(i) {
+            tiles[i] = { image: '', link: tiles[i].link || '' };
+            renderTiles();
+        }
+
+        function onLinkChange(i, value) {
+            tiles[i].link = value.trim();
+        }
+
+        async function onUpload(i, input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function () {
+                try {
+                    const res = await fetch('/api/images/upload', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            imageData: reader.result,
+                            filename: 'ig-tile-' + i + '-' + Date.now() + '.jpg',
+                            productId: 'instagram',
+                        }),
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.url) {
+                        tiles[i].image = data.url;
+                        renderTiles();
+                        showMsg('Image uploaded', 'ok');
+                    } else {
+                        showMsg(data.error || 'Upload failed', 'err');
+                    }
+                } catch (e) {
+                    showMsg('Upload error', 'err');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showMsg(text, kind) {
+            const el = document.getElementById('saveMsg');
+            el.textContent = text;
+            el.className = 'save-msg ' + (kind || 'ok');
+            setTimeout(function () { if (el.textContent === text) el.textContent = ''; }, 3500);
+        }
+
+        async function loadCurrent() {
+            try {
+                const res = await fetch('/api/instagram');
+                if (!res.ok) return;
+                const data = await res.json();
+                document.getElementById('handle').value = data.handle || '';
+                document.getElementById('profileUrl').value = data.profileUrl || '';
+                const fromServer = (data.tiles || []).slice(0, TILE_COUNT);
+                for (let i = 0; i < TILE_COUNT; i++) {
+                    tiles[i] = fromServer[i] || { image: '', link: '' };
+                }
+                renderTiles();
+            } catch (e) {
+                renderTiles();
+            }
+        }
+
+        async function save() {
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            const original = btn.textContent;
+            btn.textContent = 'Saving…';
+            try {
+                const handle = document.getElementById('handle').value.trim().replace(/^@/, '');
+                const profileUrl = document.getElementById('profileUrl').value.trim();
+                const payloadTiles = tiles.filter(function (t) { return t.image; });
+                const res = await fetch('/api/admin/instagram/publish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ handle, profileUrl, tiles: payloadTiles }),
+                });
+                const data = await res.json();
+                if (res.ok) showMsg('Published — ' + data.count + ' tile(s) live', 'ok');
+                else showMsg(data.error || 'Publish failed', 'err');
+            } catch (e) {
+                showMsg('Save error', 'err');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = original;
+            }
+        }
+
+        loadCurrent();
+    </script>
+</body>
+</html>

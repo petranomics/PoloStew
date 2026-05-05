@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Journal — POLOSTEW</title>
+    <meta name="description" content="Stories, drops, and finds from the PoloStew journal.">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #2c2418;
+            --ivory: #faf6f0;
+            --or: #c75d3a;
+            --argent: #e8e0d4;
+            --charbon: #3d3226;
+            --sage: #8a9a7b;
+            --parchment: #f0e6d3;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--ivory); color: var(--noir); min-height: 100vh; }
+        header { position: fixed; width: 100%; top: 0; z-index: 1000; background: rgba(250, 246, 240, 0.98); backdrop-filter: blur(20px); border-bottom: 1px solid var(--argent); }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 5%; }
+        .nav-icons { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-icon { width: 24px; height: 24px; cursor: pointer; opacity: 0.8; transition: opacity 0.3s; }
+        .nav-icon:hover { opacity: 1; }
+        main { padding-top: 130px; max-width: 1100px; margin: 0 auto; padding-left: 5%; padding-right: 5%; padding-bottom: 5rem; }
+        .page-header { text-align: center; margin-bottom: 3rem; }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .page-subtitle { color: #777; font-size: 1rem; }
+        .post-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
+        @media (max-width: 700px) { .post-grid { grid-template-columns: 1fr; } .page-title { font-size: 2rem; } }
+        .post-card { background: white; border: 1px solid var(--argent); border-radius: 12px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; color: inherit; display: block; }
+        .post-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(44, 36, 24, 0.08); }
+        .post-cover { aspect-ratio: 16 / 9; background: var(--parchment); overflow: hidden; }
+        .post-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .post-body { padding: 1.5rem; }
+        .post-date { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--or); margin-bottom: 0.5rem; }
+        .post-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 500; margin-bottom: 0.5rem; line-height: 1.3; }
+        .post-excerpt { color: #666; font-size: 0.95rem; line-height: 1.6; }
+        .empty-state { text-align: center; padding: 5rem 2rem; color: #888; }
+        .empty-state h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--noir); }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" aria-label="PoloStew home"><img src="/images/polostew-logo.png" alt="PoloStew" style="height:42px;width:auto;display:block;"></a>
+            <div class="nav-icons">
+                <svg class="nav-icon" onclick="window.location.href='/#search'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                <svg class="nav-icon" onclick="window.location.href='/account'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <svg class="nav-icon" onclick="window.location.href='/cart'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <h1 class="page-title">Journal</h1>
+            <p class="page-subtitle">Stories, drops, and finds.</p>
+        </div>
+        <div id="postContainer"></div>
+    </main>
+
+    <script>
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function fmtDate(s) {
+            if (!s) return '';
+            try {
+                return new Date(s).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            } catch (e) { return ''; }
+        }
+
+        (async function load() {
+            const container = document.getElementById('postContainer');
+            try {
+                const res = await fetch('/api/journal');
+                const data = await res.json();
+                const posts = (data && data.posts) || [];
+                if (posts.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><h2>Nothing here yet</h2><p>Check back soon for new stories.</p></div>';
+                    return;
+                }
+                container.innerHTML = '<div class="post-grid">' + posts.map(function (p) {
+                    const cover = p.coverImage
+                        ? '<img src="' + escapeHtml(p.coverImage) + '" alt="' + escapeHtml(p.title) + '" loading="lazy">'
+                        : '';
+                    return (
+                        '<a class="post-card" href="/journal/' + encodeURIComponent(p.slug) + '">' +
+                            (cover ? '<div class="post-cover">' + cover + '</div>' : '') +
+                            '<div class="post-body">' +
+                                '<div class="post-date">' + escapeHtml(fmtDate(p.publishedAt)) + '</div>' +
+                                '<h2 class="post-title">' + escapeHtml(p.title || 'Untitled') + '</h2>' +
+                                (p.excerpt ? '<p class="post-excerpt">' + escapeHtml(p.excerpt) + '</p>' : '') +
+                            '</div>' +
+                        '</a>'
+                    );
+                }).join('') + '</div>';
+            } catch (e) {
+                container.innerHTML = '<div class="empty-state"><h2>Couldn\'t load posts</h2></div>';
+            }
+        })();
+    </script>
+</body>
+</html>
