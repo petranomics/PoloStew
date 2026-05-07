@@ -61,10 +61,25 @@
         .btn:hover { opacity: 0.9; }
         .btn-secondary { background: white; color: var(--noir); border: 1px solid var(--argent); }
         .btn-danger { background: #b95448; color: white; }
-        .save-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; align-items: center; }
+        .save-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; align-items: center; flex-wrap: wrap; }
         .save-msg { font-size: 0.85rem; }
         .save-msg.ok { color: var(--sage); }
         .save-msg.err { color: #b95448; }
+
+        /* Connect card */
+        .connect-card { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+        .connect-status { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+        .connect-pill { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.85rem; border-radius: 999px; font-size: 0.85rem; font-weight: 500; }
+        .connect-pill.disconnected { background: var(--parchment); color: var(--charbon); }
+        .connect-pill.connected { background: rgba(138, 154, 123, 0.15); color: #5d6e4f; }
+        .connect-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #c0c0c0; }
+        .connect-pill.connected .dot { background: var(--sage); }
+        .connect-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .help-text { font-size: 0.85rem; color: #666; line-height: 1.5; margin-top: 0.75rem; }
+        .help-text a { color: var(--or); }
+        .ig-banner { padding: 0.85rem 1.1rem; border-radius: 8px; margin-bottom: 1.25rem; font-size: 0.9rem; }
+        .ig-banner.connected { background: rgba(138, 154, 123, 0.15); color: #5d6e4f; border: 1px solid rgba(138, 154, 123, 0.4); }
+        .ig-banner.error { background: rgba(185, 84, 72, 0.1); color: #8a3a31; border: 1px solid rgba(185, 84, 72, 0.4); }
     </style>
 </head>
 <body>
@@ -81,22 +96,48 @@
             <p style="font-size:0.9rem;color:#666;">Up to 6 tiles. Shown on the homepage above the footer.</p>
         </div>
 
+        <div id="flashBanner" style="display:none;"></div>
+
         <div class="card">
-            <h3>Profile</h3>
-            <div class="row">
-                <div>
-                    <label for="handle">Handle (without @)</label>
-                    <input type="text" id="handle" placeholder="polostew">
+            <h3>Connection</h3>
+            <div class="connect-card">
+                <div class="connect-status">
+                    <span id="connectPill" class="connect-pill disconnected">
+                        <span class="dot"></span>
+                        <span id="connectLabel">Not connected</span>
+                    </span>
                 </div>
-                <div>
-                    <label for="profileUrl">Profile URL (optional — auto-filled from handle)</label>
-                    <input type="text" id="profileUrl" placeholder="https://instagram.com/polostew">
+                <div class="connect-actions" id="connectActions">
+                    <a class="btn" href="/api/instagram/auth/install" id="connectBtn">Connect Instagram</a>
                 </div>
             </div>
+            <p class="help-text">
+                Your Instagram account must be a <strong>Business</strong> or <strong>Creator</strong> account
+                (free to switch in Instagram → Settings → Account → Switch to professional account).
+                We only request read access — we cannot post on your behalf.
+            </p>
         </div>
 
         <div class="card">
-            <h3>Tiles</h3>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem;">
+                <h3 style="margin:0;">Tiles</h3>
+                <button class="btn btn-secondary" onclick="refreshFromInstagram()" id="refreshBtn" disabled>
+                    ↻ Refresh from Instagram
+                </button>
+            </div>
+            <p style="font-size:0.85rem;color:#666;margin-bottom:1rem;">
+                Click "Refresh from Instagram" to pull your latest 6 posts. Edit links or remove any you don't want before saving.
+            </p>
+            <div class="row" style="margin-bottom:1.25rem;">
+                <div>
+                    <label for="profileUrl">Profile URL (where the @handle in the footer links)</label>
+                    <input type="text" id="profileUrl" placeholder="Auto-filled when you connect">
+                </div>
+                <div>
+                    <label for="handle">Handle (without @)</label>
+                    <input type="text" id="handle" placeholder="Auto-filled when you connect">
+                </div>
+            </div>
             <div class="tile-grid" id="tileGrid"></div>
         </div>
 
@@ -200,6 +241,100 @@
             }
         }
 
+        async function loadConnectionStatus() {
+            const pill = document.getElementById('connectPill');
+            const label = document.getElementById('connectLabel');
+            const actions = document.getElementById('connectActions');
+            const refreshBtn = document.getElementById('refreshBtn');
+            try {
+                const res = await fetch('/api/instagram/auth/status');
+                if (!res.ok) throw new Error('status check failed');
+                const data = await res.json();
+                if (data.connected) {
+                    pill.classList.remove('disconnected');
+                    pill.classList.add('connected');
+                    label.textContent = 'Connected as @' + (data.username || 'unknown');
+                    actions.innerHTML =
+                        '<a class="btn" href="/api/instagram/auth/install">Reconnect</a>' +
+                        '<button class="btn btn-danger" onclick="disconnect()">Disconnect</button>';
+                    refreshBtn.disabled = false;
+
+                    // Auto-fill profile fields from connection if blank
+                    const handleInput = document.getElementById('handle');
+                    const profileInput = document.getElementById('profileUrl');
+                    if (!handleInput.value && data.username) handleInput.value = data.username;
+                    if (!profileInput.value && data.username) profileInput.value = 'https://instagram.com/' + data.username;
+                } else {
+                    pill.classList.remove('connected');
+                    pill.classList.add('disconnected');
+                    label.textContent = 'Not connected';
+                    refreshBtn.disabled = true;
+                }
+            } catch (e) {
+                refreshBtn.disabled = true;
+            }
+        }
+
+        async function disconnect() {
+            if (!confirm('Disconnect Instagram? Your saved tiles stay published, but you won\'t be able to refresh until you reconnect.')) return;
+            try {
+                const res = await fetch('/api/instagram/auth/disconnect', { method: 'POST' });
+                if (res.ok) {
+                    showFlash('connected', 'Disconnected');
+                    loadConnectionStatus();
+                } else {
+                    showFlash('error', 'Disconnect failed');
+                }
+            } catch (e) {
+                showFlash('error', 'Network error');
+            }
+        }
+
+        async function refreshFromInstagram() {
+            const btn = document.getElementById('refreshBtn');
+            btn.disabled = true;
+            const original = btn.textContent;
+            btn.textContent = 'Fetching…';
+            try {
+                const res = await fetch('/api/admin/instagram/refresh', { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) {
+                    showMsg(data.error || 'Refresh failed', 'err');
+                    return;
+                }
+                const fetched = (data.tiles || []).slice(0, TILE_COUNT);
+                for (let i = 0; i < TILE_COUNT; i++) {
+                    tiles[i] = fetched[i] || { image: '', link: '' };
+                }
+                renderTiles();
+                showMsg('Loaded ' + fetched.length + ' post(s) — review and save', 'ok');
+            } catch (e) {
+                showMsg('Network error', 'err');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = original;
+            }
+        }
+
+        function showFlash(kind, message) {
+            const el = document.getElementById('flashBanner');
+            if (!message) { el.style.display = 'none'; return; }
+            el.className = 'ig-banner ' + (kind === 'error' ? 'error' : 'connected');
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+
+        function readFlashFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const ig = params.get('ig');
+            const msg = params.get('msg');
+            if (ig && msg) {
+                showFlash(ig, msg);
+                // Clean URL so refreshing doesn't re-show
+                window.history.replaceState({}, '', '/admin/instagram');
+            }
+        }
+
         async function save() {
             const btn = document.getElementById('saveBtn');
             btn.disabled = true;
@@ -225,7 +360,9 @@
             }
         }
 
+        readFlashFromUrl();
         loadCurrent();
+        loadConnectionStatus();
     </script>
 </body>
 </html>
