@@ -12,9 +12,10 @@
     "@vercel/blob": "^0.24.0",
     "@vercel/kv": "^1.0.1",
     "bcryptjs": "^2.4.3",
+    "cookie": "^0.6.0",
     "jsonwebtoken": "^9.0.2",
-    "uuid": "^9.0.1",
-    "cookie": "^0.6.0"
+    "stripe": "^22.1.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "vercel": "^33.0.0"
@@ -22,7 +23,12 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["vintage", "clothing", "thrift", "fashion"],
+  "keywords": [
+    "vintage",
+    "clothing",
+    "thrift",
+    "fashion"
+  ],
   "author": "PoloStew",
   "license": "UNLICENSED",
   "private": true

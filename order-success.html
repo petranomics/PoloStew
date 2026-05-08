@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmed · PoloStew</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #2c2418;
+    --ivory: #faf6f0;
+    --or: #c75d3a;
+    --argent: #e8e0d4;
+    --charbon: #3d3226;
+    --sage: #8a9a7b;
+    --parchment: #f0e6d3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ivory);
+    color: var(--noir);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--argent);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--noir);
+    text-decoration: none;
+  }
+  .container {
+    flex: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    text-align: center;
+  }
+  .check-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--sage);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+    font-size: 40px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--noir);
+  }
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--charbon);
+    margin-bottom: 16px;
+  }
+  .receipt-note {
+    background: var(--parchment);
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin: 32px 0;
+    font-size: 14px;
+    color: var(--charbon);
+  }
+  .btn {
+    display: inline-block;
+    background: var(--noir);
+    color: var(--ivory);
+    padding: 14px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 24px;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: var(--or); }
+</style>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">POLOSTEW</a>
+  </header>
+
+  <div class="container">
+    <div class="check-circle">✓</div>
+    <h1>Order confirmed</h1>
+    <p>Thanks for shopping vintage with us. Your one-of-a-kind piece is officially yours.</p>
+    <p>You'll get a receipt by email shortly with all the details.</p>
+
+    <div class="receipt-note">
+      Items typically ship within 2 business days. Tracking info gets sent to your email once it's on the way.
+    </div>
+
+    <a href="/" class="btn">Keep Shopping</a>
+  </div>
+
+  <script>
+    // Clear the cart now that the order completed
+    try {
+      localStorage.removeItem('polostew_cart');
+    } catch(e) { /* ignore */ }
+  </script>
+</body>
+</html>

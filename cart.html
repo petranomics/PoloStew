@@ -419,19 +419,27 @@
             btn.textContent = 'Redirecting to checkout…';
 
             try {
-                const res = await fetch('/api/shopify/checkout', {
+                const res = await fetch('/api/checkout/stripe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         items: window.cart.items.map(function(i) {
-                            return { variantId: i.variantId, quantity: i.quantity || 1 };
+                            return {
+                                id: i.id,
+                                name: i.name,
+                                brand: i.brand,
+                                price: i.price,
+                                image: i.image,
+                                condition: i.condition,
+                                quantity: i.quantity || 1,
+                            };
                         })
                     })
                 });
 
                 const data = await res.json();
-                if (data.checkoutUrl) {
-                    window.location.href = data.checkoutUrl;
+                if (data.url) {
+                    window.location.href = data.url;
                     return;
                 }
                 throw new Error(data.error || 'Checkout failed');
