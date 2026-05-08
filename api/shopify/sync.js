@@ -68,6 +68,11 @@ export default async function handler(req, res) {
     const mapped = shopifyProducts.map((p) => {
       const variant = (p.variants && p.variants[0]) || {};
       const images = (p.images || []).map((img) => img.src);
+      // status: 'active' | 'draft' | 'archived'
+      // published_at: ISO string when published to Online Store, null if not
+      const isActive = p.status === 'active';
+      const isPublished = !!p.published_at;
+      const isCheckoutReady = isActive && isPublished;
       return {
         shopifyId: String(p.id),
         // Shopify checkout needs the variant ID, not the product ID
@@ -81,6 +86,10 @@ export default async function handler(req, res) {
         images: images,
         size: variant.title && variant.title !== 'Default Title' ? variant.title : '',
         description: (p.body_html || '').replace(/<[^>]*>/g, '').trim(),
+        // Publication status — used by admin UI to flag products that won't checkout
+        shopifyStatus: p.status || 'unknown',
+        publishedAt: p.published_at || null,
+        isCheckoutReady,
         // Vintage-specific fields stay empty for user to fill
         color: '',
         condition: '',
@@ -90,9 +99,17 @@ export default async function handler(req, res) {
       };
     });
 
+    const warnings = {
+      draft: mapped.filter((p) => p.shopifyStatus === 'draft').length,
+      archived: mapped.filter((p) => p.shopifyStatus === 'archived').length,
+      unpublished: mapped.filter((p) => p.shopifyStatus === 'active' && !p.publishedAt).length,
+      notCheckoutReady: mapped.filter((p) => !p.isCheckoutReady).length,
+    };
+
     return res.status(200).json({
       products: mapped,
       count: mapped.length,
+      warnings,
       syncedAt: new Date().toISOString(),
     });
   } catch (error) {
