@@ -359,6 +359,7 @@ table tbody tr:hover { background: #f9f8f5; }
         </div>
         <button id="btnShopifyConnect" class="btn btn-secondary" onclick="connectShopify()" title="Install app on Shopify store (one-time)">⚡ Connect Shopify</button>
         <button id="btnShopifySync" class="btn btn-secondary" onclick="syncFromShopify()" title="Pull products from Shopify">↻ Sync from Shopify</button>
+        <button id="btnEbaySync" class="btn btn-secondary" onclick="syncFromEbay()" title="Pull active listings from eBay">↻ Sync from eBay</button>
         <button class="btn btn-primary" onclick="openAddModal()">+ ADD NEW PRODUCT</button>
       </div>
       <div id="shopifySyncStatus" style="display:none;width:100%;margin-top:12px;padding:10px 14px;border-radius:6px;font-size:13px;"></div>
@@ -937,6 +938,89 @@ async function syncFromShopify() {
   } catch (err) {
     console.error('Shopify sync error:', err);
     showSyncStatus('Sync failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
+}
+
+async function syncFromEbay() {
+  var btn = document.getElementById('btnEbaySync');
+  if (!btn) return;
+  var origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Syncing eBay...';
+  showSyncStatus('Fetching listings from eBay...', 'info');
+
+  try {
+    var response = await fetch('/api/ebay/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+      var errData = await response.json().catch(function() { return {}; });
+      throw new Error(errData.error || 'Sync failed (' + response.status + ')');
+    }
+
+    var data = await response.json();
+    var ebayProducts = data.products || [];
+
+    if (ebayProducts.length === 0) {
+      showSyncStatus('No active listings found for eBay seller "' + (data.seller || '?') + '".', 'warning');
+      return;
+    }
+
+    var added = 0, updated = 0, soldFlagged = 0;
+    var liveEbayIds = {};
+    ebayProducts.forEach(function(ep) { liveEbayIds[ep.ebayItemId] = true; });
+
+    // Mark previously-synced eBay products as sold if no longer in active listings
+    products.forEach(function(p) {
+      if (p.ebayItemId && !liveEbayIds[p.ebayItemId] && p.stock > 0) {
+        p.stock = 0;
+        soldFlagged++;
+      }
+    });
+
+    ebayProducts.forEach(function(ep) {
+      var existing = products.find(function(p) { return p.ebayItemId === ep.ebayItemId; });
+      if (existing) {
+        // Refresh synced fields, preserve user-edited vintage details
+        existing.name = ep.name;
+        existing.brand = existing.brand || ep.brand;
+        existing.price = ep.price;
+        existing.stock = ep.stock;
+        existing.image = existing.image || ep.image;
+        existing.images = (existing.images && existing.images.length > 0) ? existing.images : ep.images;
+        if (!existing.category && ep.category) existing.category = ep.category;
+        if (!existing.size && ep.size) existing.size = ep.size;
+        if (!existing.color && ep.color) existing.color = ep.color;
+        if (!existing.condition && ep.condition) existing.condition = ep.condition;
+        if (!existing.era && ep.era) existing.era = ep.era;
+        existing.ebayUrl = ep.ebayUrl;
+        updated++;
+      } else {
+        ep.id = nextId++;
+        products.push(ep);
+        added++;
+      }
+    });
+
+    saveProducts();
+    updateBrandDropdowns();
+    applyAllFilters();
+    updateStats();
+
+    var msg = 'Synced ' + ebayProducts.length + ' active listing(s): ' +
+              added + ' new, ' + updated + ' updated';
+    if (soldFlagged > 0) {
+      msg += '. ' + soldFlagged + ' marked SOLD (no longer active on eBay).';
+    }
+    showSyncStatus(msg, 'success');
+  } catch (err) {
+    console.error('eBay sync error:', err);
+    showSyncStatus('eBay sync failed: ' + err.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = origText;
