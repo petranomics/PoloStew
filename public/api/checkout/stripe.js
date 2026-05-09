@@ -3,12 +3,10 @@
  * Body: { items: [{ id, name, brand, price, quantity, image }] }
  * Returns: { url } — Stripe Checkout hosted page
  *
- * Uses inline price_data so we don't need to pre-sync products to Stripe.
+ * Calls Stripe REST API directly via fetch to avoid SDK runtime issues in Vercel.
  * Vintage one-of-a-kind items live in PoloStew admin; Stripe handles payment only.
  * Each line item carries the PoloStew product ID in metadata for the webhook.
  */
-
-import Stripe from 'stripe';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -25,83 +23,87 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Body must be { items: [...] } with at least one item' });
   }
 
-  // Resolve where to send the customer back after checkout
   const origin = req.headers.origin || `https://${req.headers.host || 'polostew.com'}`;
   const successUrl = `${origin}/order-success?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${origin}/cart`;
 
+  // Stripe accepts application/x-www-form-urlencoded with bracket notation for nested fields
+  const params = new URLSearchParams();
+  params.append('mode', 'payment');
+  params.append('success_url', successUrl);
+  params.append('cancel_url', cancelUrl);
+  params.append('shipping_address_collection[allowed_countries][0]', 'US');
+  params.append('shipping_address_collection[allowed_countries][1]', 'CA');
+
+  // Standard shipping
+  params.append('shipping_options[0][shipping_rate_data][type]', 'fixed_amount');
+  params.append('shipping_options[0][shipping_rate_data][fixed_amount][amount]', '800');
+  params.append('shipping_options[0][shipping_rate_data][fixed_amount][currency]', 'usd');
+  params.append('shipping_options[0][shipping_rate_data][display_name]', 'Standard Shipping (3-7 days)');
+  params.append('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][unit]', 'business_day');
+  params.append('shipping_options[0][shipping_rate_data][delivery_estimate][minimum][value]', '3');
+  params.append('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][unit]', 'business_day');
+  params.append('shipping_options[0][shipping_rate_data][delivery_estimate][maximum][value]', '7');
+
+  // Free shipping
+  params.append('shipping_options[1][shipping_rate_data][type]', 'fixed_amount');
+  params.append('shipping_options[1][shipping_rate_data][fixed_amount][amount]', '0');
+  params.append('shipping_options[1][shipping_rate_data][fixed_amount][currency]', 'usd');
+  params.append('shipping_options[1][shipping_rate_data][display_name]', 'Free Shipping (5-10 days)');
+  params.append('shipping_options[1][shipping_rate_data][delivery_estimate][minimum][unit]', 'business_day');
+  params.append('shipping_options[1][shipping_rate_data][delivery_estimate][minimum][value]', '5');
+  params.append('shipping_options[1][shipping_rate_data][delivery_estimate][maximum][unit]', 'business_day');
+  params.append('shipping_options[1][shipping_rate_data][delivery_estimate][maximum][value]', '10');
+
+  params.append('metadata[source]', 'polostew');
+  params.append('metadata[itemCount]', String(items.length));
+
+  let lineIndex = 0;
+  for (const item of items) {
+    if (!item || !item.name || !(item.price > 0)) continue;
+    const prefix = `line_items[${lineIndex}]`;
+    params.append(`${prefix}[price_data][currency]`, 'usd');
+    params.append(`${prefix}[price_data][unit_amount]`, String(Math.round(parseFloat(item.price) * 100)));
+    params.append(`${prefix}[price_data][product_data][name]`, item.name);
+    if (item.brand) {
+      const desc = item.brand + (item.condition ? ' · ' + item.condition : '');
+      params.append(`${prefix}[price_data][product_data][description]`, desc);
+    }
+    if (item.image) {
+      params.append(`${prefix}[price_data][product_data][images][0]`, item.image);
+    }
+    params.append(`${prefix}[price_data][product_data][metadata][polostewId]`, String(item.id || ''));
+    if (item.brand) params.append(`${prefix}[price_data][product_data][metadata][brand]`, item.brand);
+    params.append(`${prefix}[quantity]`, String(item.quantity || 1));
+    lineIndex++;
+  }
+
+  if (lineIndex === 0) {
+    return res.status(400).json({ error: 'No valid items in cart' });
+  }
+
   try {
-    const stripe = new Stripe(secretKey, {
-      maxNetworkRetries: 0,
-      timeout: 8000,
+    const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${secretKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
     });
 
-    const lineItems = items
-      .filter((i) => i && i.price > 0 && i.name)
-      .map((i) => {
-        const productData = {
-          name: i.name,
-          metadata: {
-            polostewId: String(i.id || ''),
-            brand: i.brand || '',
-          },
-        };
-        if (i.image) productData.images = [i.image];
-        if (i.brand) productData.description = i.brand + (i.condition ? ' · ' + i.condition : '');
+    const data = await stripeRes.json();
 
-        return {
-          price_data: {
-            currency: 'usd',
-            unit_amount: Math.round(parseFloat(i.price) * 100),
-            product_data: productData,
-          },
-          quantity: i.quantity || 1,
-        };
+    if (!stripeRes.ok) {
+      console.error('Stripe API error:', stripeRes.status, data);
+      return res.status(stripeRes.status).json({
+        error: data.error?.message || `Stripe error (${stripeRes.status})`,
       });
-
-    if (lineItems.length === 0) {
-      return res.status(400).json({ error: 'No valid items in cart' });
     }
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items: lineItems,
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      shipping_address_collection: { allowed_countries: ['US', 'CA'] },
-      shipping_options: [
-        {
-          shipping_rate_data: {
-            type: 'fixed_amount',
-            fixed_amount: { amount: 800, currency: 'usd' },
-            display_name: 'Standard Shipping (3-7 days)',
-            delivery_estimate: {
-              minimum: { unit: 'business_day', value: 3 },
-              maximum: { unit: 'business_day', value: 7 },
-            },
-          },
-        },
-        {
-          shipping_rate_data: {
-            type: 'fixed_amount',
-            fixed_amount: { amount: 0, currency: 'usd' },
-            display_name: 'Free Shipping (5-10 days)',
-            delivery_estimate: {
-              minimum: { unit: 'business_day', value: 5 },
-              maximum: { unit: 'business_day', value: 10 },
-            },
-          },
-        },
-      ],
-      metadata: {
-        source: 'polostew',
-        itemCount: String(items.length),
-      },
-    });
-
-    return res.status(200).json({ url: session.url, sessionId: session.id });
+    return res.status(200).json({ url: data.url, sessionId: data.id });
   } catch (error) {
-    console.error('Stripe checkout error:', error.message);
-    return res.status(500).json({ error: error.message });
+    console.error('Checkout fetch error:', error.message, error.cause);
+    return res.status(500).json({ error: `Network error: ${error.message}` });
   }
 }
