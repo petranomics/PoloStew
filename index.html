@@ -670,6 +670,99 @@
             background: white;
         }
 
+        /* From the Journal */
+        .journal-preview {
+            padding: 6rem 5%;
+            background: var(--ivory);
+            color: var(--noir);
+        }
+        .journal-preview-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .journal-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .journal-preview-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+        .journal-preview-link {
+            color: var(--or);
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid var(--or);
+            padding-bottom: 2px;
+        }
+        .journal-preview-link:hover { color: var(--charbon); border-color: var(--charbon); }
+        .journal-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        @media (max-width: 768px) {
+            .journal-preview-grid { grid-template-columns: 1fr; }
+        }
+        .journal-card {
+            background: white;
+            border: 1px solid var(--argent);
+            border-radius: 8px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .journal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(44, 36, 24, 0.12);
+        }
+        .journal-card-img {
+            width: 100%;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+            background: var(--parchment);
+        }
+        .journal-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+        .journal-card-meta {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .journal-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+        }
+        .journal-card-excerpt {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--charbon);
+            opacity: 0.8;
+            flex: 1;
+        }
+        .journal-preview-empty {
+            text-align: center;
+            color: #999;
+            padding: 2rem;
+            font-style: italic;
+        }
+
         /* Brand Story */
         .brand-story {
             padding: 10rem 5%;
@@ -1621,6 +1714,53 @@
             <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#999;">Loading products…</div>
         </div>
     </section>
+
+    <!-- From the Journal -->
+    <section class="journal-preview">
+        <div class="journal-preview-inner">
+            <div class="journal-preview-header">
+                <h2 class="journal-preview-title">From the Journal</h2>
+                <a class="journal-preview-link" href="/journal">Read all stories →</a>
+            </div>
+            <div class="journal-preview-grid" id="journalPreviewGrid">
+                <div class="journal-preview-empty" style="grid-column:1/-1;">Loading latest stories…</div>
+            </div>
+        </div>
+    </section>
+    <script>
+      (async function loadJournalPreview() {
+        var grid = document.getElementById('journalPreviewGrid');
+        try {
+          var res = await fetch('/api/journal');
+          if (!res.ok) throw new Error('fetch failed');
+          var data = await res.json();
+          var posts = (data.posts || []).slice(0, 3);
+          if (posts.length === 0) {
+            grid.innerHTML = '<div class="journal-preview-empty" style="grid-column:1/-1;">First entry coming soon.</div>';
+            return;
+          }
+          grid.innerHTML = posts.map(function(p) {
+            var date = p.publishedAt || p.updatedAt || p.createdAt;
+            var dateStr = date ? new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+            var img = p.coverImage || p.image || '';
+            var imgTag = img
+              ? '<img class="journal-card-img" src="' + img + '" alt="' + (p.title || '') + '" loading="lazy">'
+              : '<div class="journal-card-img"></div>';
+            var excerpt = p.excerpt || (p.content ? p.content.replace(/<[^>]*>/g, '').slice(0, 140) + '…' : '');
+            return '<a class="journal-card" href="/journal/' + encodeURIComponent(p.slug) + '">' +
+              imgTag +
+              '<div class="journal-card-body">' +
+                (dateStr ? '<div class="journal-card-meta">' + dateStr + '</div>' : '') +
+                '<h3 class="journal-card-title">' + (p.title || 'Untitled') + '</h3>' +
+                '<p class="journal-card-excerpt">' + excerpt + '</p>' +
+              '</div>' +
+            '</a>';
+          }).join('');
+        } catch (err) {
+          grid.innerHTML = '<div class="journal-preview-empty" style="grid-column:1/-1;">Couldn\'t load stories. Check back soon.</div>';
+        }
+      })();
+    </script>
 
     <!-- Brand Story -->
     <section class="brand-story">
