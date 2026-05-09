@@ -360,7 +360,7 @@ table tbody tr:hover { background: #f9f8f5; }
         <button id="btnEbaySync" class="btn btn-secondary" onclick="syncFromEbay()" title="Pull active listings from eBay">↻ Sync from eBay</button>
         <button class="btn btn-primary" onclick="openAddModal()">+ ADD NEW PRODUCT</button>
       </div>
-      <div id="shopifySyncStatus" style="display:none;width:100%;margin-top:12px;padding:10px 14px;border-radius:6px;font-size:13px;"></div>
+      <div id="syncStatus" style="display:none;width:100%;margin-top:12px;padding:10px 14px;border-radius:6px;font-size:13px;"></div>
     </div>
 
     <div class="filters">
@@ -821,20 +821,9 @@ function toggleFeatured(id) {
   applyAllFilters();
 }
 
-/* ── Shopify Sync ── */
-function connectShopify() {
-  window.location.href = '/api/shopify/auth/install';
-}
-
-(function checkShopifyConnected() {
-  if (new URLSearchParams(window.location.search).get('shopify') === 'connected') {
-    showSyncStatus('Shopify connected. You can now sync products.', 'success');
-    history.replaceState(null, '', window.location.pathname);
-  }
-})();
-
+/* ── Sync status banner (shared across all sync sources) ── */
 function showSyncStatus(message, type) {
-  var el = document.getElementById('shopifySyncStatus');
+  var el = document.getElementById('syncStatus');
   if (!el) return;
   var colors = {
     info: { bg: '#e8f0fe', color: '#1967d2', border: '#aecbfa' },
@@ -848,98 +837,6 @@ function showSyncStatus(message, type) {
   el.style.color = c.color;
   el.style.border = '1px solid ' + c.border;
   el.textContent = message;
-}
-
-async function syncFromShopify() {
-  var btn = document.getElementById('btnShopifySync');
-  if (!btn) return;
-  var origText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Syncing...';
-  showSyncStatus('Fetching products from Shopify...', 'info');
-
-  try {
-    var response = await fetch('/api/shopify/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    if (!response.ok) {
-      var errData = await response.json().catch(function() { return {}; });
-      throw new Error(errData.error || 'Sync failed (' + response.status + ')');
-    }
-
-    var data = await response.json();
-    var shopifyProducts = data.products || [];
-
-    if (shopifyProducts.length === 0) {
-      showSyncStatus('No products found in Shopify.', 'warning');
-      return;
-    }
-
-    var added = 0, updated = 0, skipped = 0;
-    shopifyProducts.forEach(function(sp) {
-      var existing = products.find(function(p) { return p.shopifyId === sp.shopifyId; });
-      if (existing) {
-        // Update synced fields only — preserve user-edited vintage fields
-        existing.name = sp.name;
-        existing.brand = sp.brand;
-        existing.price = sp.price;
-        existing.stock = sp.stock;
-        existing.image = existing.image || sp.image;
-        existing.images = (existing.images && existing.images.length > 0) ? existing.images : sp.images;
-        if (!existing.category && sp.category) existing.category = sp.category;
-        // Always refresh publication status so warnings stay accurate
-        existing.shopifyStatus = sp.shopifyStatus;
-        existing.publishedAt = sp.publishedAt;
-        existing.isCheckoutReady = sp.isCheckoutReady;
-        existing.variantId = sp.variantId;
-        updated++;
-      } else {
-        // Brand new — import
-        sp.id = nextId++;
-        sp.condition = sp.condition || 'Good (visible wear)';
-        sp.era = sp.era || '';
-        sp.size = sp.size || '';
-        sp.color = sp.color || '';
-        sp.measurements = sp.measurements || {};
-        sp.features = sp.features || [];
-        sp.description = sp.description || '';
-        products.push(sp);
-        added++;
-      }
-    });
-
-    saveProducts();
-    updateBrandDropdowns();
-    applyAllFilters();
-    updateStats();
-
-    var msg = 'Synced ' + shopifyProducts.length + ' product(s): ' +
-              added + ' new, ' + updated + ' updated' +
-              (skipped > 0 ? ', ' + skipped + ' skipped' : '');
-
-    // Build publication warnings if any
-    var w = data.warnings || {};
-    var warningParts = [];
-    if (w.draft > 0) warningParts.push(w.draft + ' draft');
-    if (w.archived > 0) warningParts.push(w.archived + ' archived');
-    if (w.unpublished > 0) warningParts.push(w.unpublished + ' active but not published to Online Store');
-
-    if (warningParts.length > 0) {
-      msg += '. ⚠️ ' + w.notCheckoutReady + ' product(s) WILL NOT CHECKOUT (' + warningParts.join(', ') +
-             '). Fix in Shopify: set Status to Active and check the Online Store sales channel.';
-      showSyncStatus(msg, 'warning');
-    } else {
-      showSyncStatus(msg, 'success');
-    }
-  } catch (err) {
-    console.error('Shopify sync error:', err);
-    showSyncStatus('Sync failed: ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = origText;
-  }
 }
 
 async function syncFromEbay() {
@@ -1105,12 +1002,7 @@ function renderListView(items) {
     var statusBadge = p.stock > 0
       ? '<span class="badge badge-success">Available</span>'
       : '<span class="badge badge-danger">Sold</span>';
-    // Flag products that won't checkout — they came from Shopify as draft or unpublished
-    var checkoutWarn = (p.shopifyStatus && p.shopifyStatus !== 'active')
-      ? '<span class="badge badge-warning" title="Status: ' + p.shopifyStatus + ' in Shopify. Set to Active to enable checkout." style="margin-left:4px;">⚠️ ' + p.shopifyStatus + '</span>'
-      : (p.shopifyStatus === 'active' && p.publishedAt === null
-          ? '<span class="badge badge-warning" title="Not published to Online Store sales channel. Customers can\'t buy this." style="margin-left:4px;">⚠️ unpublished</span>'
-          : '');
+    var checkoutWarn = '';
     var imgSrc = p.image || (p.images && p.images.length > 0 ? p.images[0] : '');
     var imgTag = imgSrc
       ? '<img src="' + imgSrc + '" alt="' + p.name + '" class="product-img">'
