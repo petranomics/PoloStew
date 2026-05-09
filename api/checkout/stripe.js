@@ -31,7 +31,10 @@ export default async function handler(req, res) {
   const cancelUrl = `${origin}/cart`;
 
   try {
-    const stripe = new Stripe(secretKey);
+    const stripe = new Stripe(secretKey, {
+      maxNetworkRetries: 0,
+      timeout: 8000,
+    });
 
     const lineItems = items
       .filter((i) => i && i.price > 0 && i.name)
