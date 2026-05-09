@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   const cancelUrl = `${origin}/cart`;
 
   try {
-    const stripe = new Stripe(secretKey, { apiVersion: '2024-11-20.acacia' });
+    const stripe = new Stripe(secretKey);
 
     const lineItems = items
       .filter((i) => i && i.price > 0 && i.name)

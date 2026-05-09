@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Webhook not configured' });
   }
 
-  const stripe = new Stripe(secretKey, { apiVersion: '2024-11-20.acacia' });
+  const stripe = new Stripe(secretKey);
 
   let event;
   try {
