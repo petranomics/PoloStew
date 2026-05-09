@@ -340,6 +340,9 @@ table tbody tr:hover { background: #f9f8f5; }
     <div class="admin-toggle">
       <button id="tabInventory" class="active" onclick="switchAdminTab('inventory')">Inventory</button>
       <button id="tabBanners" onclick="switchAdminTab('banners')">Banners</button>
+      <button id="tabContent" onclick="switchAdminTab('content')">Content</button>
+      <button id="tabSubscribers" onclick="switchAdminTab('subscribers')">Subscribers</button>
+      <button id="tabAnalytics" onclick="switchAdminTab('analytics')">Analytics</button>
       <button onclick="window.location.href='/admin/instagram'">Instagram</button>
       <button onclick="window.location.href='/admin/journal'">Journal</button>
       <button id="tabSettings" onclick="switchAdminTab('settings')">Settings</button>
@@ -1760,30 +1763,428 @@ init();
 
 </div>
 
+<!-- ============================== -->
+<!-- CONTENT SECTION (lightweight CMS) -->
+<!-- ============================== -->
+<div id="contentSection" style="display:none;">
+  <div class="container" style="margin-top:40px;max-width:920px;">
+    <div class="section-header">
+      <h2>Site Content</h2>
+      <a href="/" target="_blank" rel="noopener" class="btn btn-secondary" style="text-decoration:none;">View on storefront →</a>
+    </div>
+    <p style="color:#666;margin-bottom:1.5rem;font-size:0.95rem;">Edit copy that appears on the homepage. Changes take effect immediately on the live site.</p>
+    <div id="contentLoading" style="padding:2rem;text-align:center;color:#888;">Loading…</div>
+    <form id="contentForm" style="display:none;" onsubmit="saveContent(event)">
+      <div id="contentGroups"></div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-top:2rem;">
+        <button type="submit" id="contentSaveBtn" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-secondary" onclick="resetContentToDefaults()">Reset all to defaults</button>
+        <span id="contentMsg" style="font-size:0.9rem;"></span>
+      </div>
+    </form>
+  </div>
+  <script>
+    var contentGroupsConfig = [
+      { title: 'Hero — Slide 1', fields: [
+        { key: 'hero.slide1.title',    label: 'Title',    type: 'text' },
+        { key: 'hero.slide1.subtitle', label: 'Subtitle', type: 'text' },
+        { key: 'hero.slide1.cta',      label: 'Button',   type: 'text' },
+      ]},
+      { title: 'Hero — Slide 2', fields: [
+        { key: 'hero.slide2.title',    label: 'Title',    type: 'text' },
+        { key: 'hero.slide2.subtitle', label: 'Subtitle', type: 'text' },
+        { key: 'hero.slide2.cta',      label: 'Button',   type: 'text' },
+      ]},
+      { title: 'Hero — Slide 3', fields: [
+        { key: 'hero.slide3.title',    label: 'Title',    type: 'text' },
+        { key: 'hero.slide3.subtitle', label: 'Subtitle', type: 'text' },
+        { key: 'hero.slide3.cta',      label: 'Button',   type: 'text' },
+      ]},
+      { title: 'Hero — Slide 4', fields: [
+        { key: 'hero.slide4.title',    label: 'Title',    type: 'text' },
+        { key: 'hero.slide4.subtitle', label: 'Subtitle', type: 'text' },
+        { key: 'hero.slide4.cta',      label: 'Button',   type: 'text' },
+      ]},
+      { title: 'Featured Section', fields: [
+        { key: 'featured.title',    label: 'Heading',    type: 'text' },
+        { key: 'featured.subtitle', label: 'Subheading', type: 'text' },
+      ]},
+      { title: 'Brand Story', fields: [
+        { key: 'brandStory.title', label: 'Title', type: 'text' },
+        { key: 'brandStory.body',  label: 'Body',  type: 'textarea' },
+      ]},
+      { title: 'Journal Section', fields: [
+        { key: 'journalSection.title',    label: 'Heading',   type: 'text' },
+        { key: 'journalSection.linkText', label: 'Link text', type: 'text' },
+      ]},
+    ];
+    var contentDefaults = {};
+
+    async function loadContentAdmin() {
+      var loading = document.getElementById('contentLoading');
+      var form = document.getElementById('contentForm');
+      var groups = document.getElementById('contentGroups');
+      try {
+        var res = await fetch('/api/admin/content', { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('Failed to load');
+        var data = await res.json();
+        contentDefaults = data.defaults || {};
+        var content = data.content || {};
+        groups.innerHTML = contentGroupsConfig.map(function(g) {
+          return '<div style="background:white;border:1px solid #e8e0d4;border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;">' +
+            '<h3 style="font-family:\'Playfair Display\',serif;font-weight:500;margin-bottom:1rem;font-size:1.25rem;">' + g.title + '</h3>' +
+            g.fields.map(function(f) {
+              var val = (content[f.key] != null ? content[f.key] : '').toString();
+              var input = f.type === 'textarea'
+                ? '<textarea data-content-key="' + f.key + '" rows="6" style="width:100%;padding:0.7rem 0.85rem;border:1px solid #e8e0d4;border-radius:6px;font-family:inherit;font-size:0.95rem;line-height:1.5;">' + escapeHtml(val) + '</textarea>'
+                : '<input type="text" data-content-key="' + f.key + '" value="' + escapeAttr(val) + '" style="width:100%;padding:0.7rem 0.85rem;border:1px solid #e8e0d4;border-radius:6px;font-family:inherit;font-size:0.95rem;">';
+              return '<div style="margin-bottom:0.85rem;">' +
+                '<label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:0.4rem;">' + f.label + '</label>' +
+                input +
+              '</div>';
+            }).join('') +
+          '</div>';
+        }).join('');
+        loading.style.display = 'none';
+        form.style.display = 'block';
+      } catch (err) {
+        loading.textContent = 'Failed to load content. Refresh and try again.';
+        loading.style.color = '#b95448';
+      }
+    }
+    function escapeHtml(s) { return String(s).replace(/[&<>]/g, function(c) { return { '&':'&amp;','<':'&lt;','>':'&gt;' }[c]; }); }
+    function escapeAttr(s) { return String(s).replace(/[&<>"]/g, function(c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+
+    async function saveContent(ev) {
+      ev.preventDefault();
+      var btn = document.getElementById('contentSaveBtn');
+      var msg = document.getElementById('contentMsg');
+      msg.textContent = ''; msg.style.color = '';
+      var inputs = document.querySelectorAll('[data-content-key]');
+      var content = {};
+      inputs.forEach(function(el) { content[el.getAttribute('data-content-key')] = el.value; });
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        var res = await fetch('/api/admin/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ content: content })
+        });
+        if (!res.ok) throw new Error('Save failed');
+        msg.textContent = 'Saved.';
+        msg.style.color = '#8a9a7b';
+      } catch (err) {
+        msg.textContent = 'Save failed.';
+        msg.style.color = '#b95448';
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save Changes';
+      }
+    }
+
+    function resetContentToDefaults() {
+      if (!confirm('Reset every field to the default text? This cannot be undone after saving.')) return;
+      document.querySelectorAll('[data-content-key]').forEach(function(el) {
+        var key = el.getAttribute('data-content-key');
+        if (contentDefaults[key] != null) el.value = contentDefaults[key];
+      });
+    }
+  </script>
+</div>
+
+<!-- ============================== -->
+<!-- SUBSCRIBERS SECTION -->
+<!-- ============================== -->
+<div id="subscribersSection" style="display:none;">
+  <div class="container" style="margin-top:40px;">
+    <div class="section-header">
+      <h2>Newsletter Subscribers</h2>
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <span id="subscribersCount" style="font-size:0.9rem;color:#666;">0 subscribers</span>
+        <a id="subscribersDownload" class="btn btn-primary" href="/api/admin/newsletter/export">Download CSV</a>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Source</th>
+            <th>Signed up</th>
+            <th style="width:100px;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="subscribersTbody">
+          <tr><td colspan="4" style="text-align:center;color:#888;padding:2rem;">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    async function loadSubscribers() {
+      var tbody = document.getElementById('subscribersTbody');
+      var countEl = document.getElementById('subscribersCount');
+      try {
+        var res = await fetch('/api/admin/newsletter/list', { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('load fail');
+        var data = await res.json();
+        var subs = data.subscribers || [];
+        countEl.textContent = subs.length + ' subscriber' + (subs.length === 1 ? '' : 's');
+        if (subs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;padding:2rem;">No subscribers yet.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = subs.map(function(s) {
+          var d = s.subscribedAt ? new Date(s.subscribedAt).toLocaleString() : '—';
+          var emailEsc = (s.email || '').replace(/"/g, '&quot;');
+          return '<tr>' +
+            '<td>' + (s.email || '') + '</td>' +
+            '<td><span class="badge" style="background:var(--parchment);color:var(--charbon);">' + (s.source || 'unknown') + '</span></td>' +
+            '<td>' + d + '</td>' +
+            '<td><button class="btn btn-sm btn-danger" onclick="removeSubscriber(\'' + emailEsc + '\')">Remove</button></td>' +
+          '</tr>';
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#b95448;padding:2rem;">Failed to load subscribers.</td></tr>';
+      }
+    }
+    async function removeSubscriber(email) {
+      if (!confirm('Remove ' + email + ' from the list?')) return;
+      try {
+        var res = await fetch('/api/admin/newsletter/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ email: email })
+        });
+        if (!res.ok) throw new Error('delete fail');
+        await loadSubscribers();
+      } catch (err) {
+        alert('Failed to remove subscriber.');
+      }
+    }
+  </script>
+</div>
+
+<!-- ============================== -->
+<!-- ANALYTICS SECTION -->
+<!-- ============================== -->
+<div id="analyticsSection" style="display:none;">
+  <div class="container" style="margin-top:40px;">
+    <div class="section-header">
+      <h2>Analytics</h2>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <label style="font-size:0.85rem;color:#666;">Range:</label>
+        <select id="analyticsRange" class="filter-select" onchange="loadAnalytics()">
+          <option value="7">Last 7 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div id="analyticsKpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;"></div>
+
+    <!-- Daily revenue chart -->
+    <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.5rem;margin-bottom:1.5rem;">
+      <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:1rem;">Daily revenue & orders</h3>
+      <div id="analyticsChart" style="display:flex;align-items:flex-end;gap:2px;height:180px;border-bottom:1px solid var(--argent);padding-bottom:4px;"></div>
+      <div id="analyticsChartLegend" style="display:flex;justify-content:space-between;font-size:0.7rem;color:#888;margin-top:0.4rem;"></div>
+    </div>
+
+    <!-- Funnel -->
+    <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.5rem;margin-bottom:1.5rem;">
+      <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:1rem;">Conversion Funnel</h3>
+      <div id="analyticsFunnel"></div>
+    </div>
+
+    <!-- Two-column tables -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:1.5rem;">
+      <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.25rem;">
+        <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:0.75rem;font-size:1.1rem;">Top Pages</h3>
+        <table style="width:100%;font-size:0.9rem;"><tbody id="analyticsTopPaths"></tbody></table>
+      </div>
+      <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.25rem;">
+        <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:0.75rem;font-size:1.1rem;">Top Referrers</h3>
+        <table style="width:100%;font-size:0.9rem;"><tbody id="analyticsTopRefs"></tbody></table>
+      </div>
+      <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.25rem;">
+        <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:0.75rem;font-size:1.1rem;">Most Added to Cart</h3>
+        <table style="width:100%;font-size:0.9rem;"><tbody id="analyticsTopAdds"></tbody></table>
+      </div>
+      <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.25rem;">
+        <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:0.75rem;font-size:1.1rem;">Most Purchased</h3>
+        <table style="width:100%;font-size:0.9rem;"><tbody id="analyticsTopPurchases"></tbody></table>
+      </div>
+      <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.25rem;">
+        <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:0.75rem;font-size:1.1rem;">Mobile vs Desktop</h3>
+        <div id="analyticsDevice"></div>
+      </div>
+      <div style="background:white;border:1px solid var(--argent);border-radius:8px;padding:1.25rem;">
+        <h3 style="font-family:'Playfair Display',serif;font-weight:500;margin-bottom:0.75rem;font-size:1.1rem;">Recent Activity</h3>
+        <div id="analyticsRecent" style="max-height:280px;overflow-y:auto;font-size:0.85rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fmtCents(c) { return '$' + ((Number(c) || 0) / 100).toFixed(2); }
+    function fmtInt(n) { return (Number(n) || 0).toLocaleString(); }
+    function pct(p) { return (Number(p) || 0).toFixed(2) + '%'; }
+
+    async function loadAnalytics() {
+      var range = document.getElementById('analyticsRange').value || '30';
+      var kpis = document.getElementById('analyticsKpis');
+      kpis.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:1rem;">Loading…</div>';
+      try {
+        var res = await fetch('/api/admin/analytics/summary?range=' + range, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('load fail');
+        var data = await res.json();
+        renderAnalytics(data);
+      } catch (err) {
+        kpis.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#b95448;padding:1rem;">Failed to load analytics.</div>';
+      }
+    }
+
+    function kpiCard(label, value) {
+      return '<div class="stat-card" style="padding:1.25rem;">' +
+        '<h3 style="font-size:11px;">' + label + '</h3>' +
+        '<div class="value" style="font-size:1.7rem;">' + value + '</div>' +
+      '</div>';
+    }
+
+    function renderAnalytics(data) {
+      var t = data.totals || {};
+      var convRate = t.sessions ? ((t.orders / t.sessions) * 100).toFixed(2) + '%' : '0.00%';
+      document.getElementById('analyticsKpis').innerHTML = [
+        kpiCard('Pageviews', fmtInt(t.pageviews)),
+        kpiCard('Unique Visitors', fmtInt(t.sessions)),
+        kpiCard('Add to Cart', fmtInt(t.addToCart)),
+        kpiCard('Checkout Starts', fmtInt(t.checkoutStart)),
+        kpiCard('Orders', fmtInt(t.orders)),
+        kpiCard('Revenue', fmtCents(t.revenueCents)),
+        kpiCard('Conv. Rate', convRate),
+      ].join('');
+
+      // Chart
+      var ts = data.timeseries || [];
+      var maxRev = Math.max.apply(null, ts.map(function(d) { return d.revenueCents; }).concat([1]));
+      var maxOrd = Math.max.apply(null, ts.map(function(d) { return d.orders; }).concat([1]));
+      var chart = document.getElementById('analyticsChart');
+      chart.innerHTML = ts.map(function(d) {
+        var hRev = (d.revenueCents / maxRev) * 100;
+        var hOrd = (d.orders / maxOrd) * 100;
+        var tip = d.date + ' — Revenue ' + fmtCents(d.revenueCents) + ', Orders ' + d.orders + ', Sessions ' + d.sessions;
+        return '<div title="' + tip + '" style="flex:1;display:flex;align-items:flex-end;gap:1px;height:100%;">' +
+          '<div style="flex:1;background:var(--or);height:' + hRev + '%;min-height:1px;"></div>' +
+          '<div style="flex:1;background:var(--sage);height:' + hOrd + '%;min-height:1px;"></div>' +
+        '</div>';
+      }).join('');
+      var dates = data.dates || [];
+      document.getElementById('analyticsChartLegend').innerHTML =
+        '<span>' + (dates[0] || '') + '</span>' +
+        '<span><span style="display:inline-block;width:10px;height:10px;background:var(--or);margin-right:4px;"></span>Revenue ' +
+        '<span style="display:inline-block;width:10px;height:10px;background:var(--sage);margin:0 4px 0 12px;"></span>Orders</span>' +
+        '<span>' + (dates[dates.length-1] || '') + '</span>';
+
+      // Funnel
+      var f = data.funnel || {};
+      var fr = f.rates || {};
+      var stages = [
+        ['Sessions', f.sessions, null],
+        ['Add to Cart', f.addToCart, fr.sessionToAdd],
+        ['Checkout Start', f.checkoutStart, fr.addToCheckout],
+        ['Purchase', f.purchase, fr.checkoutToPurchase],
+      ];
+      var maxStage = Math.max.apply(null, stages.map(function(s) { return s[1]; }).concat([1]));
+      document.getElementById('analyticsFunnel').innerHTML = stages.map(function(s, i) {
+        var w = Math.max(((s[1] || 0) / maxStage) * 100, 2);
+        var arrow = i > 0 && s[2] != null ? '<span style="font-size:0.8rem;color:#888;margin-left:0.5rem;">→ ' + pct(s[2]) + ' from prev</span>' : '';
+        return '<div style="margin-bottom:0.65rem;">' +
+          '<div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.3rem;"><span><strong>' + s[0] + '</strong>' + arrow + '</span><span>' + fmtInt(s[1]) + '</span></div>' +
+          '<div style="background:var(--parchment);border-radius:4px;overflow:hidden;height:18px;"><div style="background:var(--or);width:' + w + '%;height:100%;"></div></div>' +
+        '</div>';
+      }).join('') +
+      '<div style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--argent);font-size:0.85rem;color:#666;">Overall conversion (sessions → purchase): <strong style="color:var(--or);">' + pct(fr.sessionToPurchase) + '</strong></div>';
+
+      // Tables
+      function renderRows(tbodyId, rows, valueLabel) {
+        var tbody = document.getElementById(tbodyId);
+        if (!rows || rows.length === 0) {
+          tbody.innerHTML = '<tr><td style="padding:0.5rem 0;color:#888;">No data yet.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = rows.map(function(r) {
+          return '<tr><td style="padding:0.4rem 0;border-bottom:1px solid #f0ece4;">' + r.label + '</td>' +
+            '<td style="padding:0.4rem 0;border-bottom:1px solid #f0ece4;text-align:right;font-weight:600;">' + r.value + '</td></tr>';
+        }).join('');
+      }
+      renderRows('analyticsTopPaths', (data.topPaths || []).map(function(p) { return { label: p.path, value: fmtInt(p.views) }; }));
+      renderRows('analyticsTopRefs', (data.topReferrers || []).map(function(r) { return { label: r.host, value: fmtInt(r.count) }; }));
+      renderRows('analyticsTopAdds', (data.topProductsAdds || []).map(function(p) { return { label: p.productId, value: fmtInt(p.count) }; }));
+      renderRows('analyticsTopPurchases', (data.topProductsPurchases || []).map(function(p) { return { label: p.productId, value: fmtInt(p.count) }; }));
+
+      // Device split
+      var dev = data.deviceSplit || { mobile: 0, desktop: 0 };
+      var totalDev = (dev.mobile + dev.desktop) || 1;
+      var mPct = (dev.mobile / totalDev) * 100;
+      var dPct = (dev.desktop / totalDev) * 100;
+      document.getElementById('analyticsDevice').innerHTML =
+        '<div style="margin-bottom:0.75rem;"><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem;"><span>Mobile</span><span>' + fmtInt(dev.mobile) + ' (' + mPct.toFixed(1) + '%)</span></div>' +
+        '<div style="background:var(--parchment);border-radius:4px;height:14px;overflow:hidden;"><div style="background:var(--or);width:' + mPct + '%;height:100%;"></div></div></div>' +
+        '<div><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem;"><span>Desktop</span><span>' + fmtInt(dev.desktop) + ' (' + dPct.toFixed(1) + '%)</span></div>' +
+        '<div style="background:var(--parchment);border-radius:4px;height:14px;overflow:hidden;"><div style="background:var(--sage);width:' + dPct + '%;height:100%;"></div></div></div>';
+
+      // Recent activity
+      var recent = data.recent || [];
+      var recentEl = document.getElementById('analyticsRecent');
+      if (recent.length === 0) {
+        recentEl.innerHTML = '<div style="color:#888;padding:0.5rem 0;">No recent events.</div>';
+      } else {
+        recentEl.innerHTML = recent.map(function(e) {
+          var time = e.ts ? new Date(e.ts).toLocaleTimeString() : '';
+          var label = e.event + (e.path ? ' · ' + e.path : '') + (e.productId ? ' · ' + e.productId : '');
+          return '<div style="padding:0.35rem 0;border-bottom:1px solid #f0ece4;display:flex;justify-content:space-between;gap:0.5rem;">' +
+            '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + label + '</span>' +
+            '<span style="color:#999;font-size:0.75rem;flex-shrink:0;">' + time + '</span>' +
+          '</div>';
+        }).join('');
+      }
+    }
+  </script>
+</div>
+
 <script>
 function switchAdminTab(tab) {
-  var bannerSection = document.getElementById('bannerSection');
-  var inventorySection = document.getElementById('inventorySection');
-  var settingsSection = document.getElementById('settingsSection');
-  var tabBanners = document.getElementById('tabBanners');
-  var tabInventory = document.getElementById('tabInventory');
-  var tabSettings = document.getElementById('tabSettings');
-  bannerSection.style.display = 'none';
-  inventorySection.style.display = 'none';
-  if (settingsSection) settingsSection.style.display = 'none';
-  tabBanners.classList.remove('active');
-  tabInventory.classList.remove('active');
-  if (tabSettings) tabSettings.classList.remove('active');
-  if (tab === 'banners') {
-    bannerSection.style.display = 'block';
-    tabBanners.classList.add('active');
-  } else if (tab === 'settings' && settingsSection) {
-    settingsSection.style.display = 'block';
-    if (tabSettings) tabSettings.classList.add('active');
-  } else {
-    inventorySection.style.display = 'block';
-    tabInventory.classList.add('active');
-  }
+  var sections = {
+    inventory: document.getElementById('inventorySection'),
+    banners: document.getElementById('bannerSection'),
+    content: document.getElementById('contentSection'),
+    subscribers: document.getElementById('subscribersSection'),
+    analytics: document.getElementById('analyticsSection'),
+    settings: document.getElementById('settingsSection'),
+  };
+  var tabs = {
+    inventory: document.getElementById('tabInventory'),
+    banners: document.getElementById('tabBanners'),
+    content: document.getElementById('tabContent'),
+    subscribers: document.getElementById('tabSubscribers'),
+    analytics: document.getElementById('tabAnalytics'),
+    settings: document.getElementById('tabSettings'),
+  };
+  Object.keys(sections).forEach(function(k) {
+    if (sections[k]) sections[k].style.display = 'none';
+    if (tabs[k]) tabs[k].classList.remove('active');
+  });
+  var active = sections[tab] ? tab : 'inventory';
+  if (sections[active]) sections[active].style.display = 'block';
+  if (tabs[active]) tabs[active].classList.add('active');
+
+  // Lazy-load tab data
+  if (active === 'content' && !window.__contentLoaded) { window.__contentLoaded = true; loadContentAdmin(); }
+  if (active === 'subscribers') { loadSubscribers(); }
+  if (active === 'analytics') { loadAnalytics(); }
 }
 </script>
 </body>

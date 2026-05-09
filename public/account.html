@@ -488,6 +488,27 @@
         </nav>
     </header>
 
+    <!-- Email verification banner -->
+    <div id="verifyBanner" style="display:none;max-width:1400px;margin:100px auto 0;padding:0 5%;">
+      <div style="background:#fff8e1;border:1px solid #ffe082;border-left:4px solid #f9a825;color:#5d4037;padding:1rem 1.4rem;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+        <div style="font-size:0.95rem;line-height:1.5;">
+          <strong>Verify your email.</strong> We sent a verification link to your inbox. Once you confirm, this banner will go away.
+        </div>
+        <button id="resendVerifyBtn" type="button"
+                style="background:#c75d3a;color:#fff;border:none;padding:0.55rem 1.2rem;border-radius:4px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;font-weight:500;">
+          Resend verification email
+        </button>
+      </div>
+      <div id="verifyBannerMsg" style="font-size:0.85rem;color:#5d4037;margin-top:0.5rem;display:none;"></div>
+    </div>
+
+    <!-- Email-just-verified banner -->
+    <div id="verifiedBanner" style="display:none;max-width:1400px;margin:100px auto 0;padding:0 5%;">
+      <div style="background:#e8f5e9;border:1px solid #a5d6a7;border-left:4px solid #2e7d32;color:#1b5e20;padding:1rem 1.4rem;border-radius:8px;font-size:0.95rem;">
+        <strong>Email verified.</strong> Thanks — your account is fully set up.
+      </div>
+    </div>
+
     <!-- Main Container -->
     <div class="container">
         <!-- Sidebar -->
@@ -713,6 +734,17 @@
         </main>
     </div>
 
+    <footer style="background:#3d3226;color:#faf6f0;padding:2rem 5%;text-align:center;font-size:0.85rem;font-family:'DM Sans',sans-serif;margin-top:3rem;">
+        <div style="font-family:'Playfair Display',serif;letter-spacing:0.32em;font-size:1.1rem;margin-bottom:0.6rem;">POLOSTEW</div>
+        <div>
+            <a href="/" style="color:#faf6f0;margin:0 0.6rem;text-decoration:none;">Home</a> ·
+            <a href="/journal" style="color:#faf6f0;margin:0 0.6rem;text-decoration:none;">Journal</a> ·
+            <a href="/privacy" style="color:#faf6f0;margin:0 0.6rem;text-decoration:none;">Privacy</a> ·
+            <a href="/terms" style="color:#faf6f0;margin:0 0.6rem;text-decoration:none;">Terms</a>
+        </div>
+        <div style="margin-top:0.6rem;opacity:0.7;">© 2026 POLOSTEW. Curated vintage from Austin, TX.</div>
+    </footer>
+
     <script>
         // Check if user is logged in
         window.addEventListener('load', function() {
@@ -723,7 +755,7 @@
             }
 
             const userData = JSON.parse(session);
-            
+
             // If admin, redirect to admin panel
             if (userData.role === 'admin') {
                 window.location.href = '/admin/';
@@ -735,6 +767,82 @@
             document.getElementById('profileName').textContent = userData.name;
             document.getElementById('profileEmail').textContent = userData.email;
             document.getElementById('avatarInitial').textContent = userData.name.charAt(0).toUpperCase();
+
+            checkVerificationStatus(userData);
+        });
+
+        // Show "just verified" toast if redirected here from verify-email
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('verified') === '1') {
+                const b = document.getElementById('verifiedBanner');
+                if (b) {
+                    b.style.display = 'block';
+                    const c = document.querySelector('.container');
+                    if (c) c.style.marginTop = '1rem';
+                    setTimeout(() => { b.style.display = 'none'; if (c) c.style.marginTop = '100px'; }, 6000);
+                }
+            }
+        })();
+
+        async function checkVerificationStatus(localUser) {
+            // Try to fetch live profile from API. If API call fails (e.g. legacy
+            // localStorage-only session), fall back to localStorage flag.
+            let emailVerified = null;
+            try {
+                const res = await fetch('/api/user/profile', { credentials: 'include' });
+                if (res.ok) {
+                    const data = await res.json();
+                    emailVerified = !!data.emailVerified;
+                }
+            } catch (_) { /* ignore */ }
+
+            if (emailVerified === null && localUser && typeof localUser.emailVerified === 'boolean') {
+                emailVerified = localUser.emailVerified;
+            }
+
+            if (emailVerified === false) {
+                const banner = document.getElementById('verifyBanner');
+                if (banner) {
+                    banner.style.display = 'block';
+                    const c = document.querySelector('.container');
+                    if (c) c.style.marginTop = '1rem';
+                }
+            }
+        }
+
+        document.addEventListener('click', async function (e) {
+            if (e.target && e.target.id === 'resendVerifyBtn') {
+                const btn = e.target;
+                const msg = document.getElementById('verifyBannerMsg');
+                btn.disabled = true;
+                btn.textContent = 'Sending…';
+                try {
+                    const res = await fetch('/api/auth/resend-verification', {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (res.ok) {
+                        msg.style.display = 'block';
+                        msg.textContent = data.alreadyVerified
+                            ? 'Your email is already verified. Refresh the page to clear this banner.'
+                            : 'Verification email sent. Check your inbox.';
+                        btn.textContent = 'Sent';
+                    } else {
+                        msg.style.display = 'block';
+                        msg.textContent = (data && data.error) || 'Could not send. Try again later.';
+                        btn.disabled = false;
+                        btn.textContent = 'Resend verification email';
+                    }
+                } catch (err) {
+                    msg.style.display = 'block';
+                    msg.textContent = 'Network error. Try again.';
+                    btn.disabled = false;
+                    btn.textContent = 'Resend verification email';
+                }
+            }
         });
 
         // Show section

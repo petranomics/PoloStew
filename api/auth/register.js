@@ -1,11 +1,17 @@
 /**
  * User Registration Endpoint
  * POST /api/auth/register
+ *
+ * Creates the user, then fires off a verification email via Resend.
+ * The user can log in immediately — verification is non-blocking; UI shows a banner.
  */
 
 import { kv } from '@vercel/kv';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
+import { sendVerificationEmail } from '../../lib/email.mjs';
+
+const VERIFY_TTL_SECONDS = 24 * 60 * 60; // 24 hours
 
 export default async function handler(req, res) {
   // Only allow POST
@@ -54,13 +60,14 @@ export default async function handler(req, res) {
     // Generate IDs and tokens
     const userId = uuidv4();
     const verificationToken = uuidv4();
+    const expiresAt = new Date(Date.now() + VERIFY_TTL_SECONDS * 1000).toISOString();
 
-    // Create user object
+    // Create user object — verification is async; mark unverified
     const user = {
       id: userId,
       email: emailLower,
       passwordHash,
-      role: 'user', // Default role
+      role: 'user',
       profile: {
         firstName,
         lastName,
@@ -71,7 +78,7 @@ export default async function handler(req, res) {
       wishlist: [],
       orderHistory: [],
       createdAt: new Date().toISOString(),
-      emailVerified: true, // Auto-verify for now (no email service)
+      emailVerified: false,
       verificationToken: null
     };
 
@@ -79,19 +86,32 @@ export default async function handler(req, res) {
     await kv.set(`user:${userId}`, user);
     await kv.set(`user:email:${emailLower}`, userId);
 
-    // If we had email service, we would:
-    // await kv.set(`user:verification:${verificationToken}`, userId, { ex: 86400 });
-    // await sendVerificationEmail(email, verificationToken);
+    // Store verification token with TTL
+    await kv.set(
+      `verify:${verificationToken}`,
+      { userId, email: emailLower, expiresAt },
+      { ex: VERIFY_TTL_SECONDS }
+    );
+
+    // Build verify URL — prefer explicit prod host
+    const verifyUrl = `https://polostew.com/verify-email?token=${encodeURIComponent(verificationToken)}`;
+
+    // Fire-and-await — email helper never throws
+    const emailResult = await sendVerificationEmail(emailLower, firstName, verifyUrl);
+    if (!emailResult.ok) {
+      console.warn('[register] verification email send failed for', emailLower);
+    }
 
     return res.status(201).json({
       success: true,
-      message: 'Registration successful. You can now log in.',
+      message: 'Registration successful. Please check your email to verify your account.',
       userId,
       user: {
         id: userId,
         email: emailLower,
         firstName,
-        lastName
+        lastName,
+        emailVerified: false
       }
     });
 

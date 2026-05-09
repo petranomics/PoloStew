@@ -1652,9 +1652,9 @@
                 <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1558171813-4c088753af8f?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
                     <p class="slide-category">New Arrivals</p>
-                    <h1 class="slide-title">Fresh Finds</h1>
-                    <p class="slide-description">Just dropped. One of a kind.</p>
-                    <a href="#products" class="slide-cta">Explore Collection</a>
+                    <h1 class="slide-title" id="content-hero-slide1-title">Fresh Finds</h1>
+                    <p class="slide-description" id="content-hero-slide1-subtitle">Just dropped. One of a kind.</p>
+                    <a href="#products" class="slide-cta" id="content-hero-slide1-cta">Explore Collection</a>
                 </div>
             </div>
 
@@ -1663,9 +1663,9 @@
                 <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
                     <p class="slide-category">Worn-In Classics</p>
-                    <h1 class="slide-title">Vintage Denim</h1>
-                    <p class="slide-description">Broken in. Not broken.</p>
-                    <a href="/category.html?cat=bundles-lots" class="slide-cta">View Collection</a>
+                    <h1 class="slide-title" id="content-hero-slide2-title">Vintage Denim</h1>
+                    <p class="slide-description" id="content-hero-slide2-subtitle">Broken in. Not broken.</p>
+                    <a href="/category.html?cat=bundles-lots" class="slide-cta" id="content-hero-slide2-cta">View Collection</a>
                 </div>
             </div>
 
@@ -1674,9 +1674,9 @@
                 <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
                     <p class="slide-category">Game Day</p>
-                    <h1 class="slide-title">Jersey Season</h1>
-                    <p class="slide-description">Game day, every day.</p>
-                    <a href="/category.html?cat=jerseys" class="slide-cta">Shop Now</a>
+                    <h1 class="slide-title" id="content-hero-slide3-title">Jersey Season</h1>
+                    <p class="slide-description" id="content-hero-slide3-subtitle">Game day, every day.</p>
+                    <a href="/category.html?cat=jerseys" class="slide-cta" id="content-hero-slide3-cta">Shop Now</a>
                 </div>
             </div>
 
@@ -1685,9 +1685,9 @@
                 <div class="slide-bg" style="background: url('https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=1920&h=1080&fit=crop') center/cover;"></div>
                 <div class="slide-content">
                     <p class="slide-category">One of a Kind</p>
-                    <h1 class="slide-title">Curated Vintage</h1>
-                    <p class="slide-description">Worn stories. New chapter.</p>
-                    <a href="#products" class="slide-cta">Discover More</a>
+                    <h1 class="slide-title" id="content-hero-slide4-title">Curated Vintage</h1>
+                    <p class="slide-description" id="content-hero-slide4-subtitle">Worn stories. New chapter.</p>
+                    <a href="#products" class="slide-cta" id="content-hero-slide4-cta">Discover More</a>
                 </div>
             </div>
         </div>
@@ -1706,8 +1706,8 @@
     <!-- Featured Products Section -->
     <section class="featured-section" id="products">
         <div class="section-header">
-            <h2 class="section-title">Curated Vintage</h2>
-            <p class="section-subtitle">Hand-picked vintage finds with character and history</p>
+            <h2 class="section-title" id="content-featured-title">Curated Vintage</h2>
+            <p class="section-subtitle" id="content-featured-subtitle">Hand-picked vintage finds with character and history</p>
         </div>
 
         <div class="products-grid" id="productsGrid" data-products-grid>
@@ -1719,8 +1719,8 @@
     <section class="journal-preview">
         <div class="journal-preview-inner">
             <div class="journal-preview-header">
-                <h2 class="journal-preview-title">From the Journal</h2>
-                <a class="journal-preview-link" href="/journal">Read all stories →</a>
+                <h2 class="journal-preview-title" id="content-journal-title">From the Journal</h2>
+                <a class="journal-preview-link" href="/journal" id="content-journal-link">Read all stories →</a>
             </div>
             <div class="journal-preview-grid" id="journalPreviewGrid">
                 <div class="journal-preview-empty" style="grid-column:1/-1;">Loading latest stories…</div>
@@ -1765,8 +1765,8 @@
     <!-- Brand Story -->
     <section class="brand-story">
         <div class="story-content">
-            <h2 class="story-title">The Hunt Is the Point</h2>
-            <p class="story-text">
+            <h2 class="story-title" id="content-brandstory-title">The Hunt Is the Point</h2>
+            <p class="story-text" id="content-brandstory-body">
                 We spend our weekends in warehouse sales, thrift shops, and flea markets so you can spend yours looking good. Every piece on PoloStew was pulled from the wild -- worn in, broken in, one of a kind. No fast fashion, no mass production. Just real clothes with real history. We're here for the hunt, the find, and the feeling of wearing something nobody else has. Sustainability isn't our marketing angle -- it's just what happens when you buy things that already exist.
             </p>
         </div>
@@ -1827,6 +1827,69 @@
     </script>
 
     <footer>
+        <!-- Newsletter signup -->
+        <section class="newsletter-row">
+            <div class="newsletter-inner">
+                <h3 class="newsletter-title">Get the drop list</h3>
+                <p class="newsletter-blurb">First dibs on new vintage finds. No spam, ever.</p>
+                <form id="newsletterForm" class="newsletter-form" onsubmit="return submitNewsletter(event)">
+                    <input type="email" id="newsletterEmail" placeholder="your@email.com" required autocomplete="email">
+                    <button type="submit" id="newsletterBtn">Subscribe</button>
+                </form>
+                <p class="newsletter-msg" id="newsletterMsg" aria-live="polite"></p>
+                <p class="newsletter-fineprint">By subscribing you agree to our <a href="/privacy">Privacy Policy</a>.</p>
+            </div>
+        </section>
+        <style>
+            .newsletter-row { background: var(--parchment); padding: 4rem 5%; border-top: 1px solid var(--argent); }
+            .newsletter-inner { max-width: 560px; margin: 0 auto; text-align: center; color: var(--noir); }
+            .newsletter-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 500; margin-bottom: 0.5rem; letter-spacing: 0.04em; }
+            .newsletter-blurb { color: var(--charbon); opacity: 0.85; margin-bottom: 1.5rem; font-size: 0.98rem; }
+            .newsletter-form { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; margin-bottom: 0.75rem; }
+            .newsletter-form input { flex: 1 1 240px; padding: 0.85rem 1rem; border: 1px solid var(--clay); border-radius: 4px; background: white; font-family: inherit; font-size: 0.95rem; color: var(--noir); }
+            .newsletter-form button { padding: 0.85rem 1.6rem; background: var(--or); color: var(--ivory); border: none; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; transition: background 0.2s ease; }
+            .newsletter-form button:hover { background: var(--charbon); }
+            .newsletter-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+            .newsletter-msg { font-size: 0.85rem; margin-bottom: 0.75rem; min-height: 1.2em; }
+            .newsletter-msg.ok { color: var(--sage); }
+            .newsletter-msg.err { color: #b95448; }
+            .newsletter-fineprint { font-size: 0.75rem; color: #888; }
+            .newsletter-fineprint a { color: var(--or); text-decoration: none; border-bottom: 1px solid var(--clay); }
+        </style>
+        <script>
+            async function submitNewsletter(ev) {
+                ev.preventDefault();
+                var email = document.getElementById('newsletterEmail').value.trim();
+                var msg = document.getElementById('newsletterMsg');
+                var btn = document.getElementById('newsletterBtn');
+                msg.className = 'newsletter-msg';
+                msg.textContent = '';
+                if (!email) return false;
+                btn.disabled = true; btn.textContent = 'Subscribing…';
+                try {
+                    var res = await fetch('/api/newsletter/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, source: 'footer' })
+                    });
+                    var data = await res.json();
+                    if (res.ok) {
+                        msg.textContent = data.message || "You're on the list. Welcome.";
+                        msg.classList.add('ok');
+                        document.getElementById('newsletterEmail').value = '';
+                    } else {
+                        msg.textContent = data.error || 'Something went wrong. Try again.';
+                        msg.classList.add('err');
+                    }
+                } catch (err) {
+                    msg.textContent = 'Network error. Try again.';
+                    msg.classList.add('err');
+                } finally {
+                    btn.disabled = false; btn.textContent = 'Subscribe';
+                }
+                return false;
+            }
+        </script>
         <div class="footer-content">
             <div>
                 <div class="footer-brand"><img src="/images/polostew-logo.png" alt="PoloStew" style="height:54px;width:auto;display:block;"></div>
@@ -1863,7 +1926,8 @@
                     <li><a href="#">Sustainability</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Press</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
                 </ul>
             </div>
         </div>
@@ -2245,6 +2309,47 @@
 
     <!-- Shopping Cart -->
     <script src="/js/cart.js"></script>
+
+    <!-- Analytics Tracker -->
+    <script src="/js/track.js"></script>
+
+    <!-- Editable Site Content (CMS) -->
+    <script>
+      (async function loadSiteContent() {
+        var map = {
+          'hero.slide1.title': 'content-hero-slide1-title',
+          'hero.slide1.subtitle': 'content-hero-slide1-subtitle',
+          'hero.slide1.cta': 'content-hero-slide1-cta',
+          'hero.slide2.title': 'content-hero-slide2-title',
+          'hero.slide2.subtitle': 'content-hero-slide2-subtitle',
+          'hero.slide2.cta': 'content-hero-slide2-cta',
+          'hero.slide3.title': 'content-hero-slide3-title',
+          'hero.slide3.subtitle': 'content-hero-slide3-subtitle',
+          'hero.slide3.cta': 'content-hero-slide3-cta',
+          'hero.slide4.title': 'content-hero-slide4-title',
+          'hero.slide4.subtitle': 'content-hero-slide4-subtitle',
+          'hero.slide4.cta': 'content-hero-slide4-cta',
+          'brandStory.title': 'content-brandstory-title',
+          'brandStory.body': 'content-brandstory-body',
+          'journalSection.title': 'content-journal-title',
+          'journalSection.linkText': 'content-journal-link',
+          'featured.title': 'content-featured-title',
+          'featured.subtitle': 'content-featured-subtitle'
+        };
+        try {
+          var res = await fetch('/api/content');
+          if (!res.ok) return;
+          var data = await res.json();
+          var content = (data && data.content) || {};
+          Object.keys(map).forEach(function(key) {
+            var el = document.getElementById(map[key]);
+            if (el && typeof content[key] === 'string' && content[key].length) {
+              el.textContent = content[key];
+            }
+          });
+        } catch (e) { /* keep hardcoded text on failure */ }
+      })();
+    </script>
 </body>
 </html>
 <!-- Updated Tue Feb 10 16:22:21 CST 2026 -->

@@ -12,6 +12,19 @@
  */
 
 import Stripe from 'stripe';
+import { kv } from '@vercel/kv';
+
+const ANALYTICS_TTL = 95 * 24 * 60 * 60;
+function todayUTC() { return new Date().toISOString().slice(0, 10); }
+async function safeIncrBy(key, amount) {
+  try {
+    await kv.incrby(key, amount);
+    await kv.expire(key, ANALYTICS_TTL);
+  } catch (e) { /* noop */ }
+}
+async function safeIncr(key) {
+  try { await kv.incr(key); await kv.expire(key, ANALYTICS_TTL); } catch (e) {}
+}
 
 // Disable Vercel's default body parser so we get the raw body for signature verification
 export const config = {
@@ -76,6 +89,23 @@ export default async function handler(req, res) {
         items: soldItems,
         shippingAddress: session.shipping_details?.address,
       });
+
+      // Analytics: write daily revenue + orders + per-product purchase counts
+      try {
+        const day = todayUTC();
+        const amount = Number(session.amount_total) || 0;
+        await safeIncrBy(`analytics:revenue:${day}`, amount);
+        await safeIncr(`analytics:orders:${day}`);
+        await safeIncr(`analytics:counter:purchase:${day}`);
+        for (const item of soldItems) {
+          if (item.polostewId) {
+            await safeIncr(`analytics:product:${item.polostewId}:purchases:total`);
+            await safeIncr(`analytics:product:${item.polostewId}:purchases:${day}`);
+          }
+        }
+      } catch (analyticsErr) {
+        console.error('[stripe webhook] analytics write failed', analyticsErr.message);
+      }
 
       // TODO: when we move products to a database, mark each soldItems[].polostewId as stock=0 here
       // For now, products are in localStorage on the admin browser, so the merchant manually
