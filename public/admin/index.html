@@ -497,7 +497,11 @@ table tbody tr:hover { background: #f9f8f5; }
       <div class="form-group">
         <label>Measurements</label>
         <div id="measurementsContainer" style="display:flex;flex-direction:column;gap:10px"></div>
-        <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addMeasurementRow()">+ Add measurement</button>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="addMeasurementRow()">+ Add measurement</button>
+          <button type="button" id="btnAiMeasurements" class="btn btn-secondary btn-sm" onclick="generateMeasurements()" style="background:linear-gradient(135deg,#c75d3a,#d4873a);color:#fff;">✨ Estimate with AI</button>
+        </div>
+        <div id="measurementsAiNote" style="font-size:11px;color:#888;margin-top:4px;display:none;"></div>
       </div>
 
       <div class="form-group">
@@ -1580,6 +1584,78 @@ async function generateAIDescription() {
   } finally {
     btn.classList.remove('loading');
     btn.disabled = false;
+  }
+}
+
+/* ── AI Measurements Estimator ── */
+async function generateMeasurements() {
+  var btn = document.getElementById('btnAiMeasurements');
+  var note = document.getElementById('measurementsAiNote');
+  var category = document.getElementById('productCategory').value;
+  var size = document.getElementById('productSize').value.trim();
+  var name = document.getElementById('productName').value.trim();
+  var brand = document.getElementById('newBrandInput').value.trim() || document.getElementById('productBrand').value;
+
+  if (!category) {
+    note.textContent = 'Pick a category first so I know what type of garment.';
+    note.style.display = 'block';
+    note.style.color = '#c5221f';
+    return;
+  }
+  if (!size && !name) {
+    note.textContent = 'Add a size or name first so estimates are accurate.';
+    note.style.display = 'block';
+    note.style.color = '#c5221f';
+    return;
+  }
+
+  // Use blob URL if available — Claude vision can fetch it. data URLs are too big.
+  var imageUrl = '';
+  if (uploadedImages.length > 0 && uploadedImages[0].blobUrl) {
+    imageUrl = uploadedImages[0].blobUrl;
+  }
+
+  var origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = imageUrl ? 'Analyzing photo…' : 'Estimating…';
+  note.style.display = 'block';
+  note.style.color = '#888';
+  note.textContent = imageUrl
+    ? 'Analyzing photo + size chart…'
+    : 'Estimating from size chart (upload a photo first for vision-based measurements)…';
+
+  try {
+    var response = await fetch('/api/ai/measurements', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, brand, category, size, imageUrl }),
+    });
+    if (!response.ok) {
+      var err = await response.json().catch(function () { return {}; });
+      throw new Error(err.error || 'Server returned ' + response.status);
+    }
+    var data = await response.json();
+    var m = data.measurements || {};
+    var keys = Object.keys(m);
+    if (keys.length === 0) {
+      note.textContent = 'AI didn\'t return any measurements. Try filling them in manually.';
+      note.style.color = '#c5221f';
+      return;
+    }
+    // Replace measurements in the form with the AI-suggested values
+    renderMeasurementsForm(m);
+    note.textContent =
+      (data.source === 'vision'
+        ? '✓ Estimated from photo (' + keys.length + ' measurements). Verify before publishing.'
+        : '✓ Estimated from size chart (' + keys.length + ' measurements). Adjust to actual.');
+    note.style.color = '#137333';
+  } catch (err) {
+    console.error('Measurement AI error:', err);
+    note.textContent = 'AI estimation failed: ' + err.message;
+    note.style.color = '#c5221f';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
   }
 }
 
