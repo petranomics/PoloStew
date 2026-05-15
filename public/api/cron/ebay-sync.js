@@ -69,7 +69,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const sellerUsername = process.env.EBAY_SELLER_USERNAME;
+  const sellerUsername = (process.env.EBAY_SELLER_USERNAME || '').trim();
   if (!sellerUsername) {
     return res.status(500).json({ error: 'EBAY_SELLER_USERNAME not configured' });
   }
