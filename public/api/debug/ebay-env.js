@@ -60,6 +60,10 @@ export default async function handler(req, res) {
     certId_trimmed_sha: sha(certId),
   };
 
+  // App ID is not really secret (it's a public client identifier — only the Cert ID is sensitive).
+  // Showing it here lets us eyeball the diff against eBay's source-of-truth value.
+  const fullAppId = appId;
+
   return res.status(200).json({
     raw: {
       EBAY_APP_ID: preview(rawAppId),
@@ -73,5 +77,6 @@ export default async function handler(req, res) {
     EBAY_SELLER_USERNAME: preview(process.env.EBAY_SELLER_USERNAME),
     tokenAttempt: tokenResult,
     hashes,
+    fullAppId,
   });
 }
