@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   const appId = rawAppId.trim();
   const certId = rawCertId.trim();
 
-  // Try to get a token with TRIMMED values
+  // Try eBay token call with the trimmed Vercel value
   let tokenResult = { tested: false };
   try {
     const env = (process.env.EBAY_ENV || 'production').trim();
@@ -44,10 +44,21 @@ export default async function handler(req, res) {
       body: 'grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope',
     });
     const body = await r.text();
-    tokenResult = { tested: true, status: r.status, body: body.slice(0, 400) };
+    tokenResult = { tested: true, status: r.status, body: body.slice(0, 300) };
   } catch (err) {
     tokenResult = { tested: true, error: err.message };
   }
+
+  // SHA256 of trimmed values — safe to expose, used to compare against expected hash
+  // computed locally without ever putting the real secret in source code.
+  const crypto = await import('node:crypto');
+  function sha(s) {
+    return crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
+  }
+  const hashes = {
+    appId_trimmed_sha: sha(appId),
+    certId_trimmed_sha: sha(certId),
+  };
 
   return res.status(200).json({
     raw: {
@@ -61,5 +72,6 @@ export default async function handler(req, res) {
     EBAY_ENV: process.env.EBAY_ENV || null,
     EBAY_SELLER_USERNAME: preview(process.env.EBAY_SELLER_USERNAME),
     tokenAttempt: tokenResult,
+    hashes,
   });
 }
