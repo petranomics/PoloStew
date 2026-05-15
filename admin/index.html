@@ -389,12 +389,27 @@ table tbody tr:hover { background: #f9f8f5; }
       </select>
     </div>
 
+    <!-- Bulk action toolbar -->
+    <div id="bulkActionsBar" style="display:none;margin-bottom:1rem;padding:12px 16px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <strong id="bulkSelectedCount">0 selected</strong>
+      <button class="btn btn-danger btn-sm" onclick="bulkDelete()">Delete selected</button>
+      <button class="btn btn-secondary btn-sm" onclick="clearBulkSelection()">Clear selection</button>
+    </div>
+    <div style="margin-bottom:1rem;display:flex;gap:8px;flex-wrap:wrap;font-size:13px;">
+      <span style="color:#666;align-self:center;">Quick select:</span>
+      <button class="btn btn-secondary btn-sm" onclick="selectByPredicate(p => p.stock === 0)">All sold</button>
+      <button class="btn btn-secondary btn-sm" onclick="selectByPredicate(p => !p.ebayItemId)">Not from eBay</button>
+      <button class="btn btn-secondary btn-sm" onclick="selectByPredicate(p => p.ebayItemId)">From eBay</button>
+      <button class="btn btn-secondary btn-sm" onclick="selectAllVisible()">All visible</button>
+    </div>
+
     <!-- List View -->
     <div id="listView">
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
+              <th style="width:32px;"><input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAllVisible(this.checked)" title="Select all in current view"></th>
               <th>Image</th>
               <th>Name</th>
               <th>Category</th>
@@ -1014,7 +1029,9 @@ function renderListView(items) {
     var imgTag = imgSrc
       ? '<img src="' + imgSrc + '" alt="' + p.name + '" class="product-img">'
       : '<div style="width:60px;height:60px;background:#f0ece4;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:10px;">No img</div>';
+    var checked = bulkSelectedIds.has(String(p.id)) ? 'checked' : '';
     tbody.innerHTML += '<tr>' +
+      '<td><input type="checkbox" class="bulk-checkbox" data-id="' + p.id + '" onclick="toggleBulkSelect(\'' + p.id + '\', this.checked)" ' + checked + '></td>' +
       '<td>' + imgTag + '</td>' +
       '<td><strong>' + p.name + '</strong>' + checkoutWarn + '</td>' +
       '<td>' + p.category + '</td>' +
@@ -1290,6 +1307,71 @@ function deleteProduct(id) {
     updateBrandDropdowns();
     alert('Product deleted successfully!');
   }
+}
+
+/* ── Bulk select / delete ── */
+var bulkSelectedIds = new Set();
+
+function updateBulkBar() {
+  var bar = document.getElementById('bulkActionsBar');
+  var count = bulkSelectedIds.size;
+  document.getElementById('bulkSelectedCount').textContent = count + ' selected';
+  bar.style.display = count > 0 ? 'flex' : 'none';
+}
+
+function toggleBulkSelect(id, checked) {
+  if (checked) bulkSelectedIds.add(String(id));
+  else bulkSelectedIds.delete(String(id));
+  updateBulkBar();
+}
+
+function clearBulkSelection() {
+  bulkSelectedIds.clear();
+  document.querySelectorAll('.bulk-checkbox').forEach(function(c) { c.checked = false; });
+  var sa = document.getElementById('selectAllCheckbox');
+  if (sa) sa.checked = false;
+  updateBulkBar();
+}
+
+function selectByPredicate(pred) {
+  products.forEach(function(p) {
+    if (pred(p)) bulkSelectedIds.add(String(p.id));
+  });
+  document.querySelectorAll('.bulk-checkbox').forEach(function(c) {
+    if (bulkSelectedIds.has(c.dataset.id)) c.checked = true;
+  });
+  updateBulkBar();
+}
+
+function selectAllVisible() {
+  document.querySelectorAll('.bulk-checkbox').forEach(function(c) {
+    c.checked = true;
+    bulkSelectedIds.add(c.dataset.id);
+  });
+  updateBulkBar();
+}
+
+function toggleSelectAllVisible(checked) {
+  document.querySelectorAll('.bulk-checkbox').forEach(function(c) {
+    c.checked = checked;
+    if (checked) bulkSelectedIds.add(c.dataset.id);
+    else bulkSelectedIds.delete(c.dataset.id);
+  });
+  updateBulkBar();
+}
+
+function bulkDelete() {
+  var count = bulkSelectedIds.size;
+  if (count === 0) return;
+  if (!confirm('Delete ' + count + ' product(s)? This cannot be undone.')) return;
+  products = products.filter(function(p) { return !bulkSelectedIds.has(String(p.id)); });
+  bulkSelectedIds.clear();
+  saveProducts();
+  applyAllFilters();
+  updateStats();
+  updateBrandDropdowns();
+  updateBulkBar();
+  alert('Deleted ' + count + ' product(s).');
 }
 
 function closeModal() {
