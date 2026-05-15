@@ -87,6 +87,7 @@ export default async function handler(req, res) {
       const url =
         `${base}/buy/browse/v1/item_summary/search` +
         `?filter=sellers:{${encodeURIComponent(sellerUsername)}}` +
+        `&category_ids=11450` + // Clothing, Shoes & Accessories — required since Browse API rejects seller-only filters
         `&limit=${limit}&offset=${offset}`;
       const r = await fetch(url, {
         headers: {
