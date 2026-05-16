@@ -171,7 +171,74 @@ export async function sendPasswordResetEmail(to, name, resetUrl) {
   });
 }
 
+/**
+ * Notify the merchant when an order completes on the site.
+ * Lists each item with its eBay listing link (if present) so the merchant
+ * can manually end the eBay listing to prevent double-selling.
+ *
+ * @param {string} to - merchant's email (MERCHANT_EMAIL env var)
+ * @param {object} order - { sessionId, total, customerEmail, shippingAddress?, items: [{ name, quantity, amount, ebayItemId?, ebayUrl?, polostewId? }] }
+ */
+export async function sendOrderNotificationEmail(to, order) {
+  const itemsHtml = (order.items || []).map((it) => {
+    const ebayLink = it.ebayUrl
+      ? `<a href="${escapeHtml(it.ebayUrl)}" style="color:${COLORS.burnt};font-weight:600;">End eBay listing →</a>`
+      : (it.ebayItemId
+          ? `<a href="https://www.ebay.com/itm/${escapeHtml(String(it.ebayItemId))}" style="color:${COLORS.burnt};font-weight:600;">End eBay listing →</a>`
+          : '<span style="color:#999;font-size:12px;">No eBay link saved</span>');
+    const priceStr = it.amount != null ? '$' + (Number(it.amount) / 100).toFixed(2) : '';
+    return `
+      <tr>
+        <td style="padding:14px 0;border-bottom:1px solid ${COLORS.argent};">
+          <div style="font-weight:600;color:${COLORS.noir};margin-bottom:4px;">${escapeHtml(it.name || 'Item')}</div>
+          <div style="font-size:13px;color:${COLORS.muted};margin-bottom:6px;">Qty ${it.quantity || 1} · ${priceStr}</div>
+          <div>${ebayLink}</div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  const totalStr = '$' + (Number(order.total || 0) / 100).toFixed(2);
+  const shipAddr = order.shippingAddress
+    ? `${escapeHtml(order.shippingAddress.line1 || '')}${order.shippingAddress.line2 ? ', ' + escapeHtml(order.shippingAddress.line2) : ''}, ${escapeHtml(order.shippingAddress.city || '')}, ${escapeHtml(order.shippingAddress.state || '')} ${escapeHtml(order.shippingAddress.postal_code || '')}`
+    : '(no shipping address provided)';
+
+  const html = wrapEmail({
+    heading: `New order — ${totalStr}`,
+    bodyHtml: `
+      <p style="margin:0 0 16px 0;">A new order just came in on polostew.com.</p>
+      <div style="background:${COLORS.cream};border:1px solid ${COLORS.argent};border-radius:8px;padding:16px 20px;margin-bottom:20px;">
+        <div style="font-size:13px;color:${COLORS.muted};margin-bottom:4px;">CUSTOMER</div>
+        <div style="margin-bottom:12px;">${escapeHtml(order.customerEmail || 'no email')}</div>
+        <div style="font-size:13px;color:${COLORS.muted};margin-bottom:4px;">SHIP TO</div>
+        <div style="font-size:14px;">${shipAddr}</div>
+      </div>
+      <p style="margin:0 0 8px 0;font-weight:600;color:${COLORS.noir};">⚠️ Don't forget to end the eBay listing(s) below to prevent double-selling:</p>
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:8px 0 16px 0;">
+        ${itemsHtml}
+      </table>
+    `,
+    ctaLabel: 'View in Stripe Dashboard',
+    ctaUrl: `https://dashboard.stripe.com/payments/${escapeHtml(order.sessionId || '')}`,
+    footerNote: 'Items have been marked sold in your PoloStew admin automatically.'
+  });
+
+  const text = `New PoloStew order — ${totalStr}\n\nCustomer: ${order.customerEmail || ''}\n\nItems:\n` +
+    (order.items || []).map((it) => {
+      const link = it.ebayUrl || (it.ebayItemId ? `https://www.ebay.com/itm/${it.ebayItemId}` : '(no eBay link)');
+      return `  • ${it.name} — End eBay listing: ${link}`;
+    }).join('\n') +
+    `\n\nDon't forget to end the eBay listings to prevent double-selling.`;
+
+  return sendViaResend({
+    to,
+    subject: `New PoloStew order — ${totalStr} · ${(order.items || []).length} item(s)`,
+    html,
+    text
+  });
+}
+
 export default {
   sendVerificationEmail,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  sendOrderNotificationEmail
 };

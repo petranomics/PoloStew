@@ -13,6 +13,7 @@
 
 import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
+import { sendOrderNotificationEmail } from '../../lib/email.mjs';
 
 const ANALYTICS_TTL = 95 * 24 * 60 * 60;
 function todayUTC() { return new Date().toISOString().slice(0, 10); }
@@ -107,9 +108,68 @@ export default async function handler(req, res) {
         console.error('[stripe webhook] analytics write failed', analyticsErr.message);
       }
 
-      // TODO: when we move products to a database, mark each soldItems[].polostewId as stock=0 here
-      // For now, products are in localStorage on the admin browser, so the merchant manually
-      // marks items sold by viewing the Stripe dashboard or the order email.
+      // Flip stock to 0 in the live KV catalog so the storefront immediately hides sold items
+      const enrichedItems = [];
+      try {
+        const pub = await kv.get('published:products');
+        if (pub && Array.isArray(pub.products)) {
+          let mutated = false;
+          for (const sold of soldItems) {
+            if (!sold.polostewId) {
+              enrichedItems.push(sold);
+              continue;
+            }
+            const idx = pub.products.findIndex((p) => String(p.id) === String(sold.polostewId));
+            if (idx !== -1) {
+              const product = pub.products[idx];
+              enrichedItems.push({
+                ...sold,
+                ebayItemId: product.ebayItemId,
+                ebayUrl: product.ebayUrl,
+              });
+              if (product.stock !== 0) {
+                pub.products[idx] = { ...product, stock: 0 };
+                mutated = true;
+              }
+            } else {
+              enrichedItems.push(sold);
+            }
+          }
+          if (mutated) {
+            await kv.set('published:products', { ...pub, publishedAt: new Date().toISOString() });
+          }
+        } else {
+          enrichedItems.push(...soldItems);
+        }
+      } catch (stockErr) {
+        console.error('[stripe webhook] stock flip failed', stockErr.message);
+        enrichedItems.push(...soldItems);
+      }
+
+      // Notify merchant with eBay links so they can manually end the eBay listings
+      const merchantEmail = process.env.MERCHANT_EMAIL;
+      if (merchantEmail) {
+        try {
+          await sendOrderNotificationEmail(merchantEmail, {
+            sessionId: session.id,
+            total: session.amount_total,
+            customerEmail: session.customer_details?.email,
+            shippingAddress: session.shipping_details?.address,
+            items: enrichedItems.map((it) => ({
+              name: it.name,
+              quantity: it.quantity,
+              amount: it.amountTotal,
+              ebayItemId: it.ebayItemId,
+              ebayUrl: it.ebayUrl,
+              polostewId: it.polostewId,
+            })),
+          });
+        } catch (mailErr) {
+          console.error('[stripe webhook] order notification email failed', mailErr.message);
+        }
+      } else {
+        console.warn('[stripe webhook] MERCHANT_EMAIL not set — skipping order notification');
+      }
     } else if (event.type === 'checkout.session.expired') {
       console.log('[stripe webhook] Session expired', event.data.object.id);
     }
