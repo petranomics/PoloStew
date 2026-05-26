@@ -321,9 +321,9 @@
 
         async function loadBanners() {
             try {
-                const res = await fetch('/data/banners.json');
+                const res = await fetch('/api/banners');
                 const data = await res.json();
-                banners = data.banners.sort((a, b) => a.order - b.order);
+                banners = (data.banners || []).sort((a, b) => a.order - b.order);
                 renderBanners();
             } catch (error) {
                 console.error('Error loading banners:', error);

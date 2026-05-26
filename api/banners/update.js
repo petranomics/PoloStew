@@ -1,13 +1,14 @@
 /**
  * Banner Update Endpoint
  * PUT /api/banners/update
- * Updates banner configuration
- * Requires admin authentication
+ * Updates banner configuration in KV (`banners:list`).
+ * Requires admin authentication.
  */
 
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { kv } from '@vercel/kv';
 import { requireAdmin } from '../../lib/admin-auth.mjs';
+
+const KV_KEY = 'banners:list';
 
 export default async function handler(req, res) {
   if (req.method !== 'PUT') {
@@ -25,7 +26,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate banner structure
     for (const banner of banners) {
       if (!banner.id || !banner.title) {
         return res.status(400).json({
@@ -35,12 +35,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // Read current data
-    const bannersPath = join(process.cwd(), 'data', 'banners.json');
-    const data = { banners };
-
-    // Write updated data
-    writeFileSync(bannersPath, JSON.stringify(data, null, 2), 'utf8');
+    await kv.set(KV_KEY, { banners, updatedAt: new Date().toISOString() });
 
     return res.status(200).json({
       success: true,
