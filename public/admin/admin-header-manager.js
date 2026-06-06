@@ -6,9 +6,9 @@ let headerSlides = [];
 
 async function loadHeaderSlides() {
     try {
-        const res = await fetch('/data/banners.json');
+        const res = await fetch('/api/banners');
         const data = await res.json();
-        headerSlides = data.banners;
+        headerSlides = data.banners || [];
         renderHeaderSlidesAdmin();
     } catch (e) {
         alert('Failed to load header slides');
