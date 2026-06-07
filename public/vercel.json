@@ -5,7 +5,7 @@
     { "path": "/api/cron/ebay-sync", "schedule": "0 */12 * * *" }
   ],
   "rewrites": [
-    { "source": "/journal/:slug", "destination": "/journal-post.html?slug=:slug" }
+    { "source": "/journal/:slug", "destination": "/journal-post?slug=:slug" }
   ],
   "headers": [
     {

@@ -290,8 +290,9 @@ async function uploadBannerImage(file, i) {
     var preview = document.getElementById('banner-preview-' + i);
     switchImageMode(i, 'upload');
 
-    if (file.size > 5 * 1024 * 1024) {
-        alert('Image is too large (' + (file.size / 1024 / 1024).toFixed(1) + 'MB). Maximum is 5MB.');
+    // Hard guard: anything over 20MB is almost certainly a mistake (RAW, HEIC burst).
+    if (file.size > 20 * 1024 * 1024) {
+        alert('Image is too large (' + (file.size / 1024 / 1024).toFixed(1) + 'MB). Please pick a file under 20MB.');
         return;
     }
 
@@ -304,11 +305,56 @@ async function uploadBannerImage(file, i) {
         });
     }
 
+    // Resize+compress in the browser. Vercel Hobby caps API bodies at 4.5MB
+    // (~3MB raw after base64), so a fresh phone photo (5-10MB) would otherwise
+    // be rejected before reaching the handler. Targets ~1920px wide / JPEG 0.85,
+    // which lands well under the limit while staying sharp on a 1920x800 banner.
+    function compressViaCanvas(srcDataUrl) {
+        return new Promise(function(resolve, reject) {
+            var img = new Image();
+            img.onload = function() {
+                try {
+                    var MAX_W = 1920;
+                    var scale = Math.min(1, MAX_W / img.naturalWidth);
+                    var w = Math.round(img.naturalWidth * scale);
+                    var h = Math.round(img.naturalHeight * scale);
+                    var canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    // Always JPEG output — best compression for photos and matches
+                    // Blob storage expectations. Preserves alpha-less hero banners.
+                    var out = canvas.toDataURL('image/jpeg', 0.85);
+                    resolve(out);
+                } catch (e) { reject(e); }
+            };
+            img.onerror = reject;
+            img.src = srcDataUrl;
+        });
+    }
+
     var dataUrl;
     try {
         dataUrl = await readAsDataURL(file);
+        // Skip compression for SVGs and gifs (animation/vectors)
+        var ct = (dataUrl.match(/^data:([^;]+);/) || [])[1] || '';
+        if (ct.startsWith('image/') && ct !== 'image/svg+xml' && ct !== 'image/gif') {
+            try {
+                var compressed = await compressViaCanvas(dataUrl);
+                // Only swap if compression actually helped
+                if (compressed && compressed.length < dataUrl.length) dataUrl = compressed;
+            } catch (e) { /* fall through with the original */ }
+        }
     } catch (e) {
         alert('Could not read image file.');
+        return;
+    }
+
+    // After compression, sanity-check we're under the body limit.
+    // Base64 length × 0.75 ≈ raw bytes; add a buffer for JSON overhead.
+    if (dataUrl.length > 4 * 1024 * 1024) {
+        alert('This image is still too large after compression. Try a smaller source photo.');
         return;
     }
 

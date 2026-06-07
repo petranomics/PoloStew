@@ -10,13 +10,13 @@
 import { put } from '@vercel/blob';
 import { requireAdmin } from '../../lib/admin-auth.mjs';
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-};
+// Vercel Serverless Functions on Hobby cap request bodies at 4.5MB at the
+// platform level — there is no per-function override (the Next-style
+// `bodyParser` config is ignored here). Base64-encoded JSON inflates by ~33%,
+// so practical raw-image ceiling is ~3MB. Callers must resize/compress
+// client-side before posting; see public/admin/admin-header-manager.js
+// uploadBannerImage().
+const MAX_RAW_BYTES = 3 * 1024 * 1024;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -52,12 +52,10 @@ export default async function handler(req, res) {
     // Convert base64 to Buffer
     const buffer = Buffer.from(base64Data, 'base64');
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024;
-    if (buffer.length > maxSize) {
+    if (buffer.length > MAX_RAW_BYTES) {
       return res.status(400).json({
         error: 'File too large',
-        maxSize: '5MB',
+        maxSize: '3MB (after the Vercel 4.5MB body limit and base64 inflation)',
         actualSize: `${(buffer.length / 1024 / 1024).toFixed(2)}MB`
       });
     }
