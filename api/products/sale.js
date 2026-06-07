@@ -1,20 +1,19 @@
 /**
  * Product Sale Toggle Endpoint
  * PUT /api/products/sale
- * Toggles sale status for a product
- * Requires admin authentication
+ * Toggles sale status for a product. Persists to KV (published:products);
+ * filesystem writes would EROFS in the Vercel runtime.
+ * Requires admin authentication.
  */
 
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
 import { parseCookies, verifyAuth, verifyAdmin } from '../middleware/auth.js';
+import { loadProducts, saveProducts } from '../../lib/products-store.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verify admin authentication
   parseCookies(req);
   const authResult = await verifyAuth(req, res);
   if (authResult !== true) return;
@@ -32,29 +31,22 @@ export default async function handler(req, res) {
       });
     }
 
-    // Read products.json
-    const productsPath = join(process.cwd(), 'data', 'products.json');
-    const data = JSON.parse(readFileSync(productsPath, 'utf8'));
-
-    // Find product
-    const product = data.products.find(p => p.id === productId);
+    const products = await loadProducts();
+    const product = products.find(p => p.id === productId);
 
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Update sale status
     product.onSale = onSale;
 
-    // If turning off sale, remove salePrice from all sizes
-    if (!onSale) {
+    if (!onSale && Array.isArray(product.sizes)) {
       product.sizes.forEach(size => {
         delete size.salePrice;
       });
     }
 
-    // Write back to file
-    writeFileSync(productsPath, JSON.stringify(data, null, 2), 'utf8');
+    await saveProducts(products);
 
     return res.status(200).json({
       success: true,

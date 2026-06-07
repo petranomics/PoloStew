@@ -1,20 +1,19 @@
 /**
  * Product Sale Price Endpoint
  * PUT /api/products/sale-price
- * Sets sale price for a specific product size
- * Requires admin authentication
+ * Sets sale price for a specific product size. Persists to KV
+ * (published:products); filesystem writes would EROFS in the Vercel runtime.
+ * Requires admin authentication.
  */
 
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
 import { parseCookies, verifyAuth, verifyAdmin } from '../middleware/auth.js';
+import { loadProducts, saveProducts } from '../../lib/products-store.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verify admin authentication
   parseCookies(req);
   const authResult = await verifyAuth(req, res);
   if (authResult !== true) return;
@@ -32,25 +31,19 @@ export default async function handler(req, res) {
       });
     }
 
-    // Read products.json
-    const productsPath = join(process.cwd(), 'data', 'products.json');
-    const data = JSON.parse(readFileSync(productsPath, 'utf8'));
-
-    // Find product
-    const product = data.products.find(p => p.id === productId);
+    const products = await loadProducts();
+    const product = products.find(p => p.id === productId);
 
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Find size
-    const size = product.sizes.find(s => s.sku === sku);
+    const size = (product.sizes || []).find(s => s.sku === sku);
 
     if (!size) {
       return res.status(404).json({ error: 'Size not found' });
     }
 
-    // Validate sale price
     const salePriceNum = parseInt(salePrice);
     if (salePriceNum >= size.price) {
       return res.status(400).json({
@@ -60,15 +53,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // Set sale price
     if (salePriceNum > 0) {
       size.salePrice = salePriceNum;
     } else {
       delete size.salePrice;
     }
 
-    // Write back to file
-    writeFileSync(productsPath, JSON.stringify(data, null, 2), 'utf8');
+    await saveProducts(products);
 
     return res.status(200).json({
       success: true,

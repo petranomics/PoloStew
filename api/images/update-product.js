@@ -1,13 +1,13 @@
 /**
  * Update Product Images Endpoint
  * PUT /api/images/update-product
- * Updates the images array for a specific product
- * Requires admin authentication
+ * Updates the images array for a specific product. Persists to KV
+ * (published:products); filesystem writes would EROFS in the Vercel runtime.
+ * Requires admin authentication.
  */
 
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
 import { requireAdmin } from '../../lib/admin-auth.mjs';
+import { loadProducts, saveProducts } from '../../lib/products-store.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'PUT') {
@@ -22,21 +22,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Product ID required' });
     }
 
-    // Read products.json
-    const productsPath = join(process.cwd(), 'data', 'products.json');
-    const data = JSON.parse(readFileSync(productsPath, 'utf8'));
-
-    // Find product
-    const product = data.products.find(p => p.id === productId);
+    const products = await loadProducts();
+    const product = products.find(p => p.id === productId);
 
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Update images based on action
     switch (action) {
       case 'set':
-        // Replace all images
         if (!Array.isArray(images)) {
           return res.status(400).json({ error: 'Images must be an array' });
         }
@@ -44,7 +38,6 @@ export default async function handler(req, res) {
         break;
 
       case 'add':
-        // Add new image
         if (typeof images === 'string') {
           product.images = product.images || [];
           product.images.push(images);
@@ -55,7 +48,6 @@ export default async function handler(req, res) {
         break;
 
       case 'remove':
-        // Remove image by URL
         if (typeof images === 'string') {
           product.images = (product.images || []).filter(img => img !== images);
         } else if (Array.isArray(images)) {
@@ -64,7 +56,6 @@ export default async function handler(req, res) {
         break;
 
       case 'reorder':
-        // Reorder images
         if (!Array.isArray(images)) {
           return res.status(400).json({ error: 'Images must be an array for reorder' });
         }
@@ -78,8 +69,7 @@ export default async function handler(req, res) {
         });
     }
 
-    // Write back to file
-    writeFileSync(productsPath, JSON.stringify(data, null, 2), 'utf8');
+    await saveProducts(products);
 
     return res.status(200).json({
       success: true,
