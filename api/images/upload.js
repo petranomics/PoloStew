@@ -10,6 +10,14 @@
 import { put } from '@vercel/blob';
 import { requireAdmin } from '../../lib/admin-auth.mjs';
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

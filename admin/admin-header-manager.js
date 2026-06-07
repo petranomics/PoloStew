@@ -288,33 +288,63 @@ function handleBannerFileSelect(e, i) {
 
 async function uploadBannerImage(file, i) {
     var preview = document.getElementById('banner-preview-' + i);
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        preview.className = 'banner-image-preview has-image';
-        preview.innerHTML = '<img src="' + e.target.result + '" alt="Banner preview">';
-    };
-    reader.readAsDataURL(file);
-
     switchImageMode(i, 'upload');
 
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Image is too large (' + (file.size / 1024 / 1024).toFixed(1) + 'MB). Maximum is 5MB.');
+        return;
+    }
+
+    function readAsDataURL(f) {
+        return new Promise(function(resolve, reject) {
+            var r = new FileReader();
+            r.onload = function(e) { resolve(e.target.result); };
+            r.onerror = reject;
+            r.readAsDataURL(f);
+        });
+    }
+
+    var dataUrl;
     try {
-        var formData = new FormData();
-        formData.append('file', file);
-        var res = await fetch('/api/images/upload', { method: 'POST', body: formData });
-        if (res.ok) {
-            var result = await res.json();
+        dataUrl = await readAsDataURL(file);
+    } catch (e) {
+        alert('Could not read image file.');
+        return;
+    }
+
+    preview.className = 'banner-image-preview has-image uploading';
+    preview.innerHTML = '<img src="' + dataUrl + '" alt="Banner preview"><div style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;">Uploading…</div>';
+
+    try {
+        var res = await fetch('/api/images/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                imageData: dataUrl,
+                filename: file.name,
+                productId: 'banner-' + i
+            })
+        });
+        var result = null;
+        try { result = await res.json(); } catch (e) {}
+
+        if (res.ok && result && result.url) {
             headerSlides[i].backgroundImage = result.url;
             var urlInput = document.getElementById('banner-url-' + i);
             if (urlInput) urlInput.value = result.url;
+            preview.className = 'banner-image-preview has-image';
+            preview.innerHTML = '<img src="' + result.url + '" alt="Banner preview">';
+        } else {
+            var msg = (result && result.error) || ('Upload failed (HTTP ' + res.status + ')');
+            preview.className = 'banner-image-preview';
+            preview.innerHTML = '<div class="banner-image-placeholder" style="color:#b95448;">Upload failed.<span>' + msg + '</span></div>';
+            alert('Image upload failed: ' + msg + '\n\nThe banner will not be saved with this image. Try a smaller file or check the Image URL field.');
         }
     } catch (err) {
-        var dataReader = new FileReader();
-        dataReader.onload = function(ev) {
-            headerSlides[i].backgroundImage = ev.target.result;
-            var urlInput = document.getElementById('banner-url-' + i);
-            if (urlInput) urlInput.value = ev.target.result;
-        };
-        dataReader.readAsDataURL(file);
+        preview.className = 'banner-image-preview';
+        preview.innerHTML = '<div class="banner-image-placeholder" style="color:#b95448;">Upload failed.<span>Network error</span></div>';
+        alert('Image upload failed (network error). The banner will not be saved with this image.');
     }
 }
 
