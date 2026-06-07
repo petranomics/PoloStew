@@ -2349,6 +2349,73 @@
           });
         } catch (e) { /* keep hardcoded text on failure */ }
       })();
+
+      // Hero carousel banner overrides (admin-edited via /admin → Banners tab).
+      // Patches the existing 4 hardcoded slides with active banners from
+      // /api/banners (KV banners:list), in `order` order. Falls back to the
+      // hardcoded slides if the call fails or returns no banners.
+      (async function applyAdminBanners() {
+        try {
+          var res = await fetch('/api/banners', { cache: 'no-store' });
+          if (!res.ok) return;
+          var data = await res.json();
+          var banners = (data && Array.isArray(data.banners) ? data.banners : [])
+            .filter(function(b) { return b && b.active !== false; })
+            .sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+          if (!banners.length) return;
+
+          var track = document.getElementById('runwayTrack');
+          if (!track) return;
+          var slides = track.querySelectorAll('.runway-slide');
+          var dots = document.querySelectorAll('.runway-nav .runway-dot');
+
+          // If banners cover MORE slots than hardcoded slides, append clones for the extras.
+          while (banners.length > slides.length && slides[0]) {
+            var clone = slides[0].cloneNode(true);
+            track.appendChild(clone);
+            slides = track.querySelectorAll('.runway-slide');
+            var dotsContainer = document.querySelector('.runway-nav');
+            if (dotsContainer && dots[0]) {
+              var dotClone = dots[0].cloneNode(false);
+              dotClone.classList.remove('active');
+              var newIndex = slides.length - 1;
+              dotClone.setAttribute('onclick', 'goToSlide(' + newIndex + ')');
+              dotsContainer.appendChild(dotClone);
+              dots = document.querySelectorAll('.runway-nav .runway-dot');
+            }
+          }
+
+          slides.forEach(function(slide, i) {
+            var b = banners[i];
+            if (!b) {
+              // Only hide trailing slides if the admin clearly trimmed below the
+              // hardcoded count (i.e. they have at least one banner — they're
+              // managing it). Leave hardcoded slides alone if banners is empty
+              // (already early-returned above), so this branch only fires when
+              // 0 < banners.length < slides.length.
+              slide.style.display = 'none';
+              if (dots[i]) dots[i].style.display = 'none';
+              return;
+            }
+            if (b.backgroundImage) {
+              var bg = slide.querySelector('.slide-bg');
+              if (bg) bg.style.background = "url('" + b.backgroundImage.replace(/'/g, "\\'") + "') center/cover";
+            }
+            if (b.backgroundColor) slide.style.backgroundColor = b.backgroundColor;
+            var content = slide.querySelector('.slide-content');
+            if (content && b.textColor) content.style.color = b.textColor;
+            var titleEl = slide.querySelector('.slide-title');
+            if (titleEl && b.title) titleEl.textContent = b.title;
+            var subEl = slide.querySelector('.slide-description');
+            if (subEl && b.subtitle) subEl.textContent = b.subtitle;
+            var ctaEl = slide.querySelector('.slide-cta');
+            if (ctaEl) {
+              if (b.buttonText) ctaEl.textContent = b.buttonText;
+              if (b.buttonLink) ctaEl.setAttribute('href', b.buttonLink);
+            }
+          });
+        } catch (e) { /* keep hardcoded slides on failure */ }
+      })();
     </script>
 </body>
 </html>
