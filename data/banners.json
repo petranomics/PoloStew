@@ -4,7 +4,7 @@
       "id": "banner-1",
       "title": "New Drops",
       "subtitle": "Fresh vintage finds added daily",
-      "backgroundImage": "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=1920&h=800&fit=crop",
+      "backgroundImage": "/images/ps-banner.png",
       "backgroundColor": "#3d3226",
       "textColor": "#faf6f0",
       "buttonText": "Shop Now",

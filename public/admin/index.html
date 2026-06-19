@@ -483,6 +483,20 @@ table tbody tr:hover { background: #f9f8f5; }
         </div>
       </div>
 
+      <!-- Sale -->
+      <div class="form-row">
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="productOnSale" style="width:auto;" onchange="toggleSaleFields()">
+            Put this item on sale
+          </label>
+        </div>
+        <div class="form-group" id="salePriceGroup" style="display:none;">
+          <label for="productSalePrice">Sale Price ($)</label>
+          <input type="number" id="productSalePrice" step="0.01" min="0" placeholder="Must be less than regular price">
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label for="productCondition">Condition *</label>
@@ -1040,7 +1054,7 @@ function renderListView(items) {
       '<td>' + (p.size || '-') + '</td>' +
       '<td>' + (p.condition || '-') + '</td>' +
       '<td>' + (p.era || '-') + '</td>' +
-      '<td>$' + p.price.toLocaleString() + '</td>' +
+      '<td>' + priceCellHtml(p) + '</td>' +
       '<td>' + statusBadge + '</td>' +
       '<td><div class="action-buttons">' +
         '<button class="btn-star" title="' + (p.featured ? 'Featured on homepage — click to unfeature' : 'Feature on homepage') + '" onclick="toggleFeatured(\'' + p.id + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:4px 6px;color:' + (p.featured ? '#d4873a' : '#ccc') + ';">' + (p.featured ? '★' : '☆') + '</button>' +
@@ -1113,7 +1127,7 @@ function renderCategoryView(items) {
         '<td>' + (p.size || '-') + '</td>' +
         '<td>' + (p.condition || '-') + '</td>' +
         '<td>' + (p.era || '-') + '</td>' +
-        '<td>$' + p.price.toLocaleString() + '</td>' +
+        '<td>' + priceCellHtml(p) + '</td>' +
         '<td>' + statusBadge + '</td>' +
         '<td><div class="action-buttons">' +
           '<button class="btn-star" title="' + (p.featured ? 'Featured — click to unfeature' : 'Feature on homepage') + '" onclick="toggleFeatured(\'' + p.id + '\')" style="background:none;border:none;cursor:pointer;font-size:18px;padding:4px 6px;color:' + (p.featured ? '#d4873a' : '#ccc') + ';">' + (p.featured ? '★' : '☆') + '</button>' +
@@ -1181,6 +1195,9 @@ function openAddModal() {
   document.getElementById('productYear').value = '';
   document.getElementById('productPrintType').value = '';
   document.getElementById('productTagType').value = '';
+  document.getElementById('productOnSale').checked = false;
+  document.getElementById('productSalePrice').value = '';
+  toggleSaleFields();
   renderMeasurementsForm({});
   updateConditionalFields();
   uploadedImages = [];
@@ -1201,6 +1218,9 @@ function editProduct(id) {
   document.getElementById('productCategory').value = p.category;
   document.getElementById('productBrand').value = p.brand;
   document.getElementById('productPrice').value = p.price;
+  document.getElementById('productOnSale').checked = !!p.onSale;
+  document.getElementById('productSalePrice').value = (p.salePrice != null ? p.salePrice : '');
+  toggleSaleFields();
   document.getElementById('productSize').value = p.size || '';
   document.getElementById('productCondition').value = p.condition || '';
   document.getElementById('productEra').value = p.era || '';
@@ -1244,6 +1264,24 @@ function updateConditionalFields() {
     defaults.forEach(function(label) { prefill[label] = ''; });
     renderMeasurementsForm(prefill);
   }
+}
+
+/* ── Sale fields ── */
+function toggleSaleFields() {
+  var onSale = document.getElementById('productOnSale').checked;
+  document.getElementById('salePriceGroup').style.display = onSale ? '' : 'none';
+}
+
+// Price cell for the admin product lists — shows a SALE tag and the sale price
+// (with the regular price struck through) when the item is on sale.
+function priceCellHtml(p) {
+  var price = Number(p.price) || 0;
+  var sale = Number(p.salePrice);
+  var onSale = p.onSale && isFinite(sale) && sale > 0 && sale < price;
+  if (!onSale) return '$' + price.toLocaleString();
+  return '<span style="color:#e53935;font-weight:600;">$' + sale.toLocaleString() + '</span>' +
+         ' <span style="color:#999;text-decoration:line-through;font-size:0.85em;">$' + price.toLocaleString() + '</span>' +
+         ' <span style="background:#e53935;color:#fff;font-size:0.65em;padding:1px 5px;border-radius:3px;vertical-align:middle;">SALE</span>';
 }
 
 /* ── Measurements ── */
@@ -1436,11 +1474,33 @@ document.getElementById('productForm').addEventListener('submit', async function
       .map(function(s) { return s.trim(); })
       .filter(function(s) { return s.length > 0; });
 
+    var price = parseFloat(document.getElementById('productPrice').value);
+
+    // Sale: salePrice only applies when on sale, and must be a positive number
+    // below the regular price (matches the storefront, which shows
+    // salePrice || basePrice and a % discount off basePrice).
+    var onSale = document.getElementById('productOnSale').checked;
+    var salePrice = null;
+    if (onSale) {
+      var rawSale = document.getElementById('productSalePrice').value;
+      if (rawSale !== '' && rawSale != null) {
+        salePrice = parseFloat(rawSale);
+        if (!isFinite(salePrice) || salePrice <= 0) {
+          throw new Error('Sale price must be a number greater than 0.');
+        }
+        if (salePrice >= price) {
+          throw new Error('Sale price ($' + salePrice + ') must be less than the regular price ($' + price + ').');
+        }
+      }
+    }
+
     var pd = {
       name: document.getElementById('productName').value,
       category: category,
       brand: newBrand || selectedBrand,
-      price: parseFloat(document.getElementById('productPrice').value),
+      price: price,
+      onSale: onSale,
+      salePrice: salePrice,
       size: document.getElementById('productSize').value,
       color: document.getElementById('productColor').value.trim(),
       condition: document.getElementById('productCondition').value,

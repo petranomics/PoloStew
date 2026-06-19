@@ -1,12 +1,18 @@
 /**
  * POST /api/checkout/stripe
- * Body: { items: [{ id, name, brand, price, quantity, image }] }
+ * Body: { items: [{ id, quantity }] }  — only `id` and `quantity` are trusted.
  * Returns: { url } — Stripe Checkout hosted page
  *
  * Calls Stripe REST API directly via fetch to avoid SDK runtime issues in Vercel.
  * Vintage one-of-a-kind items live in PoloStew admin; Stripe handles payment only.
  * Each line item carries the PoloStew product ID in metadata for the webhook.
+ *
+ * SECURITY: price, name, and image are looked up server-side from the published
+ * catalog (KV `published:products`). The client-supplied `price` is IGNORED —
+ * trusting it would let a buyer pay any amount for any item.
  */
+
+import { loadProducts } from '../../lib/products-store.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -58,24 +64,67 @@ export default async function handler(req, res) {
   params.append('metadata[source]', 'polostew');
   params.append('metadata[itemCount]', String(items.length));
 
+  // Look up the authoritative catalog. Everything that affects what the buyer
+  // is charged comes from here — never from the request body.
+  let catalog;
+  try {
+    catalog = await loadProducts();
+  } catch (err) {
+    console.error('Checkout: failed to load catalog:', err.message);
+    return res.status(500).json({ error: 'Could not load catalog. Please try again.' });
+  }
+  const byId = new Map(catalog.map((p) => [String(p.id), p]));
+
+  // Server-authoritative price: sale price only when on sale, valid, and below base.
+  const resolvePrice = (p) => {
+    const base = Number(p.basePrice != null ? p.basePrice : p.price);
+    const sale = Number(p.salePrice);
+    if (p.onSale && Number.isFinite(sale) && sale > 0 && sale < base) return sale;
+    return base;
+  };
+
   let lineIndex = 0;
+  const unavailable = [];
   for (const item of items) {
-    if (!item || !item.name || !(item.price > 0)) continue;
+    const id = item && item.id != null ? String(item.id) : '';
+    const product = byId.get(id);
+
+    // Reject rather than silently drop: the buyer must know if something in
+    // their cart is gone or sold out, not be quietly charged for the rest.
+    if (!product) { unavailable.push({ id, reason: 'not found' }); continue; }
+    const stock = Number(product.stock);
+    if (!Number.isFinite(stock) || stock <= 0) { unavailable.push({ id, name: product.name, reason: 'sold out' }); continue; }
+
+    const unitPrice = resolvePrice(product);
+    if (!Number.isFinite(unitPrice) || unitPrice <= 0) { unavailable.push({ id, name: product.name, reason: 'unpriced' }); continue; }
+
+    // Vintage stock is one-of-a-kind; never let a line exceed available stock.
+    const requestedQty = Math.max(1, parseInt(item.quantity, 10) || 1);
+    const quantity = Math.min(requestedQty, stock);
+
     const prefix = `line_items[${lineIndex}]`;
     params.append(`${prefix}[price_data][currency]`, 'usd');
-    params.append(`${prefix}[price_data][unit_amount]`, String(Math.round(parseFloat(item.price) * 100)));
-    params.append(`${prefix}[price_data][product_data][name]`, item.name);
-    if (item.brand) {
-      const desc = item.brand + (item.condition ? ' · ' + item.condition : '');
+    params.append(`${prefix}[price_data][unit_amount]`, String(Math.round(unitPrice * 100)));
+    params.append(`${prefix}[price_data][product_data][name]`, product.name);
+    if (product.brand) {
+      const desc = product.brand + (product.condition ? ' · ' + product.condition : '');
       params.append(`${prefix}[price_data][product_data][description]`, desc);
     }
-    if (item.image) {
-      params.append(`${prefix}[price_data][product_data][images][0]`, item.image);
+    const image = (Array.isArray(product.images) && product.images[0]) || product.image;
+    if (image) {
+      params.append(`${prefix}[price_data][product_data][images][0]`, image);
     }
-    params.append(`${prefix}[price_data][product_data][metadata][polostewId]`, String(item.id || ''));
-    if (item.brand) params.append(`${prefix}[price_data][product_data][metadata][brand]`, item.brand);
-    params.append(`${prefix}[quantity]`, String(item.quantity || 1));
+    params.append(`${prefix}[price_data][product_data][metadata][polostewId]`, id);
+    if (product.brand) params.append(`${prefix}[price_data][product_data][metadata][brand]`, product.brand);
+    params.append(`${prefix}[quantity]`, String(quantity));
     lineIndex++;
+  }
+
+  if (unavailable.length > 0) {
+    return res.status(409).json({
+      error: 'Some items are no longer available. Please review your cart.',
+      unavailable,
+    });
   }
 
   if (lineIndex === 0) {

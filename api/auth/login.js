@@ -7,9 +7,8 @@ import { kv } from '@vercel/kv';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import { parseCookies, setCookie } from '../middleware/auth.js';
+import { parseCookies, setCookie, getJwtSecret } from '../middleware/auth.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
 const JWT_EXPIRES_IN = '15m';
 const REFRESH_TOKEN_EXPIRES_IN = '7d';
 
@@ -71,14 +70,15 @@ export default async function handler(req, res) {
     // }
 
     // Generate tokens
+    const jwtSecret = getJwtSecret();
     const accessToken = jwt.sign(
       {
         userId: user.id,
         email: user.email,
         role: user.role
       },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      jwtSecret,
+      { expiresIn: JWT_EXPIRES_IN, algorithm: 'HS256' }
     );
 
     const refreshToken = jwt.sign(
@@ -86,8 +86,8 @@ export default async function handler(req, res) {
         userId: user.id,
         type: 'refresh'
       },
-      JWT_SECRET,
-      { expiresIn: rememberMe ? '30d' : REFRESH_TOKEN_EXPIRES_IN }
+      jwtSecret,
+      { expiresIn: rememberMe ? '30d' : REFRESH_TOKEN_EXPIRES_IN, algorithm: 'HS256' }
     );
 
     // Create session

@@ -6,11 +6,22 @@
 import jwt from 'jsonwebtoken';
 import { kv } from '@vercel/kv';
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error('CRITICAL: JWT_SECRET environment variable is not set!');
+/**
+ * Returns the JWT signing secret, throwing if it is not configured.
+ * There is intentionally NO insecure fallback: signing/verifying with a
+ * publicly-known default would let anyone forge tokens for any user.
+ */
+export function getJwtSecret() {
+  const s = process.env.JWT_SECRET;
+  if (!s) {
+    throw new Error('JWT_SECRET environment variable is not set');
+  }
+  return s;
 }
+
+// All tokens are HS256 — pin the algorithm on every verify so a token can't
+// declare a different (or "none") algorithm in its header (alg-confusion).
+export const JWT_ALGORITHMS = ['HS256'];
 
 /**
  * Middleware to verify JWT token and attach user to request
@@ -32,7 +43,7 @@ export async function verifyAuth(req, res, next) {
     // Verify JWT
     let decoded;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, getJwtSecret(), { algorithms: JWT_ALGORITHMS });
     } catch (err) {
       if (err.name === 'TokenExpiredError') {
         return res.status(401).json({

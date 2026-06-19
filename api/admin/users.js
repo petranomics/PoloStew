@@ -81,12 +81,10 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      // Prevent admin from demoting themselves
-      if (userId === req.user.id && role !== 'admin') {
-        return res.status(400).json({
-          error: 'Cannot change your own role'
-        });
-      }
+      // Note: admin access here is the shared admin-password gate
+      // (lib/admin-auth.mjs), which carries no per-admin identity — there is
+      // no "yourself" to guard. The previous self-demote/self-delete checks
+      // dereferenced an undefined req.user and always threw, so they're gone.
 
       // Update role if provided
       if (role) {
@@ -122,13 +120,6 @@ export default async function handler(req, res) {
 
       if (!userId) {
         return res.status(400).json({ error: 'User ID required' });
-      }
-
-      // Prevent admin from deleting themselves
-      if (userId === req.user.id) {
-        return res.status(400).json({
-          error: 'Cannot delete your own account'
-        });
       }
 
       const user = await kv.get(`user:${userId}`);

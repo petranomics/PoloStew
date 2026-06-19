@@ -10,10 +10,9 @@
 import { kv } from '@vercel/kv';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
-import { parseCookies } from '../middleware/auth.js';
+import { parseCookies, getJwtSecret, JWT_ALGORITHMS } from '../middleware/auth.js';
 import { sendVerificationEmail } from '../../lib/email.mjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
 const VERIFY_TTL_SECONDS = 24 * 60 * 60;
 
 export default async function handler(req, res) {
@@ -33,7 +32,7 @@ export default async function handler(req, res) {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, getJwtSecret(), { algorithms: JWT_ALGORITHMS });
     } catch (err) {
       return res.status(401).json({ error: 'Invalid or expired session', code: 'INVALID_TOKEN' });
     }

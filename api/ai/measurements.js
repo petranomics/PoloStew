@@ -12,6 +12,11 @@
  * format the manual measurement form uses.
  */
 
+import { logUsage } from '../../lib/usage-logger.mjs';
+import { requireAdmin } from '../../lib/admin-auth.mjs';
+
+const MODEL = 'claude-haiku-4-5-20251001';
+
 const SYSTEM_PROMPT = `You are a vintage clothing measurement expert. Estimate garment measurements in inches.
 
 You will receive a category, size, and (sometimes) a photo of the item. Return realistic flat-measured measurements that a vintage seller would list.
@@ -36,6 +41,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  // Admin-only: vision calls are the most expensive AI path in the app.
+  if (!(await requireAdmin(req, res))) return;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -65,6 +72,7 @@ ${useVision ? 'Use the attached photo to refine your size-chart starting point.'
       ]
     : userText;
 
+  const startedAt = Date.now();
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -74,7 +82,7 @@ ${useVision ? 'Use the attached photo to refine your size-chart starting point.'
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: MODEL,
         max_tokens: 300,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userContent }],
@@ -107,6 +115,16 @@ ${useVision ? 'Use the attached photo to refine your size-chart starting point.'
     if (typeof measurements !== 'object' || Array.isArray(measurements) || measurements === null) {
       return res.status(500).json({ error: 'AI returned non-object measurements' });
     }
+
+    await logUsage({
+      app: 'polostew',
+      endpoint: '/api/ai/measurements',
+      model: MODEL,
+      provider: 'anthropic',
+      response: result,
+      latencyMs: Date.now() - startedAt,
+      metadata: { category, source: useVision ? 'vision' : 'sizechart' },
+    });
 
     return res.status(200).json({
       measurements,
