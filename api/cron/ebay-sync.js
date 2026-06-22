@@ -75,10 +75,13 @@ function getSpecific(specifics, name) {
 }
 
 export default async function handler(req, res) {
-  // Vercel cron auth
+  // Vercel cron auth — fail closed. Vercel automatically sends
+  // `Authorization: Bearer ${CRON_SECRET}` for scheduled invocations. If the
+  // secret is unset or doesn't match, reject: this endpoint runs an expensive
+  // eBay sync that rewrites the whole catalog, so it must never be open.
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = req.headers.authorization || '';
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
