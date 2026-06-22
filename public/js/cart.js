@@ -95,19 +95,14 @@ class Cart {
     this.saveCart();
   }
 
-  // Update cart UI (badge)
+  // Update cart UI: show a small dot on the basket whenever the cart has
+  // items. Targets every .cart-badge on the page (each header has one).
   updateCartUI() {
-    const cartCount = this.getCount();
-    const cartBadge = document.querySelector('.cart-badge');
-
-    if (cartBadge) {
-      if (cartCount > 0) {
-        cartBadge.textContent = cartCount;
-        cartBadge.style.display = 'flex';
-      } else {
-        cartBadge.style.display = 'none';
-      }
-    }
+    const hasItems = this.getCount() > 0;
+    document.querySelectorAll('.cart-badge').forEach((badge) => {
+      badge.textContent = '';
+      badge.style.display = hasItems ? 'block' : 'none';
+    });
   }
 
   // Show notification

@@ -1,0 +1,52 @@
+{
+  "categories": {
+    "vintage-tees": {
+      "name": "Vintage Tees & Graphic Shirts",
+      "slug": "vintage-tees",
+      "brands": ["Vintage Nike", "90s Starter", "Band Tees", "College/University", "Graphic Tees", "Single Stitch"],
+      "types": ["Graphic", "Band", "Sports", "College", "Plain", "Tie-Dye"],
+      "priceRanges": ["Under $25", "$25-$50", "$50-$100", "$100+"],
+      "featuredProducts": []
+    },
+    "jerseys": {
+      "name": "Jerseys (Sports & Soccer)",
+      "slug": "jerseys",
+      "brands": ["Mitchell & Ness", "Starter", "Champion", "Nike", "Adidas", "Reebok", "Umbro", "Puma"],
+      "types": ["Basketball", "Football", "Baseball", "Hockey", "Soccer", "Warmup"],
+      "priceRanges": ["Under $40", "$40-$80", "$80-$150", "$150+"],
+      "featuredProducts": []
+    },
+    "jackets-outerwear": {
+      "name": "Jackets & Outerwear",
+      "slug": "jackets-outerwear",
+      "brands": ["Carhartt", "North Face", "Starter", "Patagonia", "Members Only", "Varsity", "Levi's"],
+      "types": ["Jackets", "Windbreakers", "Flannels", "Vests", "Varsity", "Denim Jackets"],
+      "priceRanges": ["Under $50", "$50-$100", "$100-$200", "$200+"],
+      "featuredProducts": []
+    },
+    "sweatshirts-hoodies": {
+      "name": "Sweatshirts & Hoodies",
+      "slug": "sweatshirts-hoodies",
+      "brands": ["Champion", "Russell Athletic", "Nike", "Adidas", "Carhartt", "Hanes"],
+      "types": ["Crewneck", "Pullover Hoodie", "Zip-Up Hoodie", "Quarter-Zip", "Sweatpants Set"],
+      "priceRanges": ["Under $30", "$30-$60", "$60-$100", "$100+"],
+      "featuredProducts": []
+    },
+    "shirts-button-ups": {
+      "name": "Shirts & Button-Ups",
+      "slug": "shirts-button-ups",
+      "brands": ["Ralph Lauren", "Tommy Hilfiger", "Nautica", "Pendleton", "L.L. Bean", "Polo"],
+      "types": ["Oxford", "Flannel", "Polo", "Rugby", "Western", "Hawaiian"],
+      "priceRanges": ["Under $30", "$30-$60", "$60-$100", "$100+"],
+      "featuredProducts": []
+    },
+    "bundles-lots": {
+      "name": "Bundles & Lots",
+      "slug": "bundles-lots",
+      "brands": ["Mixed", "Reseller Lots", "Curated Bundles"],
+      "types": ["Tee Bundle", "Jersey Lot", "Outerwear Lot", "Mystery Box", "Mixed Vintage"],
+      "priceRanges": ["Under $100", "$100-$250", "$250-$500", "$500+"],
+      "featuredProducts": []
+    }
+  }
+}
