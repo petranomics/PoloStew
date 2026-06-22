@@ -9,8 +9,21 @@
  * trigger spurious syncs.
  */
 
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { kv } from '@vercel/kv';
 import { getEbayAppToken, getEbayApiBase } from '../../lib/ebayAuth.mjs';
+
+// Ids of the bundled demo/sample catalog (data/products.json). These are
+// first-run placeholders and must never linger once real eBay inventory exists.
+function sampleProductIds() {
+  try {
+    const f = JSON.parse(readFileSync(join(process.cwd(), 'data', 'products.json'), 'utf8'));
+    return new Set((f.products || []).map((p) => String(p.id)));
+  } catch (e) {
+    return new Set();
+  }
+}
 
 const CATEGORY_MAP = {
   't-shirt': 'Vintage Tees & Graphic Shirts',
@@ -161,9 +174,12 @@ export default async function handler(req, res) {
       };
     });
 
-    // Pull existing published catalog from KV
+    // Pull existing published catalog from KV, dropping any bundled demo
+    // samples so a sync produces a clean catalog (real eBay + manual only).
     const existingPub = await kv.get('published:products');
-    const existing = (existingPub && existingPub.products) || [];
+    const sampleIds = sampleProductIds();
+    const existing = ((existingPub && existingPub.products) || [])
+      .filter((p) => !sampleIds.has(String(p.id)));
 
     // Merge: keep non-eBay-sourced products as-is, update or mark-sold the eBay ones,
     // and add any brand-new eBay listings.

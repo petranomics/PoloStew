@@ -812,6 +812,13 @@ let products = [
 let nextId = 11;
 let currentView = 'list';
 
+// The built-in sample catalog above is first-run demo data only. We track its
+// ids so we can (a) never publish samples over real inventory and (b) drop them
+// the moment real inventory (eBay or manual) exists. Captured from the initial
+// `products` array before anything replaces it.
+var SAMPLE_PRODUCT_IDS = new Set(products.map(function(p) { return String(p.id); }));
+function isSampleProduct(p) { return !!p && SAMPLE_PRODUCT_IDS.has(String(p.id)); }
+
 /* ── Persistence ── */
 // The published catalog (KV, via /api/products) is the source of truth.
 // localStorage is only a per-browser cache, and the hardcoded `products` array
@@ -823,11 +830,8 @@ let currentView = 'list';
 //     server (recovery after an accidental wipe);
 //   - otherwise just show whatever exists and publish nothing automatically.
 async function loadProducts() {
-  // Snapshot the built-in sample ids BEFORE `products` gets replaced.
-  var SAMPLE_IDS = new Set(products.map(function(p) { return String(p.id); }));
   function isSampleSet(arr) {
-    return Array.isArray(arr) && arr.length > 0 &&
-      arr.every(function(p) { return SAMPLE_IDS.has(String(p.id)); });
+    return Array.isArray(arr) && arr.length > 0 && arr.every(isSampleProduct);
   }
   function cacheLocal() {
     try { localStorage.setItem('polostew_admin_products', JSON.stringify(products)); } catch (e) {}
@@ -946,6 +950,12 @@ async function syncFromEbay() {
       showSyncStatus('No active listings found for eBay seller "' + (data.seller || '?') + '".', 'warning');
       return;
     }
+
+    // Real inventory exists now — drop the built-in demo samples so a sync
+    // (including recovery after a wipe) yields a clean catalog, not samples +
+    // eBay. Genuinely manual (non-sample, non-eBay) products are preserved.
+    var droppedSamples = products.filter(isSampleProduct).length;
+    if (droppedSamples > 0) products = products.filter(function(p) { return !isSampleProduct(p); });
 
     var added = 0, updated = 0, soldFlagged = 0;
     var liveEbayIds = {};
