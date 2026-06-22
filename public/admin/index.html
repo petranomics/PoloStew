@@ -813,20 +813,65 @@ let nextId = 11;
 let currentView = 'list';
 
 /* ── Persistence ── */
-function loadProducts() {
+// The published catalog (KV, via /api/products) is the source of truth.
+// localStorage is only a per-browser cache, and the hardcoded `products` array
+// is a first-run sample set. We must NEVER auto-publish the sample set on load —
+// doing that on a browser without the real inventory cached is exactly what
+// wiped the live catalog down to the 10 samples. So:
+//   - if the server has a real (non-sample) catalog, use it;
+//   - else if THIS browser still has the real catalog cached, restore it to the
+//     server (recovery after an accidental wipe);
+//   - otherwise just show whatever exists and publish nothing automatically.
+async function loadProducts() {
+  // Snapshot the built-in sample ids BEFORE `products` gets replaced.
+  var SAMPLE_IDS = new Set(products.map(function(p) { return String(p.id); }));
+  function isSampleSet(arr) {
+    return Array.isArray(arr) && arr.length > 0 &&
+      arr.every(function(p) { return SAMPLE_IDS.has(String(p.id)); });
+  }
+  function cacheLocal() {
+    try { localStorage.setItem('polostew_admin_products', JSON.stringify(products)); } catch (e) {}
+  }
+
+  var server = null, local = null;
+  try {
+    var res = await fetch('/api/products', { cache: 'no-store' });
+    if (res.ok) {
+      var data = await res.json();
+      if (Array.isArray(data.products)) server = data.products;
+    }
+  } catch (e) { /* offline — fall back to cache */ }
   try {
     var saved = localStorage.getItem('polostew_admin_products');
     if (saved) {
       var parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        products = parsed;
-        nextId = Math.max(...products.map(function(p) { return typeof p.id === 'number' ? p.id : 0; })) + 1;
-      }
+      if (Array.isArray(parsed)) local = parsed;
     }
-  } catch(e) { /* use defaults */ }
-  // Re-publish on load so any normalization changes (price→basePrice, id→string)
-  // reach the live site without the admin needing to touch a product.
-  publishProducts();
+  } catch (e) {}
+
+  var serverReal = server && server.length > 0 && !isSampleSet(server);
+  var localReal  = local && local.length > 0 && !isSampleSet(local);
+
+  if (serverReal) {
+    products = server;
+    cacheLocal();
+  } else if (localReal) {
+    // Live catalog was lost/reset but this browser has the real inventory.
+    products = local;
+    cacheLocal();
+    showSyncStatus('Restored ' + products.length + ' products from this browser to the live site.', 'success');
+    publishProducts();
+  } else if (server && server.length > 0) {
+    products = server;   // sample set from the server — fine, do NOT republish
+    cacheLocal();
+  } else if (local && local.length > 0) {
+    products = local;
+  }
+  // else: keep the built-in samples in memory only; never auto-publish them.
+
+  nextId = Math.max.apply(null, [0].concat(products.map(function(p) {
+    return typeof p.id === 'number' ? p.id : 0;
+  }))) + 1;
 }
 
 function saveProducts() {
@@ -979,8 +1024,8 @@ const measurementDefaults = {
 };
 
 /* ── Init ── */
-function init() {
-  loadProducts();
+async function init() {
+  await loadProducts();
   updateBrandDropdowns();
   applyAllFilters();
   updateStats();
